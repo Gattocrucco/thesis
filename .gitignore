@@ -3,6 +3,11 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+*.aux
+*.lb
+*.log
+*.synctex.gz
+
 # Node artifact files
 node_modules/
 dist/
