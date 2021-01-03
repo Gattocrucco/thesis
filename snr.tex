@@ -1,0 +1,115 @@
+\chapter{Signal to noise ratio of PDM signals after filtering}
+
+% Schema:
+% introduzione/sommario
+%     dire che ci sono i segnali su background e che dobbiamo calcolare il rapporto segnale/rumore dopo aver filtrato.
+% presentazione dati LNGS
+%     i dati vengono da non-mi-ricordo-cosa che sta a LNGS. far vedere un plot.
+% filtri
+%     spiegare i filtri a media mobile e esponenziale a parole. spiegare il matched filter. spiegare l'accoppiamento del rumore come l'ho fatto e che non funziona bene.
+% fingerplot
+%     spiegare come definiamo l'SNR
+% plot w.r.t. SNR
+% plot w.r.t. tau
+% noise spectrum
+
+The DarkSide20k detectors will use photodetector modules (PDMs) made up from
+many silicon photomultipliers (SiPMs). For what concerns us, the output is
+similar to a single SiPM output. When a photon hits the photomultiplier, the
+electrical output is a sudden voltage spike, with a rise time on the order of
+nanoseconds, which decays slowly in some microseconds. The amplitude of this
+signal is proportional to the number of photoelectrons produced, so it is
+discrete, apart from some random fluctuation. See figure~\ref{fig:signals} for
+an example.
+
+\begin{figure}
+    Make a figure with 1, 2, 3 photoelectrons signals from LNGS data; number of
+    photoelectrons maps to tone, repetition maps to alpha. Do 3 repetitions.
+    \caption{}
+    \label{fig:signals}
+\end{figure}
+
+Our goal is to study the performance of some filters in finding and measuring the amplitude of the signals amidst electrical noise. We'll now introduce the dataset, list the filters tested, define a performance measure and show the results. Finally we'll compute and comment the noise spectrum. The code for this work is online at \url{https://bitbucket.org/Gattocrucco/sipmfilter/src/master/}.
+
+\section{Data}
+
+For this study we used test data taken at liquid nitrogen temperature from a setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at regular time intervals on the PDM. Both the laser trigger and the detector output are sampled at \SI{1}{GSa/s} with a 10 bit ADC and saved separating the data in ``events'' where each event correspond to a single laser pulse. See figure~\ref{fig:lngs}.
+
+\begin{figure}
+    A figure with some events. Maybe start from plotwav2.py.
+    \caption{}
+    \label{fig:lngs}
+\end{figure}
+
+We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds to tile 57 (what are these tiles anyway?) which means the data is in the directory \url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \texttt{nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav}.
+
+\begin{figure}
+    Import PDMadcCh.png
+    \caption{}
+    \label{fig:pdmadcch}
+\end{figure}
+
+In the dataset there are a couple of problems. The first is that signals with
+many photoelectrons saturate, however this won't trouble us since we'll need
+only single photoelectron signals. The second is the presence of some spurious
+signals which do not correspond to the laser pulse. I filtered these out by
+putting a threshold in the part of each event \emph{before} the laser trigger,
+which should be flat apart from the noise; there were 72 of them out of
+\num{10005} events.
+
+In principle a spurious signal arriving \emph{after} the ``official''
+laser-induced signal matters too, however I'm ignoring them out of this logic:
+spurious signals hitting earlier raise the official signal in a somewhat
+uniform way with their slowly decaying tail, so the detected amplitude will
+have a bias which is significant, but possibly small and as such not
+identifiable. Spurious signals hitting later will add a large spike in the tail
+of the official signal, so the amplitude will be noticeably higher, such that a
+single photoelectron pulse gets confused as a double or higher one, and
+we'll automatically ignore it as we'll consider signals detected as single.
+
+This reasoning may fail depending on the details of filtering and the specific
+relative timing of the signals, however the final most important consideration
+is that I expect less than 100 spurious late pulses since there are 72 early
+ones and the laser pulse is in the middle of the event, so less than \SI1\%. See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
+
+\begin{figure}
+    Spurious and saturated signals. Start from plotwav.py.
+    \caption{}
+    \label{fig:spurious}
+\end{figure}
+
+\section{Filters}
+
+A filter operates by converting the original sequence of ADC samples $(x_1,
+x_2, \ldots)$ to a new ``filtered'' sequence $(y_1, y_2, \ldots)$. The filters
+are causal, i.e. the filtered sample $y_n$ can be computed only using the
+original samples up to $x_n$. This limitation is because we are interested in
+using the filters online, i.e. produce the filter output continuously as
+samples are read.
+
+We tested three filters: the moving average, the exponential moving average or autoregressive filter, and the cross-correlation filter.
+
+The moving average consists in taking the average of the last $N$ samples:
+\begin{equation}
+    y_n = \sum_{i=0}^{N-1} x_{n-i}.
+\end{equation}
+
+The exponential moving average weighs past samples with an exponentially decaying coefficient, and can be written recursively as
+\begin{equation}
+    y_n = a y_{n-1} + (1 - a) x_n, \quad a \in (0, 1).
+\end{equation}
+The scale of the exponential decay is given by
+\begin{align}
+    \tau &= -\frac1{\log a},\\
+    &\approx \frac1{1-a} \text{ for $a$ close to 1.}
+\end{align}
+
+The cross-correlation filter is the most sophisticated we considered. Let $\mathbf h = (h_1, h_2, \ldots, h_N)$ be a \emph{template} of the signal waveform we want to detect. This means $\mathbf h$ should ideally match the shape of the signal waveform we want to find in the noisy data. The filter is then
+\begin{equation}
+    y_n = \sum_{i=1}^N h_i y_{n-N+i}.
+\end{equation}
+Under the assumption that the data is white noise plus a signal that perfectly matches the template apart from amplitude, this filter is optimal in the sense that in the filter output there will be a peak corresponding to the signal and this peak will have the maximum possible height relative to the standard deviation of the filtered noise.
+
+The differences we have from the ideal case are:
+
+\section{The fingerplot}
