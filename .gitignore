@@ -3,11 +3,13 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+# LaTeX
 *.aux
 *.lb
 *.log
 *.synctex.gz
 *.toc
+*.out
 
 # Node artifact files
 node_modules/

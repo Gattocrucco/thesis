@@ -1,18 +1,5 @@
 \chapter{Signal to noise ratio of PDM signals after filtering}
 
-% Schema:
-% introduzione/sommario
-%     dire che ci sono i segnali su background e che dobbiamo calcolare il rapporto segnale/rumore dopo aver filtrato.
-% presentazione dati LNGS
-%     i dati vengono da non-mi-ricordo-cosa che sta a LNGS. far vedere un plot.
-% filtri
-%     spiegare i filtri a media mobile e esponenziale a parole. spiegare il matched filter. spiegare l'accoppiamento del rumore come l'ho fatto e che non funziona bene.
-% fingerplot
-%     spiegare come definiamo l'SNR
-% plot w.r.t. SNR
-% plot w.r.t. tau
-% noise spectrum
-
 The DarkSide20k detectors will use photodetector modules (PDMs) made up from
 many silicon photomultipliers (SiPMs). For what concerns us, the output is
 similar to a single SiPM output. When a photon hits the photomultiplier, the
@@ -29,11 +16,21 @@ an example.
     \label{fig:signals}
 \end{figure}
 
-Our goal is to study the performance of some filters in finding and measuring the amplitude of the signals amidst electrical noise. We'll now introduce the dataset, list the filters tested, define a performance measure and show the results. Finally we'll compute and comment the noise spectrum. The code for this work is online at \url{https://bitbucket.org/Gattocrucco/sipmfilter/src/master/}.
+Our goal is to study the performance of some filters in finding and measuring
+the amplitude of the signals amidst electrical noise. We'll now introduce the
+dataset, list the filters tested, define a performance measure and show the
+results. Finally we'll compute and comment the noise spectrum. The code for
+this work is online at
+\url{https://bitbucket.org/Gattocrucco/sipmfilter/src/master/}.
 
 \section{Data}
 
-For this study we used test data taken at liquid nitrogen temperature from a setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at regular time intervals on the PDM. Both the laser trigger and the detector output are sampled at \SI{1}{GSa/s} with a 10 bit ADC and saved separating the data in ``events'' where each event correspond to a single laser pulse. See figure~\ref{fig:lngs}.
+For this study we used test data taken at liquid nitrogen temperature from a
+setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
+regular time intervals on the PDM. Both the laser trigger and the detector
+output are sampled at \SI{1}{GSa/s} with a 10 bit ADC and saved separating the
+data in ``events'' where each event correspond to a single laser pulse. See
+figure~\ref{fig:lngs}.
 
 \begin{figure}
     A figure with some events. Maybe start from plotwav2.py.
@@ -41,7 +38,11 @@ For this study we used test data taken at liquid nitrogen temperature from a set
     \label{fig:lngs}
 \end{figure}
 
-We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds to tile 57 (what are these tiles anyway?) which means the data is in the directory \url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \texttt{nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav}.
+We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds
+to tile 57 (what are these tiles anyway?) which means the data is in the
+directory
+\url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}.
+We used the file \verb'nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav'.
 
 \begin{figure}
     Import PDMadcCh.png
@@ -70,7 +71,8 @@ we'll automatically ignore it as we'll consider signals detected as single.
 This reasoning may fail depending on the details of filtering and the specific
 relative timing of the signals, however the final most important consideration
 is that I expect less than 100 spurious late pulses since there are 72 early
-ones and the laser pulse is in the middle of the event, so less than \SI1\%. See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
+ones and the laser pulse is in the middle of the event, so less than \SI1\%.
+See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
 
 \begin{figure}
     Spurious and saturated signals. Start from plotwav.py.
@@ -87,14 +89,16 @@ original samples up to $x_n$. This limitation is because we are interested in
 using the filters online, i.e. produce the filter output continuously as
 samples are read.
 
-We tested three filters: the moving average, the exponential moving average or autoregressive filter, and the cross-correlation filter.
+We tested three filters: the moving average, the exponential moving average or
+autoregressive filter, and the cross-correlation filter.
 
 The moving average consists in taking the average of the last $N$ samples:
 \begin{equation}
-    y_n = \sum_{i=0}^{N-1} x_{n-i}.
+    y_n =  \frac1N \sum_{i=1}^N x_{n-N+i}.
 \end{equation}
 
-The exponential moving average weighs past samples with an exponentially decaying coefficient, and can be written recursively as
+The exponential moving average weighs past samples with an exponentially
+decaying coefficient, and can be written recursively as
 \begin{equation}
     y_n = a y_{n-1} + (1 - a) x_n, \quad a \in (0, 1).
 \end{equation}
@@ -104,12 +108,238 @@ The scale of the exponential decay is given by
     &\approx \frac1{1-a} \text{ for $a$ close to 1.}
 \end{align}
 
-The cross-correlation filter is the most sophisticated we considered. Let $\mathbf h = (h_1, h_2, \ldots, h_N)$ be a \emph{template} of the signal waveform we want to detect. This means $\mathbf h$ should ideally match the shape of the signal waveform we want to find in the noisy data. The filter is then
+The cross-correlation filter is the most sophisticated we considered. Let
+$\mathbf h = (h_1, h_2, \ldots, h_N)$ be a \emph{template} of the signal
+waveform we want to detect. This means $\mathbf h$ should ideally match the
+shape of the signal waveform we want to find in the noisy data. The filter is
+then the cross-correlation of $\mathbf x$ with $\mathbf h$:
 \begin{equation}
-    y_n = \sum_{i=1}^N h_i y_{n-N+i}.
+    y_n = \sum_{i=1}^N h_i x_{n-N+i}.
 \end{equation}
-Under the assumption that the data is white noise plus a signal that perfectly matches the template apart from amplitude, this filter is optimal in the sense that in the filter output there will be a peak corresponding to the signal and this peak will have the maximum possible height relative to the standard deviation of the filtered noise.
+Under the assumption that the data is white noise plus a signal that perfectly
+matches the template apart from amplitude, this filter is optimal in the sense
+that in the filter output there will be a peak corresponding to the signal and
+this peak will have the maximum possible height relative to the standard
+deviation of the filtered noise.
 
 The differences we have from the ideal case are:
+\begin{enumerate}
+    \item the shape of the signal probably changes a bit each time;
+    \item the signal is not aligned always in the same way to the ADC timebase;
+    \item the noise is not white.
+\end{enumerate}
+
+The variation of the actual signal shape is difficult to address directly. The
+noise spectrum can be corrected by appropriately transforming $\mathbf h$, in
+this case the filter is called \emph{matched filter}. Let $\mathbf s$ and
+$\mathbf w$ be the signal and noise, such that the waveform to be filtered is
+$\mathbf x = \mathbf s + \mathbf w$. Let $R$ be the noise covariance matrix,
+i.e. $R_{ij} = \operatorname{Cov}[w_i, w_j]$. Then the template for the matched
+filter is
+\begin{equation}
+    \mathbf h_\text m = R^{-1} \mathbf h.
+    \label{eq:matched}    
+\end{equation}
+
+We tried implementing the matched filter with mixed results we will not report
+in detail. We computed the noise covariance matrix on the event samples before
+the signal. Since the noise is stationary, $R$ is a Toeplitz matrix, i.e. the
+covariance depends only on the lag between two samples.
+Figure~\ref{fig:autocorrlngs} shows the noise covariance obtained.
+
+\begin{figure}
+    Make a plot of the autocovariance. Use \verb'make_template.py' but with a
+    line plot instead of the matrix map.
+    \caption{}
+    \label{fig:autocorrlngs}
+\end{figure}
+
+The matched filter worked slightly better than the cross-correlation filter, as
+expected, but only for $N$ sufficiently small, getting worse as $N$ increased.
+This could be due to numerical accuracy problems in solving the linear system
+$R$ in equation~\ref{eq:matched}, or in computing $R$. We didn't work on this
+further since the gain is probably small.
+
+We computed the template for the cross-correlation filter by taking the median
+of single photoelectron signals. We did not align the signals, we operated as
+if they occurred always with the same alignment relative to the event time
+window. The template obtained is shown in figure~\ref{fig:template}. When using
+the template, we normalize it to unit sum such that the output from the
+cross-correlation filter is comparable to the output from the moving averages,
+i.e. if we send a flat waveform into the filter, the output has the same value
+as the input.
+
+\begin{figure}
+    The cross-correlation filter template.
+    \caption{}
+    \label{fig:template}
+\end{figure}
+
+See figure~\ref{fig:filters} for an example of filter output.
+
+\begin{figure}
+    An event from LNGS data with the three filters. I had already done
+    something like this, find it. Change ``matched'' to ``cross-correlation''.
+    \caption{}
+    \label{fig:filters}
+\end{figure}
 
 \section{The fingerplot}
+
+To measure the performance of filters, we define a signal to noise ratio (SNR)
+as follows: the SNR is the ratio of the average peak filter output value for
+single photoelectron signals over the standard deviation of the filtered noise.
+
+We could consider other similar measures, for example we could include the
+standard deviation of the peak filter output value since that influences where
+we should place a threshold to discriminate signals, however it is sufficient
+to use any reasonable definition for the purpose of comparing different
+filters. Effectively we computed the SNR without exactly respecting the
+definition above, we'll see in detail.
+
+For each event we compute the filter output at a fixed temporal delay from the
+leading edge of the laser trigger pulse (see figure~\ref{fig:filtersample}).
+Then we compute the average of the samples before the trigger pulse and take
+that value as ``baseline''. We subtract the baseline from the filter output,
+and finally we change the sign to obtain positive values since the signals are
+negative.
+
+\begin{figure}
+    A figure like the first one in the November 3 slides.
+    \caption{}
+    \label{fig:filtersample}
+\end{figure}
+
+We take the list of these baseline and sign corrected filter outputs and
+compute an histogram. One of these histograms is shown in
+figure~\ref{fig:fingerplot}. It is called ``fingerplot'' due to the descending
+peaks reminding of fingers.
+
+\begin{figure}
+    A reasonable fingerplot. Maybe one that has not perfectly separated peaks.
+    \caption{}
+    \label{fig:fingerplot}
+\end{figure}
+
+The first peak is centered on zero and thus corresponds to cases where the
+laser pulse produces no photoelectrons. Since the instant where we are
+evaluating the filter output in each event is independent of the output itself
+(instead of e.g. being determined by peak finding), this peak is the
+distribution of the noise after passing through the filter.
+
+The various other peaks correspond to an increasing number of photoelectrons.
+The second peak is the distribution of the filter output at a fixed instant for
+single photoelectron signals. Assuming for the moment that the instant where we
+evaluate the filter yields the highest signal response, this means that the SNR
+is the mean of the second peak divided by the standard deviation of the first.
+
+Since the peaks are often overlapping, and that we will have to repeat the
+calculations for many fingerplots automatically without checking each one, we
+use robust measures of location and scale instead of the average and standard
+deviation. We run a peak finding algorithm on the histogram and divide the data
+by putting boundaries midway between peaks, so that we assign each datapoint to
+a peak. For the second peak, we take the median instead of the average. For the
+first peak, we take the half symmetrized \SI{68}\% interquantile range instead
+of the standard deviation, i.e. half the difference between the 0.84 and 0.16
+quantiles. On a gaussian distribution these are equivalent to the mean and
+standard deviation, however they are less sensible to messing up the tails of
+the distribution, which happens since the boundaries cuts away the tails and
+there is contamination from the tails of the neighbouring peaks.
+
+\section{SNR versus filter length}
+
+When determining how to compute the SNR from the fingerplot we assumed that we
+were evaluating the filter output at the optimal instant. Since we do not know
+it a priori, we repeat the computation for a range of values of the filter
+evaluation point. A simpler solution that comes to mind is taking the minimum
+(the signals are negative) of the filter output in each event, however this
+would bias upward the SNR measure because the minimum can yield lower values
+due to noise peaks. Instead, by fixing the point independently from the data,
+the random oscillation due to noise is symmetrical and the averaging recovers
+the actual amplitude of the filter output for the signal.
+
+The resulting SNR curves are shown in figure~\ref{fig:snrplot}, repeated for a
+range of values of the filters length parameter. For the moving average and
+cross-correlation filter, the length parameter is the number of samples, $N$.
+For the exponential moving average, it is the scale of the exponential decay
+$\tau$.
+
+\begin{figure}
+    snrplot. tau->filter length (legend title), matched->cross correlation.
+    \caption{}
+    \label{fig:snrplot}
+\end{figure}
+
+The maximum of each curve gives the actual SNR figure we are interested in. We
+expect by intuition that the width of the maximum is approximately proportional
+to the temporal resolution we could achieve if we used the filter output to
+locate temporally the signal. So we do another plot
+(figure~\ref{fig:snrmaxplot}) where we show the maximum SNR value and the width
+of the peak versus the filter length parameter. We measure the width as the
+distance between the two points where the SNR is 1 less than its maximum value.
+
+\begin{figure}
+    snrmaxplot. use logscale for the two bottom plots. matched->cross
+    correlation.
+    \caption{}
+    \label{fig:snrmaxplot}
+\end{figure}
+
+\section{Effect of the baseline computation}
+
+In constructing the fingerplot, we subtract from the filter output value the
+baseline, i.e. the average value of the waveform in absence of signals. We
+compute the baseline for each event as the average of the samples before the
+signal. More precisely, we averaged \num{8000} samples. The value obtained
+varies randomly due to the noise; its standard deviation is that of the noise
+divided by $\sqrt{8000}$. The maximum filter length we use is 2000, so in that
+case the width of the peaks gets an additional contribution (summed in
+quadrature) which is $\sqrt{2000/8000} = 1/2$ of the width we would have with a
+noiseless baseline, i.e. the width of the first peak is $\sqrt{1 + 1/2} - 1 =
+\SI{22}\%$ larger, lowering the SNR by the same percentual.
+
+This is not just a problem of this test that can be worked around in the real
+application, how the baseline is computed is a relevant part of the signal
+finding, since it requires either a fast online algorithm estimating it
+reliably or sending enough samples to subsequent stages in the data processing
+chain.
+
+To get an idea of the effect of the baseline, we repeat everything computing
+the baseline with just 1000 or 200 samples. The result is in
+figure~\ref{fig:changebs}. We see that, for example, going from 8000 to 200 the
+maximum SNR drops from about 20 to about 9.
+
+\begin{figure}
+    A new version of snrmaxplot merging the different baselines. Drop the
+    middle plot.
+    \caption{}
+    \label{fig:changebs}
+\end{figure}
+
+\section{Noise spectrum}
+
+We take the region of each event before the trigger pulse, compute its
+periodogram, and take the median across events for each frequency. We use the
+median instead of the average in case there were spurious signals or
+irregularities we missed. We do the same for data obtained with the same sensor
+but when it was in the Proto0 setup, biased below breakdown voltage and sampled
+at \SI{125}{MSa/s}. We thus obtain two plausible noise spectra, shown in
+figure~\ref{fig:spectra}.
+
+\begin{figure}
+    Plot from spectrum.py.
+    \caption{}
+    \label{fig:spectra}
+\end{figure}
+
+We said the cross-correlation filter is optimal if the noise is white.
+Actually, it is sufficient that the noise spectrum is flat in the support of the signal spectrum, because if we filtered away frequencies outside of it, all
+the signal would still be in the waveform. In figure~\ref{fig:templsp} we
+show the power spectrum of the signal and its integral. We see that \SI{90}\% of it is below XXX~\si{MHz}, which corresponds to an approximately flat region in the noise spectra. This means that the cross-correlation filter is close to optimal. \marginpar{I've still not done this, hopefully it will turn out to be
+true.}
+
+\begin{figure}
+    the CDF of the template power spectrum
+    \caption{}
+    \label{fig:templsp}
+\end{figure}
