@@ -24,6 +24,7 @@ this work is online at
 \url{https://bitbucket.org/Gattocrucco/sipmfilter/src/master/}.
 
 \section{Data}
+\label{sec:lngsdata}
 
 For this study we used test data taken at liquid nitrogen temperature from a
 setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
@@ -73,6 +74,8 @@ relative timing of the signals, however the final most important consideration
 is that I expect less than 100 spurious late pulses since there are 72 early
 ones and the laser pulse is in the middle of the event, so less than \SI1\%.
 See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
+\marginpar{The afterpulse stuff I had not understood properly may change all
+this.}
 
 \begin{figure}
     Spurious and saturated signals. Start from plotwav.py.
@@ -81,6 +84,7 @@ See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
 \end{figure}
 
 \section{Filters}
+\label{sec:filters}
 
 A filter operates by converting the original sequence of ADC samples $(x_1,
 x_2, \ldots)$ to a new ``filtered'' sequence $(y_1, y_2, \ldots)$. The filters
@@ -168,6 +172,12 @@ the template, we normalize it to unit sum such that the output from the
 cross-correlation filter is comparable to the output from the moving averages,
 i.e. if we send a flat waveform into the filter, the output has the same value
 as the input.
+
+Since we will try various lengths of the filter template, we have to decide how
+to truncate the full template. When truncating to $N$ samples, we pick $N$
+contiguous samples from the template such that their sum is the minimum
+possible (recall the template is negative). Of course normalizing the template
+to unit sum is done after truncation.
 
 \begin{figure}
     The cross-correlation filter template.
@@ -317,6 +327,7 @@ maximum SNR drops from about 20 to about 9.
 \end{figure}
 
 \section{Noise spectrum}
+\label{sec:spectrum}
 
 We take the region of each event before the trigger pulse, compute its
 periodogram, and take the median across events for each frequency. We use the
@@ -339,7 +350,7 @@ show the power spectrum of the signal and its integral. We see that \SI{90}\% of
 true.}
 
 \begin{figure}
-    the CDF of the template power spectrum
+    The CDF of the template power spectrum.
     \caption{}
     \label{fig:templsp}
 \end{figure}

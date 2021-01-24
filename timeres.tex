@@ -1,0 +1,183 @@
+\chapter{Temporal resolution of signal detection}
+
+% Introduzione/sommario
+%     fare un toy per la risoluzione della localizzazione
+
+In the previous chapter we studied the performance of filters, but we did not
+define an algorithm to search for signals. Neither we will do it here, we'll
+skip it and measure the temporal localization precision once we know there's a
+signal.
+
+To this end, we make a simulation where each ``event'' contains only one signal
+at a known position. In principle we could use the LNGS data
+(section~\ref{sec:lngsdata}), but we don't know the jitter of the trigger pulse
+and we may reach a temporal resolution below the sampling period, while in the
+simulation we have the exact actual temporal location of signals.
+
+% Generazione degli eventi
+%     segnale
+%         dati (linkare capitolo prima)
+%         template (è diverso perché ho fatto la media, cambia nulla)
+%         downsamplare e piazzare il template
+%     rumore
+%         rumore dai dati
+%         downsampling
+%     layout dell'evento
+%         spaziature
+%         definizione dell'SNR
+
+\section{Event generation}
+
+Each event is the sum of a signal and a noise waveform. We don't add a
+baseline, so the noise has mean zero and the signals taper down to zero. The
+signals are negative. We use the same scale of the LNGS data; it actually does
+not matter because we are not simulating digitalization.
+
+\subsection{Signal}
+\label{sec:toysignal}
+
+We obtain the signal waveform by averaging single photoelectron pulses from the
+LNGS data (see section~\ref{sec:lngsdata} for a description of the dataset). We
+do not try to align the signals, assuming that they are aligned relative to the
+beginning of each acquisition event. We take 3584 \SI1{GSa/s} samples.
+Figure~\ref{fig:toytempl} shows the obtained signal template.
+
+(A study not reported here shows that better alignment is achievable but makes
+a small difference, and worse alignment means the peak of the signal is smeared
+thus yielding lower performance in signal localization, and so our choice is
+irrelevant at best, conservative at worst.)
+
+\begin{figure}
+    The toy template.
+    \caption{}
+    \label{fig:toytempl}
+\end{figure}
+
+The template is at \SI1{GSa/s}, but the simulation is at \SI{125}{MSa/s}. We
+have to downsample the template and shift its temporal position continuously
+instead of by $(\SI1{GHz})^{-1} = \SI1{ns}$ steps. Given the continuous
+temporal position where we want to place the template, we round it by excess
+and defect to the \SI{1}{ns} timebase. Then we downsample the template by
+averaging samples in groups of~8, once with the groups aligned to the floor
+rounded position, once with the ceiling rounded one. Finally we interpolate
+linearly between the two downsampled templates. Figure~\ref{fig:interptempl}
+shows a series of waveforms obtained in this way.
+
+(Downsampling with an average is not the best antialiasing filter doable, but
+it should be reasonably fine since the higher spectral part is already
+suppressed in the signal template.)
+
+\begin{figure}
+    The series of interpolated templates. I think I did this in
+    \verb'savetemplate.py'.
+    \caption{}
+    \label{fig:interptempl}
+\end{figure}
+
+\subsection{Noise}
+
+We used three different kinds of noise: gaussian white noise; noise sampled
+from the LNGS data; noise sampled from Proto0 data.
+
+The white noise is generated in the simulation. The LNGS noise is copied from
+the same data we used to make the signal template by taking the part of the
+events before the signals and filtering out a few events that contained
+spurious signals in that location. The Proto0 noise is copied from an
+acquisition made on the same PDM when it was used in the Proto0 setup with the
+SiPMs under breakdown voltage, thus inactive.
+
+The noise obtained from data is normalized to the variance required by the
+simulation. For both LNGS and Proto0 noise the data comes divided in events and
+we normalized separately for each event in case the variance changed.
+
+We downsample the noise in the same way as the signal, by averaging nearby
+samples. Both noises have spectra that go down with frequency (see
+section~\ref{sec:spectrum}), so this crappy antialiasing should be sufficient.
+The normalization to the desired variance is done after downsampling. The order
+matters because downsampling with averaging reduces the variance of the noise.
+See figure~\ref{fig:noise}.
+
+\begin{figure}
+    A figure similar to the one made by \verb'toy1gvs125m-plot.py' with both
+    LNGS and Proto0 noise and downsampled.
+    \caption{}
+    \label{fig:noise}
+\end{figure}
+
+\subsection{Event layout}
+
+Each event is the sum of a noise waveform and a shorter signal waveform. Before
+the beginning of the signal there's a noise-only region long enough for the
+filters to be in a stationary state when they reach the signal; in particular
+its length is the highest filter length parameter used in the simulation
+(\SI{2048}{ns}) plus \SI{256}{ns}.
+
+The simulation is repeated for various signal to noise ratios (SNR). We define
+the SNR as follows: the peak height relative to the baseline of the original
+\SI1{GSa/s} signal template over the noise standard deviation.
+
+Simulations with different SNR differ only in the multiplicative constant of
+the noise, so we used exactly the same noise and signal arrays for each SNR to
+speed up the code. This means that there's no random variation between results
+obtained at different SNR (or with different filters), keep this in mind when
+the smoothness of some plots would seem to suggest that the Monte Carlo error
+is negligible.
+
+Figure~\ref{fig:toyevent} shows a complete example event.
+
+\begin{figure}
+    An event. Show all filters together, plot \texttt{X}s on the minima after
+    removing localization offsets at the end of \verb'Toy._run'.
+    \caption{}
+    \label{fig:toyevent}
+\end{figure}
+
+% Localizzazione
+%     filtri
+%         linkare capitolo prima
+%         troncatura e downsampling template
+%     ricerca del minimo
+%         interpolazione
+%         upsampling
+
+\section{Temporal localization}
+
+We run the three filters described in section~\ref{sec:filters} (moving
+average, exponential moving average, cross correlation), then take the minimum
+(the signals are negative) of the filtered waveform as the location of the
+signal. We also take the minimum of the unfiltered waveform as baseline
+comparison.
+
+The minimum of the filter output occurs in some sense later than the signal
+location, this is not a problem since the choice of the point of the signal to
+be taken as reference is already arbitrary.
+
+To make the template for the cross correlation filter, we first cut the signal template (section~\ref{sec:toysignal}) to the required filter length, keeping the part of the template with maximum euclidean norm, then we downsample it by
+averaging nearby samples. See figure~\ref{fig:toyfilttempl}.
+
+\begin{figure}
+    The figure with the truncated templates. Was it in \verb'toytest.py'?
+    \caption{}
+    \label{fig:toyfilttempl}
+\end{figure}
+
+To allow for a localization eventually more precise than the sampling timebase,
+we interpolate the minimum sample and its first neighbours with a parabola. We
+also try upsampling the waveform to \SI{1}{GSa/s} (with sample repetition)
+prior to filtering.
+
+We repeat the simulation for 1000 events for each filter, filter length
+parameter, and SNR in some range. Figure~\ref{fig:lochist} shows 
+
+% Risultati
+%     istogrammi della localizzazione
+%     definizione della risoluzione
+%     curve di risoluzione in funzione dell'SNR
+%     grafico con le curve interessanti
+% Finestra
+%     come uso il filtro (condizioni al bordo, proseguimento)
+%     come piazzo la finestra
+%     grafici
+% Altre frequenze di campionamento
+%     Grafico con la risoluzione per filtro cc lungo (FEP)
+%     Grafico per cose digitalizzatore (exp? cc64?)
