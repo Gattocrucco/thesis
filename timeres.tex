@@ -95,7 +95,8 @@ samples. Both noises have spectra that go down with frequency (see
 section~\ref{sec:spectrum}), so this crappy antialiasing should be sufficient.
 The normalization to the desired variance is done after downsampling. The order
 matters because downsampling with averaging reduces the variance of the noise.
-See figure~\ref{fig:noise}.
+See figure~\ref{fig:noise}. The Proto0 noise data is already at \SI{125}{MSa/s}
+and so did not require downsampling for most of the simulations.
 
 \begin{figure}
     A figure similar to the one made by \verb'toy1gvs125m-plot.py' with both
@@ -164,16 +165,61 @@ averaging nearby samples. See figure~\ref{fig:toyfilttempl}.
 To allow for a localization eventually more precise than the sampling timebase,
 we interpolate the minimum sample and its first neighbours with a parabola. We
 also try upsampling the waveform to \SI{1}{GSa/s} (with sample repetition)
-prior to filtering.
+prior to filtering to check if it improves performance.
 
-We repeat the simulation for 1000 events for each filter, filter length
-parameter, and SNR in some range. Figure~\ref{fig:lochist} shows 
-
-% Risultati
+% Risoluzione temporale
 %     istogrammi della localizzazione
 %     definizione della risoluzione
 %     curve di risoluzione in funzione dell'SNR
 %     grafico con le curve interessanti
+
+\section{Resolution}
+
+We repeat the simulation for 1000 events for each filter, filter length
+parameter, and SNR in some range, using the Proto0 noise.
+Figure~\ref{fig:lochist} shows the histograms of the temporal localization for
+all filters for a choice of SNR and filter length.
+
+\begin{figure}
+    Histograms of resolution. Maybe SNR=5, tau=2048 ns (very nongaussian).
+    \caption{}
+    \label{fig:lochist}
+\end{figure}
+
+It is evident that the distribution of localizations can be non-gaussian, so to
+quantify the resolution we use, instead of the standard deviation, half the
+distance between the \SI{16}\% and \SI{84}\% quantiles, which is equivalent to
+a standard deviation for a gaussian, but gives a meaningful measure for the
+width of the distribution even when it's highly skewed or with heavy tails.
+
+Figure~\ref{fig:rescurve} shows the temporal resolution thus defined for each
+filter, filter length, and SNR. The exponential moving average has a
+consistently poor performance compared to the other filters. The
+cross-correlation filter is the best one, with performance improving with
+length, and at a length of 96 samples (\SI{512}{ns}) is already practically
+optimal. The moving average can get close to the cross-correlation filter by
+choosing appropriately the number of samples.
+
+\begin{figure}
+    Resolution curves. Use a denser SNR range.
+    \caption{}
+    \label{fig:rescurve}
+\end{figure}
+
+The online processing of the PDM output in the experiment will be done in two
+steps: the digitizers must find the signals, then send them to the front end
+processors (FEPs) for further analysis. The computational resources of the
+digitizers are limited compared to the FEPs.
+
+The exponential moving average can be surely implemented on the digitizers. The
+cross-correlation with 64 samples could probably be done on the digitizers
+since a similar computation was implemented in another study.
+
+The FEPs can and should probably use the best filter, so they would run a long
+cross-correlation filter. The temporal resolution matters in the FEPs but
+probably not in the digiters, in the latter case it is just a generic measure
+of perfomance.
+
 % Finestra
 %     come uso il filtro (condizioni al bordo, proseguimento)
 %     come piazzo la finestra
