@@ -14,6 +14,9 @@ at a known position. In principle we could use the LNGS data
 and we may reach a temporal resolution below the sampling period, while in the
 simulation we have the exact actual temporal location of signals.
 
+The code is in the same repository of the previous chapter,
+\url{https://bitbucket.org/Gattocrucco/sipmfilter/src/master/}.
+
 % Generazione degli eventi
 %     segnale
 %         dati (linkare capitolo prima)
@@ -217,13 +220,38 @@ since a similar computation was implemented in another study.
 
 The FEPs can and should probably use the best filter, so they would run a long
 cross-correlation filter. The temporal resolution matters in the FEPs but
-probably not in the digiters, in the latter case it is just a generic measure
+probably not in the digitizers, in the latter case it is just a generic measure
 of perfomance.
+
+Thus out of all the temporal resolution curves the ones that matter are:
+\begin{itemize}
+    \item the best we can do with the exponential moving average and moving
+    average;
+    \item the long cross-correlation filters;
+    \item the 64 samples cross-correlation filter.
+\end{itemize}
+We plotted these curves together in figure~\ref{fig:rescomp}, adding some
+curves done with the LNGS and white noises. Note that a different noise
+spectrum makes a large difference at low SNR.
+
+\begin{figure}
+    Temporal resolution comparison figure. Make it tall so that you can see the
+    low resolution cc filters well together with the expmovavg.
+    \caption{}
+    \label{fig:rescomp}
+\end{figure}
 
 % Finestra
 %     come uso il filtro (condizioni al bordo, proseguimento)
 %     come piazzo la finestra
 %     grafici
+
+\section{Effect of waveform truncation}
+
+We said that the digitizers must find signals in the waveform stream and send
+them to the FEPs for further processing. The bandwidth of the connection
+between the digitizers and the FEPs happens to be a bottleneck. Thus 
+
 % Altre frequenze di campionamento
 %     Grafico con la risoluzione per filtro cc lungo (FEP)
 %     Grafico per cose digitalizzatore (exp? cc64?)

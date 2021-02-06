@@ -10,6 +10,9 @@
 *.synctex.gz
 *.toc
 *.out
+*.watcher_pid
+*.fdb_latexmk
+*.fls
 
 # Node artifact files
 node_modules/

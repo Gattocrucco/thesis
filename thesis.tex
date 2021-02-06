@@ -1,8 +1,14 @@
 \documentclass{report}
 
+\usepackage[margin=4.4cm, top=2cm, bottom=2.5cm]{geometry}
 \usepackage{amsmath}
 \usepackage{siunitx}
+\usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage[all]{hypcap} % ref link aligned to float top (KEEP AFTER HYPERREF!)
+\usepackage[font={sf}]{caption} % sans font in captions
+
+\graphicspath{{figures/}}
 
 \author{Giacomo Petrillo}
 
@@ -16,6 +22,6 @@ for the DarkSide20k experiment}
     \tableofcontents
     
     \include{snr}
-    \include{timeres}
-    
+    \include{timeres}  
+
 \end{document}

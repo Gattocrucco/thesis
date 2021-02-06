@@ -3,16 +3,24 @@
 The DarkSide20k detectors will use photodetector modules (PDMs) made up from
 many silicon photomultipliers (SiPMs). For what concerns us, the output is
 similar to a single SiPM output. When a photon hits the photomultiplier, the
-electrical output is a sudden voltage spike, with a rise time on the order of
-nanoseconds, which decays slowly in some microseconds. The amplitude of this
-signal is proportional to the number of photoelectrons produced, so it is
-discrete, apart from some random fluctuation. See figure~\ref{fig:signals} for
-an example.
+electrical output is a sudden current spike, with a rise time on the order of
+nanoseconds, which decays slowly in some microseconds.
+
+Each SiPM is made up of many single photodiodes (called ``cells''), so when
+different photons hit simultaneously different cells, the output is a signal
+with an amplitude proportional to the number of photons. See
+figure~\ref{fig:signals} for an example. \marginpar{Bibliography for the SiPM.}
 
 \begin{figure}
-    Make a figure with 1, 2, 3 photoelectrons signals from LNGS data; number of
-    photoelectrons maps to tone, repetition maps to alpha. Do 3 repetitions.
-    \caption{}
+    \includegraphics[width=\textwidth]{figsignals}
+    
+    \caption{Example PDM signals taken from the LNGS test data (section
+    \ref{sec:lngsdata}). The different curves correspond to an increasing
+    number of photons being detected simultaneously, with the resulting signal
+    being the sum of single-photon signals. Notice that the noise amplitude is
+    the same in all curves, which means that it is produced mostly outside of
+    the PDM.}
+    
     \label{fig:signals}
 \end{figure}
 
@@ -31,23 +39,28 @@ setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
 regular time intervals on the PDM. Both the laser trigger and the detector
 output are sampled at \SI{1}{GSa/s} with a 10 bit ADC and saved separating the
 data in ``events'' where each event correspond to a single laser pulse. See
-figure~\ref{fig:lngs}.
+figure~\ref{fig:lngs}. \marginpar{Bibliography for the LNGS data.}
 
 \begin{figure}
-    A figure with some events. Maybe start from plotwav2.py.
-    \caption{}
+    \hspace{-0.26\textwidth}\includegraphics[width=1.52\textwidth]{figlngs}
+    
+    \caption{A pair of events from the LNGS test data
+    (section~\ref{sec:lngsdata}).}
+    
     \label{fig:lngs}
 \end{figure}
 
 We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds
-to tile 57 (what are these tiles anyway?) which means the data is in the
-directory
-\url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}.
-We used the file \verb'nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav'.
+to tile 57 which means the data is in the directory
+\url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \verb'nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav'.
+\marginpar{Slot 8 probably is just a Proto0 name, should mention it later.}
+\marginpar{What are these ``tiles''?}
 
 \begin{figure}
-    Import PDMadcCh.png
-    \caption{}
+    \centering\includegraphics[width=\textwidth]{PDMadcCh}
+    
+    \caption{PDM matrix of the Proto0 detector.}
+    
     \label{fig:pdmadcch}
 \end{figure}
 
@@ -78,8 +91,11 @@ See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
 this.}
 
 \begin{figure}
-    Spurious and saturated signals. Start from plotwav.py.
-    \caption{}
+    \hspace{-0.26\textwidth}\includegraphics[width=1.53\textwidth]{figspurious}
+    
+    \caption{Examples of spurious signals in the LNGS test data
+    (section~\ref{sec:lngsdata}).}
+    
     \label{fig:spurious}
 \end{figure}
 
@@ -90,7 +106,7 @@ A filter operates by converting the original sequence of ADC samples $(x_1,
 x_2, \ldots)$ to a new ``filtered'' sequence $(y_1, y_2, \ldots)$. The filters
 are causal, i.e. the filtered sample $y_n$ can be computed only using the
 original samples up to $x_n$. This limitation is because we are interested in
-using the filters online, i.e. produce the filter output continuously as
+using the filters online, i.e.\ produce the filter output continuously as
 samples are read.
 
 We tested three filters: the moving average, the exponential moving average or
@@ -108,7 +124,7 @@ decaying coefficient, and can be written recursively as
 \end{equation}
 The scale of the exponential decay is given by
 \begin{align}
-    \tau &= -\frac1{\log a},\\
+    \tau &= -\frac1{\log a}, \\
     &\approx \frac1{1-a} \text{ for $a$ close to 1.}
 \end{align}
 
@@ -152,9 +168,14 @@ covariance depends only on the lag between two samples.
 Figure~\ref{fig:autocorrlngs} shows the noise covariance obtained.
 
 \begin{figure}
-    Make a plot of the autocovariance. Use \verb'make_template.py' but with a
-    line plot instead of the matrix map.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figautocorrlngs}
+    
+    \caption{Autocorrelation of the LNGS test data noise, computed on the part
+    of the events before the trigger. The autocorrelation at lag $t$ is the
+    correlation between a sample and another sample occurring a time $t$ after
+    the first. The standard deviation of the noise is 26.7 ADC units.}
+    
     \label{fig:autocorrlngs}
 \end{figure}
 
@@ -250,7 +271,7 @@ deviation. We run a peak finding algorithm on the histogram and divide the data
 by putting boundaries midway between peaks, so that we assign each datapoint to
 a peak. For the second peak, we take the median instead of the average. For the
 first peak, we take the half symmetrized \SI{68}\% interquantile range instead
-of the standard deviation, i.e. half the difference between the 0.84 and 0.16
+of the standard deviation, i.e.\ half the difference between the 0.84 and 0.16
 quantiles. On a gaussian distribution these are equivalent to the mean and
 standard deviation, however they are less sensible to messing up the tails of
 the distribution, which happens since the boundaries cuts away the tails and
