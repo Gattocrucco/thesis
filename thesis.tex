@@ -1,14 +1,17 @@
-\documentclass{report}
+\documentclass[a4paper, twoside]{report}
 
-\usepackage[margin=4.4cm, top=2cm, bottom=2.5cm]{geometry}
+\usepackage[margin=4.4cm, top=1.8cm, bottom=1.8cm]{geometry}
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[all]{hypcap} % ref link aligned to float top (KEEP AFTER HYPERREF!)
 \usepackage[font={sf}]{caption} % sans font in captions
+% \usepackage{etoolbox} % \patchcmd
+\usepackage{fancyhdr}
 
 \graphicspath{{figures/}}
+% \patchcmd{\chapter}{plain}{fancy}{}{}
 
 \author{Giacomo Petrillo}
 
@@ -16,6 +19,16 @@
 for the DarkSide20k experiment}
 
 \begin{document}
+    
+    \pagestyle{fancyplain}
+    \renewcommand{\headrulewidth}{0pt}
+    
+    \fancyhf{}
+    \newcommand\pagenumbermargin{2.2cm}
+    \fancyfoot[LO]{~\hspace{\textwidth}\hspace{\pagenumbermargin}\thepage}
+    \fancyfoot[LE]{~\hspace{-\pagenumbermargin}\thepage}
+    
+    \setlength\footskip{0cm}
     
     \maketitle
     

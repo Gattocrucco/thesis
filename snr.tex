@@ -201,17 +201,26 @@ possible (recall the template is negative). Of course normalizing the template
 to unit sum is done after truncation.
 
 \begin{figure}
-    The cross-correlation filter template.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figtemplate}
+    
+    \caption{The template used for the cross-correlation filter. It is the
+    median of unaligned single photon events from the LNGS test data.}
+    
     \label{fig:template}
 \end{figure}
 
 See figure~\ref{fig:filters} for an example of filter output.
 
 \begin{figure}
-    An event from LNGS data with the three filters. I had already done
-    something like this, find it. Change ``matched'' to ``cross-correlation''.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figfilters}
+    
+    \caption{An event from the LNGS test data filtered with the three filters
+    used. The number of averaged samples in the moving average filter, the
+    scale of the autoregressive filter, and the length of the template of
+    the cross-correlation filter are all 1024 samples (at \SI1{GSa/s}).}
+    
     \label{fig:filters}
 \end{figure}
 
@@ -219,7 +228,7 @@ See figure~\ref{fig:filters} for an example of filter output.
 
 To measure the performance of filters, we define a signal to noise ratio (SNR)
 as follows: the SNR is the ratio of the average peak filter output value for
-single photoelectron signals over the standard deviation of the filtered noise.
+single photon signals over the standard deviation of the filtered noise.
 
 We could consider other similar measures, for example we could include the
 standard deviation of the peak filter output value since that influences where
@@ -236,8 +245,16 @@ and finally we change the sign to obtain positive values since the signals are
 negative.
 
 \begin{figure}
-    A figure like the first one in the November 3 slides.
-    \caption{}
+    \hspace{-0.25\textwidth}
+    \includegraphics[width=1.50\textwidth]{figfiltersample}
+    
+    \caption{Example of how a signal amplitude is computed in an event for the
+    purpose of computing the SNR. The samples in the shaded region are averaged
+    to compute the baseline. The filter is evaluated at a fixed offset
+    (indicated by the arrow) from the leading trigger edge. The amplitude then
+    is the difference between the baseline and the filter value. The shaded
+    region ends 100 samples before the trigger.}
+    
     \label{fig:filtersample}
 \end{figure}
 
@@ -247,20 +264,24 @@ figure~\ref{fig:fingerplot}. It is called ``fingerplot'' due to the descending
 peaks reminding of fingers.
 
 \begin{figure}
-    A reasonable fingerplot. Maybe one that has not perfectly separated peaks.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figfingerplot}
+    
+    \caption{The fingerplot for the moving average filter with 128 samples
+    evaluated 128 samples after the trigger.}
+    
     \label{fig:fingerplot}
 \end{figure}
 
 The first peak is centered on zero and thus corresponds to cases where the
 laser pulse produces no photoelectrons. Since the instant where we are
 evaluating the filter output in each event is independent of the output itself
-(instead of e.g. being determined by peak finding), this peak is the
+(instead of e.g.\ being determined by peak finding), this peak is the
 distribution of the noise after passing through the filter.
 
-The various other peaks correspond to an increasing number of photoelectrons.
-The second peak is the distribution of the filter output at a fixed instant for
-single photoelectron signals. Assuming for the moment that the instant where we
+The various other peaks correspond to an increasing number of photons. The
+second peak is the distribution of the filter output at a fixed instant for
+single photon signals. Assuming for the moment that the instant where we
 evaluate the filter yields the highest signal response, this means that the SNR
 is the mean of the second peak divided by the standard deviation of the first.
 
@@ -296,8 +317,12 @@ For the exponential moving average, it is the scale of the exponential decay
 $\tau$.
 
 \begin{figure}
-    snrplot. tau->filter length (legend title), matched->cross correlation.
-    \caption{}
+    \hspace{-0.26\textwidth}
+    \includegraphics[width=1.51\textwidth]{figsnrplot}
+    
+    \caption{The SNR as a function of delay from trigger (x-axis) and filter
+    length (shade of gray) for the three filters.}
+    
     \label{fig:snrplot}
 \end{figure}
 
@@ -310,40 +335,54 @@ of the peak versus the filter length parameter. We measure the width as the
 distance between the two points where the SNR is 1 less than its maximum value.
 
 \begin{figure}
-    snrmaxplot. use logscale for the two bottom plots. matched->cross
-    correlation.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figsnrmaxplot}
+    
+    \caption{Top plot: maximum SNR achieved with each filter (different curves)
+    and filter length (x-axis). Bottom plot: the width of the maxima, computed
+    as the length of the interval of offset from trigger with endpoints where
+    the SNR is 1 less than the maximum. The cross-correlation filter mantains
+    almost constant width with increasing SNR, while the other two filters
+    have increasing width.}
+    
     \label{fig:snrmaxplot}
 \end{figure}
 
 \section{Effect of the baseline computation}
 
 In constructing the fingerplot, we subtract from the filter output value the
-baseline, i.e. the average value of the waveform in absence of signals. We
+baseline, i.e.\ the average value of the waveform in absence of signals. We
 compute the baseline for each event as the average of the samples before the
 signal. More precisely, we averaged \num{8000} samples. The value obtained
 varies randomly due to the noise; its standard deviation is that of the noise
 divided by $\sqrt{8000}$. The maximum filter length we use is 2000, so in that
 case the width of the peaks gets an additional contribution (summed in
 quadrature) which is $\sqrt{2000/8000} = 1/2$ of the width we would have with a
-noiseless baseline, i.e. the width of the first peak is $\sqrt{1 + 1/2} - 1 =
+noiseless baseline, i.e.\ the width of the first peak is $\sqrt{1 + 1/2} - 1 =
 \SI{22}\%$ larger, lowering the SNR by the same percentual.
 
 This is not just a problem of this test that can be worked around in the real
-application, how the baseline is computed is a relevant part of the signal
-finding, since it requires either a fast online algorithm estimating it
-reliably or sending enough samples to subsequent stages in the data processing
-chain.
+application, because how the baseline is computed is a relevant part of the
+signal finding, since it requires either a fast on-digitizer algorithm
+estimating it reliably or sending enough samples to subsequent stages in the
+data processing chain.
 
 To get an idea of the effect of the baseline, we repeat everything computing
 the baseline with just 1000 or 200 samples. The result is in
-figure~\ref{fig:changebs}. We see that, for example, going from 8000 to 200 the
-maximum SNR drops from about 20 to about 9.
+figure~\ref{fig:changebs}. We see that, for example, going from 8000 to 200
+baseline samples the maximum SNR drops from about 20 to about 9.
 
 \begin{figure}
-    A new version of snrmaxplot merging the different baselines. Drop the
-    middle plot.
-    \caption{}
+    \hspace{-0.27\textwidth}
+    \includegraphics[width=1.55\textwidth]{figchangebs}
+    
+    \caption{The same plot of figure~\ref{fig:snrmaxplot} repeated changing the
+    number of pre-signal samples used to compute the baseline. The left column
+    is the same data from figure~\ref{fig:snrmaxplot}, with 8000 baseline
+    samples. The performance decreases with a lower number of samples because
+    the standard deviation of the baseline increases and the baseline is
+    compared to the filtered signal amplitude to discriminate signals.}
+    
     \label{fig:changebs}
 \end{figure}
 
@@ -356,22 +395,40 @@ median instead of the average in case there were spurious signals or
 irregularities we missed. We do the same for data obtained with the same sensor
 but when it was in the Proto0 setup, biased below breakdown voltage and sampled
 at \SI{125}{MSa/s}. We thus obtain two plausible noise spectra, shown in
-figure~\ref{fig:spectra}.
+figure~\ref{fig:spectra}. \marginpar{Source and details of the Proto0 noise
+data.}
 
 \begin{figure}
-    Plot from spectrum.py.
-    \caption{}
+    \hspace{-0.28\textwidth}
+    \includegraphics[width=1.56\textwidth]{figspectra}
+    
+    \caption{Spectrum for the PDM we used in the LNGS test data, both in the
+    LNGS test data setup and in the Proto0 detector setup. While the LNGS data
+    is in working conditions at liquid nitrogen temperature, the Proto0 data we
+    used was taken at room temperature with sensors biased below breakdown
+    voltage for the purpose of measuring noise.}
+    
     \label{fig:spectra}
 \end{figure}
 
 We said the cross-correlation filter is optimal if the noise is white.
-Actually, it is sufficient that the noise spectrum is flat in the support of the signal spectrum, because if we filtered away frequencies outside of it, all
-the signal would still be in the waveform. In figure~\ref{fig:templsp} we
-show the power spectrum of the signal and its integral. We see that \SI{90}\% of it is below XXX~\si{MHz}, which corresponds to an approximately flat region in the noise spectra. This means that the cross-correlation filter is close to optimal. \marginpar{I've still not done this, hopefully it will turn out to be
-true.}
+Actually, it is sufficient that the noise spectrum is flat in the support of
+the signal spectrum, because if we filtered away frequencies outside of it, all
+the signal would still be in the waveform. In figure~\ref{fig:templsp} we show
+the power spectrum of the signal and its integral. We see that \SI{90}\% of it
+is below XXX~\si{MHz}, which corresponds to an approximately flat region in the
+noise spectra. This means that the cross-correlation filter is close to
+optimal. \marginpar{False: most of the signal spectrum is in the rapidly
+ascending part of the noise spectra.}
 
 \begin{figure}
-    The CDF of the template power spectrum.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figtemplsp}
+    
+    \caption{Comparison of the spectra of signal and noise. The red curve shows
+    the percentual of signal power below a given frequency. The signal spectrum
+    is computed with the discrete Fourier transform of the cross-correlation
+    filter template (figure~\ref{fig:template}) without windowing.}
+    
     \label{fig:templsp}
 \end{figure}
