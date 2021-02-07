@@ -9,18 +9,20 @@ nanoseconds, which decays slowly in some microseconds.
 Each SiPM is made up of many single photodiodes (called ``cells''), so when
 different photons hit simultaneously different cells, the output is a signal
 with an amplitude proportional to the number of photons. See
-figure~\ref{fig:signals} for an example. \marginpar{Bibliography for the SiPM.}
+figure~\ref{fig:signals} for an example.
+
+\marginpar{Bibliography for the SiPM.}
 
 \begin{figure}
     \includegraphics[width=\textwidth]{figsignals}
-    
+
     \caption{Example PDM signals taken from the LNGS test data (section
     \ref{sec:lngsdata}). The different curves correspond to an increasing
     number of photons being detected simultaneously, with the resulting signal
     being the sum of single-photon signals. Notice that the noise amplitude is
     the same in all curves, which means that it is produced mostly outside of
     the PDM.}
-    
+
     \label{fig:signals}
 \end{figure}
 
@@ -39,7 +41,9 @@ setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
 regular time intervals on the PDM. Both the laser trigger and the detector
 output are sampled at \SI{1}{GSa/s} with a 10 bit ADC and saved separating the
 data in ``events'' where each event correspond to a single laser pulse. See
-figure~\ref{fig:lngs}. \marginpar{Bibliography for the LNGS data.}
+figure~\ref{fig:lngs}.
+
+\marginpar{Bibliography for the LNGS data.}
 
 \begin{figure}
     \hspace{-0.26\textwidth}\includegraphics[width=1.52\textwidth]{figlngs}
@@ -52,12 +56,13 @@ figure~\ref{fig:lngs}. \marginpar{Bibliography for the LNGS data.}
 
 We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds
 to tile 57 which means the data is in the directory
-\url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \verb'nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav'.
-\marginpar{Slot 8 probably is just a Proto0 name, should mention it later.}
-\marginpar{What are these ``tiles''?}
+\url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \nolinkurl{nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav}.
+
+\marginpar{Slot 8 probably is just a Proto0 name, should mention it later. And
+what are these ``tiles''?}
 
 \begin{figure}
-    \centering\includegraphics[width=\textwidth]{PDMadcCh}
+    \includegraphics[width=\textwidth]{PDMadcCh}
     
     \caption{PDM matrix of the Proto0 detector.}
     
@@ -87,6 +92,7 @@ relative timing of the signals, however the final most important consideration
 is that I expect less than 100 spurious late pulses since there are 72 early
 ones and the laser pulse is in the middle of the event, so less than \SI1\%.
 See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
+
 \marginpar{The afterpulse stuff I had not understood properly may change all
 this.}
 
@@ -113,16 +119,20 @@ We tested three filters: the moving average, the exponential moving average or
 autoregressive filter, and the cross-correlation filter.
 
 The moving average consists in taking the average of the last $N$ samples:
+%
 \begin{equation}
     y_n =  \frac1N \sum_{i=1}^N x_{n-N+i}.
 \end{equation}
 
 The exponential moving average weighs past samples with an exponentially
 decaying coefficient, and can be written recursively as
+%
 \begin{equation}
     y_n = a y_{n-1} + (1 - a) x_n, \quad a \in (0, 1).
 \end{equation}
+%
 The scale of the exponential decay is given by
+%
 \begin{align}
     \tau &= -\frac1{\log a}, \\
     &\approx \frac1{1-a} \text{ for $a$ close to 1.}
@@ -133,9 +143,11 @@ $\mathbf h = (h_1, h_2, \ldots, h_N)$ be a \emph{template} of the signal
 waveform we want to detect. This means $\mathbf h$ should ideally match the
 shape of the signal waveform we want to find in the noisy data. The filter is
 then the cross-correlation of $\mathbf x$ with $\mathbf h$:
+%
 \begin{equation}
     y_n = \sum_{i=1}^N h_i x_{n-N+i}.
 \end{equation}
+%
 Under the assumption that the data is white noise plus a signal that perfectly
 matches the template apart from amplitude, this filter is optimal in the sense
 that in the filter output there will be a peak corresponding to the signal and
@@ -143,6 +155,7 @@ this peak will have the maximum possible height relative to the standard
 deviation of the filtered noise.
 
 The differences we have from the ideal case are:
+%
 \begin{enumerate}
     \item the shape of the signal probably changes a bit each time;
     \item the signal is not aligned always in the same way to the ADC timebase;
@@ -156,6 +169,7 @@ $\mathbf w$ be the signal and noise, such that the waveform to be filtered is
 $\mathbf x = \mathbf s + \mathbf w$. Let $R$ be the noise covariance matrix,
 i.e. $R_{ij} = \operatorname{Cov}[w_i, w_j]$. Then the template for the matched
 filter is
+%
 \begin{equation}
     \mathbf h_\text m = R^{-1} \mathbf h.
     \label{eq:matched}    
@@ -334,6 +348,9 @@ locate temporally the signal. So we do another plot
 of the peak versus the filter length parameter. We measure the width as the
 distance between the two points where the SNR is 1 less than its maximum value.
 
+\marginpar{I can drop the snrmaxplot because it's already in the baseline
+effect plot.}
+
 \begin{figure}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figsnrmaxplot}
@@ -395,8 +412,9 @@ median instead of the average in case there were spurious signals or
 irregularities we missed. We do the same for data obtained with the same sensor
 but when it was in the Proto0 setup, biased below breakdown voltage and sampled
 at \SI{125}{MSa/s}. We thus obtain two plausible noise spectra, shown in
-figure~\ref{fig:spectra}. \marginpar{Source and details of the Proto0 noise
-data.}
+figure~\ref{fig:spectra}.
+
+\marginpar{Source and details of the Proto0 noise data.}
 
 \begin{figure}
     \hspace{-0.28\textwidth}
