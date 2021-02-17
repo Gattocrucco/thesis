@@ -1,8 +1,5 @@
 \chapter{Temporal resolution of photon detection}
 
-% Introduzione/sommario
-%     fare un toy per la risoluzione della localizzazione
-
 In the previous chapter we studied the performance of filters, but we did not
 define an algorithm to search for signals. Neither we will do it here, we'll
 skip it and measure the temporal localization precision once we know there's a
@@ -15,19 +12,7 @@ and we may reach a temporal resolution below the sampling period, while in the
 simulation we have the exact actual temporal location of signals.
 
 The code is in the same repository of the previous chapter,
-\url{https://bitbucket.org/Gattocrucco/sipmfilter/src/master/}.
-
-% Generazione degli eventi
-%     segnale
-%         dati (linkare capitolo prima)
-%         template (è diverso perché ho fatto la media, cambia nulla)
-%         downsamplare e piazzare il template
-%     rumore
-%         rumore dai dati
-%         downsampling
-%     layout dell'evento
-%         spaziature
-%         definizione dell'SNR
+\url{https://bitbucket.org/Gattocrucco/sipmfilter}.
 
 \section{Event generation}
 
@@ -51,8 +36,11 @@ thus yielding lower performance in signal localization, and so our choice is
 irrelevant at best, conservative at worst.)
 
 \begin{figure}
-    The toy template.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figtoytempl}
+    
+    \caption{The source \SI1{GSa/s} signal template used in the simulation.}
+    
     \label{fig:toytempl}
 \end{figure}
 
@@ -71,9 +59,13 @@ it should be reasonably fine since the higher spectral part is already
 suppressed in the signal template.)
 
 \begin{figure}
-    The series of interpolated templates. I think I did this in
-    \verb'savetemplate.py'.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figinterptempl}
+
+    \caption{The signal template downsampled from \SI1{GSa/s} to
+    \SI{125}{MSa/s} and translated continuously instead of by discrete steps
+    with linear interpolation.}
+    
     \label{fig:interptempl}
 \end{figure}
 
@@ -102,9 +94,12 @@ See figure~\ref{fig:noise}. The Proto0 noise data is already at \SI{125}{MSa/s}
 and so did not require downsampling for most of the simulations.
 
 \begin{figure}
-    A figure similar to the one made by \verb'toy1gvs125m-plot.py' with both
-    LNGS and Proto0 noise and downsampled.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{fignoise}
+    
+    \caption{The LNGS noise at the original sampling frequency (normalized to
+    unit variance) and downsampled.}
+    
     \label{fig:noise}
 \end{figure}
 
@@ -130,19 +125,17 @@ is negligible.
 Figure~\ref{fig:toyevent} shows a complete example event.
 
 \begin{figure}
-    An event. Show all filters together, plot \texttt{X}s on the minima after
-    removing localization offsets at the end of \verb'Toy._run'.
-    \caption{}
+    \hspace{-0.15\textwidth}
+    \includegraphics[width=1.30\textwidth]{figtoyevent}
+    
+    \caption{A simulation event. The dots are the minima of the filters output.
+    The minima are searched in the shaded region only; this makes no difference
+    with high enough SNR like in this example, but in the limit SNR = 0 the
+    minimum fluctuates around uniformly: the search range sets the endpoints of
+    this distribution.}
+    
     \label{fig:toyevent}
 \end{figure}
-
-% Localizzazione
-%     filtri
-%         linkare capitolo prima
-%         troncatura e downsampling template
-%     ricerca del minimo
-%         interpolazione
-%         upsampling
 
 \section{Temporal localization}
 
