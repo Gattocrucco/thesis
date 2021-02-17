@@ -1,4 +1,4 @@
-\chapter{Temporal resolution of signal detection}
+\chapter{Temporal resolution of photon detection}
 
 % Introduzione/sommario
 %     fare un toy per la risoluzione della localizzazione
@@ -39,9 +39,9 @@ not matter because we are not simulating digitalization.
 \subsection{Signal}
 \label{sec:toysignal}
 
-We obtain the signal waveform by averaging single photoelectron pulses from the
-LNGS data (see section~\ref{sec:lngsdata} for a description of the dataset). We
-do not try to align the signals, assuming that they are aligned relative to the
+We obtain the signal waveform by averaging single photon pulses from the LNGS
+data (see section~\ref{sec:lngsdata} for a description of the dataset). We do
+not try to align the signals, assuming that they are aligned relative to the
 beginning of each acquisition event. We take 3584 \SI1{GSa/s} samples.
 Figure~\ref{fig:toytempl} shows the obtained signal template.
 
@@ -156,7 +156,9 @@ The minimum of the filter output occurs in some sense later than the signal
 location, this is not a problem since the choice of the point of the signal to
 be taken as reference is already arbitrary.
 
-To make the template for the cross correlation filter, we first cut the signal template (section~\ref{sec:toysignal}) to the required filter length, keeping the part of the template with maximum euclidean norm, then we downsample it by
+To make the template for the cross correlation filter, we first cut the signal
+template (section~\ref{sec:toysignal}) to the required filter length, keeping
+the part of the template with maximum euclidean norm, then we downsample it by
 averaging nearby samples. See figure~\ref{fig:toyfilttempl}.
 
 \begin{figure}
@@ -176,7 +178,7 @@ prior to filtering to check if it improves performance.
 %     curve di risoluzione in funzione dell'SNR
 %     grafico con le curve interessanti
 
-\section{Resolution}
+\subsection{Resolution}
 
 We repeat the simulation for 1000 events for each filter, filter length
 parameter, and SNR in some range, using the Proto0 noise.
@@ -224,19 +226,27 @@ probably not in the digitizers, in the latter case it is just a generic measure
 of perfomance.
 
 Thus out of all the temporal resolution curves the ones that matter are:
+%
 \begin{itemize}
+    %
     \item the best we can do with the exponential moving average and moving
     average;
+    %
     \item the long cross-correlation filters;
+    %
     \item the 64 samples cross-correlation filter.
+    %
 \end{itemize}
+%
 We plotted these curves together in figure~\ref{fig:rescomp}, adding some
 curves done with the LNGS and white noises. Note that a different noise
-spectrum makes a large difference at low SNR.
+spectrum makes a large difference at low SNR. We also plot a curve computed
+with upsampling; it does not improve significantly the performance.
 
 \begin{figure}
     Temporal resolution comparison figure. Make it tall so that you can see the
-    low resolution cc filters well together with the expmovavg.
+    low resolution cc filters well together with the expmovavg. Add the
+    upsampling for a good curve.
     \caption{}
     \label{fig:rescomp}
 \end{figure}
@@ -246,12 +256,101 @@ spectrum makes a large difference at low SNR.
 %     come piazzo la finestra
 %     grafici
 
-\section{Effect of waveform truncation}
+\section{Data reduction}
 
 We said that the digitizers must find signals in the waveform stream and send
 them to the FEPs for further processing. The bandwidth of the connection
-between the digitizers and the FEPs happens to be a bottleneck. Thus 
+between the digitizers and the FEPs happens to be a bottleneck. Two possible
+ways of reducing the amount of transmitted data are keeping only the minimum
+number of samples for each signals, and reducing the sampling frequency. Both
+have an effect on the temporal resolution, which we assess here.
+
+\subsection{Waveform truncation}
+
+We repeat the simulation, but this time we use only a fixed smaller number of
+samples in each event to compute the filter output. We call this selection of
+samples ``window''. On the window we run only a long cross-correlation filter
+since that's what would be done on the FEPs. As past and future boundary
+condition we use zero. We evaluate the filter even after the sample window end
+because the window can be shorter than the filter.
+
+While the length of the window is fixed, the placement is not fixed relative to
+the true signal location. Instead we use the temporal localization with another
+filter feasible on the digitizers, calibrated to have the median aligned to the
+beginning of the signal template. The window then extends a given number of
+samples to the left and to the right of this localization.
+
+Figure~\ref{fig:windowevent} shows this procedure graphically for a single
+event. Figure~\ref{fig:windowtempres} shows the temporal resolution versus
+unfiltered SNR curves for various choices of window length, noise, and filter
+used to align the window, where for reasons of computation time the latter was
+computed at a fixed SNR that does not follow the value on the x-axis.
+
+\begin{figure}
+    Normal event left, windowed event right. The filter on the left is the
+    filter used to center the window. Modify \verb'plot_event' and
+    \verb'plot_event_window' to plot on a user-provided axis.
+    
+    \caption{}
+    
+    \label{fig:windowevent}
+\end{figure}
+
+\begin{figure}
+    The four plots of resolution vs SNR for various windows from the 2020-12-10
+    slides. See if it is more convenient to add options to the plotting method
+    or to copy its code and modify it.
+    
+    \caption{}
+    
+    \label{fig:windowtempres}
+\end{figure}
+
+By looking at figure~\ref{fig:windowtempres}, we conclude that probably it is
+sufficient to save \SI1{\micro s} of waveform to obtain practically the same
+temporal resolution achievable without windowing.
+
+What's missing in this study is that we did not try to optimize the left/right
+balance of the window, and that as said above the unwindowed localization used
+to align the windows is done at a mismatched SNR. The first problem can only
+worsen the temporal resolution obtained, so it is conservative; the second is
+conservative assuming that our choice of SNR (2.4) is lower that what we expect
+in the detector.
+
+\marginpar{Maybe with the channel summing this SNR will become realistic.}
 
 % Altre frequenze di campionamento
 %     Grafico con la risoluzione per filtro cc lungo (FEP)
 %     Grafico per cose digitalizzatore (exp? cc64?)
+
+\subsection{Downsampling}
+
+Another way of reducing the data throughput is downsampling. In
+figure~\ref{fig:tempresdowns} we show the temporal resolution achieved with a
+long cross correlation filter, for white and LNGS noise, at different sampling
+frequencies. We can observe that downsampling by a factor of 2 from
+\SI{125}{MSa/s} to \SI{62}{MSa/s} maintains almost the same temporal
+resolution, while going to \SI{31}{MSa/s} lowers it visibly.
+
+\begin{figure}
+    The figure of toy1gvs125m with also 31 MSa/s. Make it linear-linear,
+    splitting it in white noise-LNGS noise.
+    
+    \caption{}
+    
+    \label{fig:tempresdowns}
+\end{figure}
+
+Since we are downsampling we also need to check if we lose signal to noise
+ratio in the filter output. In figure~\ref{fig:filtsnrdowns} we plot the SNR
+after filtering, defined in the same way as we did in
+section~\ref{sec:fingerplot}. There's practically no difference.
+
+\begin{figure}
+    The SNR figure from toy1gvs125m, but modify toy.Toy to compute the filtered
+    signal amplitude without noise such that the definition is the sensible one.
+    
+    \caption{}
+    
+    \label{fig:filtsnrdowns}
+\end{figure}

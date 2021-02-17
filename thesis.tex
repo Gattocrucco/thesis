@@ -1,6 +1,6 @@
 \documentclass[a4paper, twoside]{report}
 
-\usepackage[margin=4.4cm, top=1.8cm, bottom=1.8cm]{geometry}
+\usepackage[margin=4.4cm, top=1.8cm, bottom=1.8cm, marginparwidth=3.5cm]{geometry}
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{graphicx}
@@ -11,6 +11,9 @@
 
 \graphicspath{{figures/}}
 
+\let\oldmarginpar\marginpar
+\renewcommand\marginpar[1]{\oldmarginpar{\sffamily\scriptsize #1}}
+
 \author{Giacomo Petrillo}
 
 \title{Thesis draft:\\Online processing of the large area SiPM detector signals
@@ -19,12 +22,12 @@ for the DarkSide20k experiment}
 \begin{document}
     
     \pagestyle{fancyplain}
-    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand\headrulewidth{0pt}
     
     \fancyhf{}
-    \newcommand\pagenumbermargin{2.2cm}
+    \newcommand\pagenumbermargin{2.5cm}
     \fancyfoot[LO]{~\hspace{\textwidth}\hspace{\pagenumbermargin}\thepage}
-    \fancyfoot[LE]{~\hspace{-\pagenumbermargin}\thepage}
+    \fancyfoot[LE]{~\hspace{-\pagenumbermargin}\hspace{-2ex}\thepage}
     
     \setlength\footskip{0cm}
     
