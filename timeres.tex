@@ -58,6 +58,9 @@ shows a series of waveforms obtained in this way.
 it should be reasonably fine since the higher spectral part is already
 suppressed in the signal template.)
 
+\marginpar{I've not said I'm varying the signal amplitude. Maybe I should drop
+it from the simulation altogether.}
+
 \begin{figure}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figinterptempl}
@@ -155,8 +158,15 @@ the part of the template with maximum euclidean norm, then we downsample it by
 averaging nearby samples. See figure~\ref{fig:toyfilttempl}.
 
 \begin{figure}
-    The figure with the truncated templates. Was it in \verb'toytest.py'?
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figtoyfilttempl}
+    
+    \caption{Some cross correlation filter templates for different lengths. It
+    may appear strange that the endpoint on the left has a different height
+    than the endpoint on the right for a given template, since we choose the
+    truncation to maximize the norm; it happens because we downsample
+    \emph{after} truncation.}
+    
     \label{fig:toyfilttempl}
 \end{figure}
 
@@ -165,12 +175,6 @@ we interpolate the minimum sample and its first neighbours with a parabola. We
 also try upsampling the waveform to \SI{1}{GSa/s} (with sample repetition)
 prior to filtering to check if it improves performance.
 
-% Risoluzione temporale
-%     istogrammi della localizzazione
-%     definizione della risoluzione
-%     curve di risoluzione in funzione dell'SNR
-%     grafico con le curve interessanti
-
 \subsection{Resolution}
 
 We repeat the simulation for 1000 events for each filter, filter length
@@ -178,13 +182,23 @@ parameter, and SNR in some range, using the Proto0 noise.
 Figure~\ref{fig:lochist} shows the histograms of the temporal localization for
 all filters for a choice of SNR and filter length.
 
+\marginpar{Specify how the signal template position varies.}
+
 \begin{figure}
-    Histograms of resolution. Maybe SNR=5, tau=2048 ns (very nongaussian).
-    \caption{}
+    \hspace{-0.07\textwidth}
+    \includegraphics[width=1.13\textwidth]{figlochist}
+    
+    \caption{Histograms of the temporal localization error, i.e.\ the
+    difference between the filter output minimum and the signal template start,
+    translated to have zero median, for a choice of SNR and filters length. The
+    error bars mark the \SI{16}\% and the \SI{84}\% quantiles. As definition of
+    temporal resolution we take half the distance between those quantiles.
+    The sampling step is \SI{8}{ns}.}
+    
     \label{fig:lochist}
 \end{figure}
 
-It is evident that the distribution of localizations can be non-gaussian, so to
+We see that the distribution of localizations can be non-gaussian, so to
 quantify the resolution we use, instead of the standard deviation, half the
 distance between the \SI{16}\% and \SI{84}\% quantiles, which is equivalent to
 a standard deviation for a gaussian, but gives a meaningful measure for the
@@ -199,8 +213,13 @@ optimal. The moving average can get close to the cross-correlation filter by
 choosing appropriately the number of samples.
 
 \begin{figure}
-    Resolution curves. Use a denser SNR range.
-    \caption{}
+    \hspace{-0.09\textwidth}
+    \includegraphics[width=1.17\textwidth]{figrescurve}
+    
+    \caption{Photodetection temporal resolution for a range of SNR and filter
+    lengths. The shaded region marks the sampling step (\SI{8}{ns}). The right
+    endpoint of the cross correlation filter curves is at \SI{3}{ns}.}
+    
     \label{fig:rescurve}
 \end{figure}
 
@@ -237,17 +256,17 @@ spectrum makes a large difference at low SNR. We also plot a curve computed
 with upsampling; it does not improve significantly the performance.
 
 \begin{figure}
-    Temporal resolution comparison figure. Make it tall so that you can see the
-    low resolution cc filters well together with the expmovavg. Add the
-    upsampling for a good curve.
-    \caption{}
+    \hspace{0.00\textwidth}
+    \includegraphics[width=1.00\textwidth]{figrescomp}
+    
+    \caption{Photodetection temporal resolution vs. SNR for various filters.
+    The shaded region marks the sampling step (\SI{8}{ns}). The hatched band is
+    the interval of SNR observed in Proto0; the vertical line is the SNR in the
+    LNGS data (after downsampling to \SI{125}{MSa/s}). Where not specified, the
+    noise is from Proto0.}
+    
     \label{fig:rescomp}
 \end{figure}
-
-% Finestra
-%     come uso il filtro (condizioni al bordo, proseguimento)
-%     come piazzo la finestra
-%     grafici
 
 \section{Data reduction}
 
@@ -311,10 +330,6 @@ conservative assuming that our choice of SNR (2.4) is lower that what we expect
 in the detector.
 
 \marginpar{Maybe with the channel summing this SNR will become realistic.}
-
-% Altre frequenze di campionamento
-%     Grafico con la risoluzione per filtro cc lungo (FEP)
-%     Grafico per cose digitalizzatore (exp? cc64?)
 
 \subsection{Downsampling}
 
