@@ -228,6 +228,9 @@ steps: the digitizers must find the signals, then send them to the front end
 processors (FEPs) for further analysis. The computational resources of the
 digitizers are limited compared to the FEPs.
 
+\marginpar{A schematic of the DAQ would be appropriate. Maybe in a previous
+introductory chapter.}
+
 The exponential moving average can be surely implemented on the digitizers. The
 cross-correlation with 64 samples could probably be done on the digitizers
 since a similar computation was implemented in another study.
@@ -299,21 +302,27 @@ used to align the window, where for reasons of computation time the latter was
 computed at a fixed SNR that does not follow the value on the x-axis.
 
 \begin{figure}
-    Normal event left, windowed event right. The filter on the left is the
-    filter used to center the window. Modify \verb'plot_event' and
-    \verb'plot_event_window' to plot on a user-provided axis.
+    \hspace{-0.20\textwidth}
+    \includegraphics[width=1.40\textwidth]{figwindowevent}
     
-    \caption{}
+    \caption{Left panel: a simulation event filtered with the exponential
+    moving average. Right panel: the same event filtered with a long cross
+    correlation filter, both using the whole waveform and using only the
+    samples in the shaded window, which is centered using the localization from
+    the filter in the left panel.}
     
     \label{fig:windowevent}
 \end{figure}
 
 \begin{figure}
-    The four plots of resolution vs SNR for various windows from the 2020-12-10
-    slides. See if it is more convenient to add options to the plotting method
-    or to copy its code and modify it.
+    \hspace{-0.14\textwidth}
+    \includegraphics[width=1.28\textwidth]{figwindowtempres}
     
-    \caption{}
+    \caption{Photodetection temporal resolution with a long cross correlation
+    filter applied only on a short window of samples centered using a shorter
+    cross correlation filter (left panels) or an exponential moving average
+    (right panels). The various curves correspond to different window lengths,
+    while the black dots are the resolution without windowing.}
     
     \label{fig:windowtempres}
 \end{figure}
@@ -340,25 +349,39 @@ frequencies. We can observe that downsampling by a factor of 2 from
 \SI{125}{MSa/s} to \SI{62}{MSa/s} maintains almost the same temporal
 resolution, while going to \SI{31}{MSa/s} lowers it visibly.
 
+\marginpar{Explain the SNR rescaling.}
+
 \begin{figure}
-    The figure of toy1gvs125m with also 31 MSa/s. Make it linear-linear,
-    splitting it in white noise-LNGS noise.
+    \hspace{-0.22\textwidth}
+    \includegraphics[width=1.43\textwidth]{figtempresdowns}
     
-    \caption{}
+    \caption{Photodetection temporal resolution at different sampling
+    frequencies with a cross correlation filter with template length
+    \SI{2048}{ns}. The SNR scale is at \SI{125}{MSa/s}; curves for different
+    sampling frequencies are rescaled horizontally by the factor written in the
+    legend to account for the noise variance reduction with downsampling.}
     
     \label{fig:tempresdowns}
 \end{figure}
 
 Since we are downsampling we also need to check if we lose signal to noise
-ratio in the filter output. In figure~\ref{fig:filtsnrdowns} we plot the SNR
-after filtering, defined in the same way as we did in
-section~\ref{sec:fingerplot}. There's practically no difference.
+ratio in the filter output. In table~\ref{tab:filtsnrdowns} we report the
+ratio between SNR after and before filtering. It does not change significantly
+with downsampling.
 
-\begin{figure}
-    The SNR figure from toy1gvs125m, but modify toy.Toy to compute the filtered
-    signal amplitude without noise such that the definition is the sensible one.
+\marginpar{Actually, it is improving, this must be a bug.}
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|cccc}
+               & \SI{1}{GSa/s} & \SI{125}{MSa/s} & \SI{62.5}{MSa/s} & \SI{31.2}{MSa/s} \\ \hline
+        Proto0 &               &            3.64 &              3.9 &             4.57 \\
+          LNGS &          6.26 &            6.34 &             7.02 &             8.34 \\
+         White &          4.68 &            4.76 &             5.05 &             5.97
+    \end{tabular}
     
-    \caption{}
+    \caption{Ratio of SNR after over before filtering, corrected for
+    downsampled noise variance reduction.}
     
-    \label{fig:filtsnrdowns}
-\end{figure}
+    \label{tab:filtsnrdowns}
+\end{table}
