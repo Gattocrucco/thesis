@@ -369,19 +369,20 @@ ratio in the filter output. In table~\ref{tab:filtsnrdowns} we report the
 ratio between SNR after and before filtering. It does not change significantly
 with downsampling.
 
-\marginpar{Actually, it is improving, this must be a bug.}
-
 \begin{table}
     \centering
     \begin{tabular}{c|cccc}
                & \SI{1}{GSa/s} & \SI{125}{MSa/s} & \SI{62.5}{MSa/s} & \SI{31.2}{MSa/s} \\ \hline
-        Proto0 &               &            3.64 &              3.9 &             4.57 \\
-          LNGS &          6.26 &            6.34 &             7.02 &             8.34 \\
-         White &          4.68 &            4.76 &             5.05 &             5.97
+        Proto0 &               &             3.6 &              3.6 &              3.6 \\
+          LNGS &           6.3 &             6.3 &              6.5 &              6.6 \\
+         White &           4.7 &             4.7 &              4.7 &              4.7
     \end{tabular}
     
-    \caption{Ratio of SNR after over before filtering, corrected for
-    downsampled noise variance reduction.}
+    \caption{Ratio of SNR after over before filtering. The \SI{125}{MSa/s}
+    column contains the actual SNR ratios of the simulations, while the values
+    for the other sampling frequencies are divided by the noise standard
+    deviation reduction with downsampling relative to \SI{125}{MSa/s} to make
+    them comparable.}
     
     \label{tab:filtsnrdowns}
 \end{table}
