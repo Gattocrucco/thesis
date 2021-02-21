@@ -118,6 +118,11 @@ The simulation is repeated for various signal to noise ratios (SNR). We define
 the SNR as follows: the peak height relative to the baseline of the original
 \SI1{GSa/s} signal template over the noise standard deviation.
 
+\marginpar{I should use the peak height, averaged over continuous positioning,
+at the simulation sampling frequency, instead of at \SI{1}{GSa/s}. Then the
+comparisons at different sampling frequencies would need to adjust both for the
+reduction of the noise variance and of the peak height.}
+
 Simulations with different SNR differ only in the multiplicative constant of
 the noise, so we used exactly the same noise and signal arrays for each SNR to
 speed up the code. This means that there's no random variation between results
@@ -257,6 +262,9 @@ We plotted these curves together in figure~\ref{fig:rescomp}, adding some
 curves done with the LNGS and white noises. Note that a different noise
 spectrum makes a large difference at low SNR. We also plot a curve computed
 with upsampling; it does not improve significantly the performance.
+
+\marginpar{If at the end the comparison plot still uses up one page, make it
+higher so it's more legible at lower temporal resolutions.}
 
 \begin{figure}
     \hspace{0.00\textwidth}
