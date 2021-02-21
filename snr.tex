@@ -391,6 +391,11 @@ the baseline with just 1000 or 200 samples. The result is in
 figure~\ref{fig:changebs}. We see that, for example, going from 8000 to 200
 baseline samples the maximum SNR drops from about 20 to about 9.
 
+\marginpar{Explain why the SNR of the cross correlation filter drops with
+increasing filter length when the baseline is short. The filter behaves like
+a mean, so its peak value drops as it gets longer; the noise rms decreases too
+but gets a constant contribution from the baseline variance.}
+
 \begin{figure}
     \hspace{-0.27\textwidth}
     \includegraphics[width=1.55\textwidth]{figchangebs}
