@@ -180,7 +180,8 @@ the signal. Since the noise is stationary, $R$ is a Toeplitz matrix, i.e. the
 covariance depends only on the lag between two samples.
 Figure~\ref{fig:autocorrlngs} shows the noise covariance obtained.
 
-\marginpar{Add the autocorrelation of the Proto0 noise to the plot.}
+\marginpar{Add the autocorrelation of the Proto0 noise to the plot. And: $R$ is
+not Toeplitz, it can be seen as the central submatrix of a Toeplitz matrix.}
 
 \begin{figure}
     \hspace{0.00\textwidth}
@@ -208,6 +209,9 @@ the template, we normalize it to unit sum such that the output from the
 cross-correlation filter is comparable to the output from the moving averages,
 i.e. if we send a flat waveform into the filter, the output has the same value
 as the input.
+
+\marginpar{Explain that we fix the mean-like behaviour for all filters because
+we have to subtract the baseline.}
 
 Since we will try various lengths of the filter template, we have to decide how
 to truncate the full template. When truncating to $N$ samples, we pick $N$
