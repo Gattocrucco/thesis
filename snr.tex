@@ -210,6 +210,11 @@ cross-correlation filter is comparable to the output from the moving averages,
 i.e. if we send a flat waveform into the filter, the output has the same value
 as the input.
 
+\marginpar{Use the template from the second chapter; plot the template without
+alignment, with trigger, with filtering; explain that we use 1 pe pulses to
+avoid afterpulses; cite Luzzi to say it should not matter much how we compute
+the template in detail.}
+
 \marginpar{Explain that we fix the mean-like behaviour for all filters because
 we have to subtract the baseline.}
 
@@ -317,6 +322,9 @@ quantiles. On a gaussian distribution these are equivalent to the mean and
 standard deviation, however they are less sensible to messing up the tails of
 the distribution, which happens since the boundaries cuts away the tails and
 there is contamination from the tails of the neighbouring peaks.
+
+\marginpar{Mention that I'm always checking that the median of the 0 pe peak
+is zero within its error.}
 
 \section{SNR versus filter length}
 

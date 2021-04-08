@@ -12,7 +12,7 @@ and we may reach a temporal resolution below the sampling period, while in the
 simulation we have the exact actual temporal location of signals.
 
 The code is in the same repository of the previous chapter,
-\url{https://bitbucket.org/Gattocrucco/sipmfilter}.
+\url{https://github.com/Gattocrucco/sipmfilter}.
 
 \section{Event generation}
 
@@ -30,10 +30,18 @@ not try to align the signals, assuming that they are aligned relative to the
 beginning of each acquisition event. We take 3584 \SI1{GSa/s} samples.
 Figure~\ref{fig:toytempl} shows the obtained signal template.
 
+\marginpar{After I explained the template in the first chapter, refer to that.
+Redo everything using the filter-aligned template instead of the unaligned or
+trigger-aligned.}
+
 (A study not reported here shows that better alignment is achievable but makes
 a small difference, and worse alignment means the peak of the signal is smeared
 thus yielding lower performance in signal localization, and so our choice is
 irrelevant at best, conservative at worst.)
+
+\marginpar{I now have trigger alignment in my own code (optional, disabled by
+default), so I can do a plot of the two templates. I still need to mention that
+even with recursive alignment you can't beat the trigger.}
 
 \begin{figure}
     \hspace{0.00\textwidth}
@@ -83,6 +91,9 @@ events before the signals and filtering out a few events that contained
 spurious signals in that location. The Proto0 noise is copied from an
 acquisition made on the same PDM when it was used in the Proto0 setup with the
 SiPMs under breakdown voltage, thus inactive.
+
+\marginpar{Say precisely how I'm filtering out spurious signals, because maybe
+I'm not filtering them away completely.}
 
 The noise obtained from data is normalized to the variance required by the
 simulation. For both LNGS and Proto0 noise the data comes divided in events and
@@ -376,6 +387,10 @@ Since we are downsampling we also need to check if we lose signal to noise
 ratio in the filter output. In table~\ref{tab:filtsnrdowns} we report the
 ratio between SNR after and before filtering. It does not change significantly
 with downsampling.
+
+\marginpar{I'm measuring the post-filter SNR with the peak detection. This
+biases upward the result. I should compute the peak height on the filtered
+signal before adding the noise.}
 
 \marginpar{Add digitalization to the simulation and make a plot like the one
 for the sampling frequency but varying the number of bits at \SI{125}{MSa/s}.
