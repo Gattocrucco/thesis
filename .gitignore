@@ -13,6 +13,10 @@
 *.watcher_pid
 *.fdb_latexmk
 *.fls
+*.bbl
+*.bcf
+*.run.xml
+*.blg
 
 # Node artifact files
 node_modules/

@@ -9,17 +9,32 @@
 \usepackage[all]{hypcap} % ref link aligned to float top (KEEP AFTER HYPERREF!)
 \usepackage[font={sf}]{caption} % sans font in captions
 \usepackage{fancyhdr}
+\usepackage[style=alphabetic]{biblatex}
+
+\addbibresource{thesis.bib}
 
 \graphicspath{{figures/}}
 
 \sisetup{%
-    detect-all,
+    detect-all, % for units, use the font of the text where they appear
 }
 
 \let\oldmarginpar\marginpar
 \renewcommand\marginpar[1]{\oldmarginpar{\sffamily\scriptsize #1}}
 
-\author{Giacomo Petrillo}
+% caption command for figures
+% usage: \figcaption{ref label without initial `fig:`}{caption}
+% the command will define the label and append a link to the python script
+% on github
+\newcommand\repofileurl{https://github.com/Gattocrucco/sipmfilter/blob/master/}
+\newcommand\figcaption[2]{
+    \caption{
+        \label{fig:#1} #2
+        \texttt{(\href{\repofileurl/figthesis/fig#1.py}{fig#1.py})}
+    }
+}
+
+\author{Giacomo Petrillo\\University of Pisa}
 
 \title{Thesis draft:\\Online processing of the large area SiPM detector signals
 for the DarkSide20k experiment}
@@ -37,9 +52,7 @@ for the DarkSide20k experiment}
     \setlength\footskip{0cm}
     
     \maketitle
-    
-    % \clearpage~\clearpage
-    
+        
     \tableofcontents
     
     \include{intro}
@@ -51,5 +64,7 @@ for the DarkSide20k experiment}
     \include{rate}
     \include{anal}
     \include{end}
+    
+    \printbibliography
     
 \end{document}

@@ -1,4 +1,5 @@
 \chapter{Signal to noise ratio of filtered photodetection signals}
+\label{ch:snr}
 
 The DarkSide20k detectors will use photodetector modules (PDMs) made up from
 many silicon photomultipliers (SiPMs). For what concerns us, the output is
@@ -16,14 +17,13 @@ figure~\ref{fig:signals} for an example.
 \begin{figure}
     \includegraphics[width=\textwidth]{figsignals}
 
-    \caption{Example PDM signals taken from the LNGS test data (section
-    \ref{sec:lngsdata}). The different curves correspond to an increasing
-    number of photons being detected simultaneously, with the resulting signal
-    being the sum of single-photon signals. Notice that the noise amplitude is
-    the same in all curves, which means that it is produced mostly outside of
-    the PDM.}
+    \figcaption{signals}{Example PDM signals taken from the LNGS test data
+    (section \ref{sec:lngsdata}). The different curves correspond to an
+    increasing number of photons being detected simultaneously, with the
+    resulting signal being the sum of single-photon signals. Notice that the
+    noise amplitude is the same in all curves, which means that it is produced
+    mostly outside of the PDM.}
 
-    \label{fig:signals}
 \end{figure}
 
 Our goal is to study the performance of some filters in finding and measuring
@@ -48,10 +48,9 @@ data.}
 \begin{figure}
     \hspace{-0.26\textwidth}\includegraphics[width=1.52\textwidth]{figlngs}
     
-    \caption{A pair of events from the LNGS test data
+    \figcaption{lngs}{A pair of events from the LNGS test data
     (section~\ref{sec:lngsdata}).}
-    
-    \label{fig:lngs}
+
 \end{figure}
 
 We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds
@@ -64,9 +63,8 @@ what are these ``tiles''?}
 \begin{figure}
     \includegraphics[width=\textwidth]{PDMadcCh}
     
-    \caption{PDM matrix of the Proto0 detector.}
-    
-    \label{fig:pdmadcch}
+    \caption{\label{fig:pdmadcch} PDM matrix of the Proto0 detector.}
+
 \end{figure}
 
 In the dataset there are a couple of problems. The first is that signals with
@@ -99,10 +97,9 @@ this.}
 \begin{figure}
     \hspace{-0.26\textwidth}\includegraphics[width=1.53\textwidth]{figspurious}
     
-    \caption{Examples of spurious signals in the LNGS test data
+    \figcaption{spurious}{Examples of spurious signals in the LNGS test data
     (section~\ref{sec:lngsdata}).}
-    
-    \label{fig:spurious}
+
 \end{figure}
 
 \section{Filters}
@@ -175,6 +172,8 @@ filter is
     \label{eq:matched}    
 \end{equation}
 
+\marginpar{Say that the matched filter is equivalent to rank~1 least squares.}
+
 We tried implementing the matched filter with mixed results we will not report
 in detail. We computed the noise covariance matrix on the event samples before
 the signal. Since the noise is stationary, $R$ is a Toeplitz matrix, i.e. the
@@ -187,12 +186,12 @@ Figure~\ref{fig:autocorrlngs} shows the noise covariance obtained.
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figautocorrlngs}
     
-    \caption{Autocorrelation of the LNGS test data noise, computed on the part
-    of the events before the trigger. The autocorrelation at lag $t$ is the
-    correlation between a sample and another sample occurring a time $t$ after
-    the first. The standard deviation of the noise is 26.7 ADC units.}
-    
-    \label{fig:autocorrlngs}
+    \figcaption{autocorrlngs}{Autocorrelation of the LNGS test data noise,
+    computed on the part of the events before the trigger. The autocorrelation
+    at lag $t$ is the correlation between a sample and another sample occurring
+    a time $t$ after the first. The standard deviation of the noise is 26.7 ADC
+    units.}
+
 \end{figure}
 
 The matched filter worked slightly better than the cross-correlation filter, as
@@ -228,10 +227,9 @@ to unit sum is done after truncation.
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figtemplate}
     
-    \caption{The template used for the cross-correlation filter. It is the
-    median of unaligned single photon events from the LNGS test data.}
-    
-    \label{fig:template}
+    \figcaption{template}{The template used for the cross-correlation filter.
+    It is the median of unaligned single photon events from the LNGS test data.}
+
 \end{figure}
 
 See figure~\ref{fig:filters} for an example of filter output.
@@ -240,12 +238,12 @@ See figure~\ref{fig:filters} for an example of filter output.
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figfilters}
     
-    \caption{An event from the LNGS test data filtered with the three filters
-    used. The number of averaged samples in the moving average filter, the
-    scale of the autoregressive filter, and the length of the template of
-    the cross-correlation filter are all 1024 samples (at \SI1{GSa/s}).}
-    
-    \label{fig:filters}
+    \figcaption{filters}{An event from the LNGS test data filtered with the
+    three filters used. The number of averaged samples in the moving average
+    filter, the scale of the autoregressive filter, and the length of the
+    template of the cross-correlation filter are all 1024 samples (at
+    \SI1{GSa/s}).}
+
 \end{figure}
 
 \section{The fingerplot}
@@ -273,14 +271,13 @@ negative.
     \hspace{-0.25\textwidth}
     \includegraphics[width=1.50\textwidth]{figfiltersample}
     
-    \caption{Example of how a signal amplitude is computed in an event for the
-    purpose of computing the SNR. The samples in the shaded region are averaged
-    to compute the baseline. The filter is evaluated at a fixed offset
-    (indicated by the arrow) from the leading trigger edge. The amplitude then
-    is the difference between the baseline and the filter value. The shaded
-    region ends 100 samples before the trigger.}
-    
-    \label{fig:filtersample}
+    \figcaption{filtersample}{Example of how a signal amplitude is computed in
+    an event for the purpose of computing the SNR. The samples in the shaded
+    region are averaged to compute the baseline. The filter is evaluated at a
+    fixed offset (indicated by the arrow) from the leading trigger edge. The
+    amplitude then is the difference between the baseline and the filter value.
+    The shaded region ends 100 samples before the trigger.}
+
 \end{figure}
 
 We take the list of these baseline and sign corrected filter outputs and
@@ -292,10 +289,9 @@ peaks reminding of fingers.
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figfingerplot}
     
-    \caption{The fingerplot for the moving average filter with 128 samples
-    evaluated 128 samples after the trigger.}
-    
-    \label{fig:fingerplot}
+    \figcaption{fingerplot}{The fingerplot for the moving average filter with
+    128 samples evaluated 128 samples after the trigger.}
+
 \end{figure}
 
 The first peak is centered on zero and thus corresponds to cases where the
@@ -348,10 +344,9 @@ $\tau$.
     \hspace{-0.26\textwidth}
     \includegraphics[width=1.51\textwidth]{figsnrplot}
     
-    \caption{The SNR as a function of delay from trigger (x-axis) and filter
-    length (shade of gray) for the three filters.}
-    
-    \label{fig:snrplot}
+    \figcaption{snrplot}{The SNR as a function of delay from trigger (x-axis)
+    and filter length (shade of gray) for the three filters.}
+
 \end{figure}
 
 The maximum of each curve gives the actual SNR figure we are interested in. We
@@ -369,14 +364,13 @@ effect plot.}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figsnrmaxplot}
     
-    \caption{Top plot: maximum SNR achieved with each filter (different curves)
-    and filter length (x-axis). Bottom plot: the width of the maxima, computed
-    as the length of the interval of offset from trigger with endpoints where
-    the SNR is 1 less than the maximum. The cross-correlation filter mantains
-    almost constant width with increasing SNR, while the other two filters
-    have increasing width.}
-    
-    \label{fig:snrmaxplot}
+    \figcaption{snrmaxplot}{Top plot: maximum SNR achieved with each filter
+    (different curves) and filter length (x-axis). Bottom plot: the width of
+    the maxima, computed as the length of the interval of offset from trigger
+    with endpoints where the SNR is 1 less than the maximum. The
+    cross-correlation filter mantains almost constant width with increasing
+    SNR, while the other two filters have increasing width.}
+
 \end{figure}
 
 \section{Effect of the baseline computation}
@@ -412,14 +406,13 @@ but gets a constant contribution from the baseline variance.}
     \hspace{-0.27\textwidth}
     \includegraphics[width=1.55\textwidth]{figchangebs}
     
-    \caption{The same plot of figure~\ref{fig:snrmaxplot} repeated changing the
-    number of pre-signal samples used to compute the baseline. The left column
-    is the same data from figure~\ref{fig:snrmaxplot}, with 8000 baseline
-    samples. The performance decreases with a lower number of samples because
-    the standard deviation of the baseline increases and the baseline is
-    compared to the filtered signal amplitude to discriminate signals.}
-    
-    \label{fig:changebs}
+    \figcaption{changebs}{The same plot of figure~\ref{fig:snrmaxplot} repeated
+    changing the number of pre-signal samples used to compute the baseline. The
+    left column is the same data from figure~\ref{fig:snrmaxplot}, with 8000
+    baseline samples. The performance decreases with a lower number of samples
+    because the standard deviation of the baseline increases and the baseline
+    is compared to the filtered signal amplitude to discriminate signals.}
+
 \end{figure}
 
 \section{Noise spectrum}
@@ -439,13 +432,12 @@ figure~\ref{fig:spectra}.
     \hspace{-0.28\textwidth}
     \includegraphics[width=1.56\textwidth]{figspectra}
     
-    \caption{Spectrum for the PDM we used in the LNGS test data, both in the
-    LNGS test data setup and in the Proto0 detector setup. While the LNGS data
-    is in working conditions at liquid nitrogen temperature, the Proto0 data we
-    used was taken at room temperature with sensors biased below breakdown
-    voltage for the purpose of measuring noise.}
-    
-    \label{fig:spectra}
+    \figcaption{spectra}{Spectrum for the PDM we used in the LNGS test data,
+    both in the LNGS test data setup and in the Proto0 detector setup. While
+    the LNGS data is in working conditions at liquid nitrogen temperature, the
+    Proto0 data we used was taken at room temperature with sensors biased below
+    breakdown voltage for the purpose of measuring noise.}
+
 \end{figure}
 
 We said the cross-correlation filter is optimal if the noise is white.
@@ -462,10 +454,10 @@ ascending part of the noise spectra.}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figtemplsp}
     
-    \caption{Comparison of the spectra of signal and noise. The red curve shows
-    the percentual of signal power below a given frequency. The signal spectrum
-    is computed with the discrete Fourier transform of the cross-correlation
-    filter template (figure~\ref{fig:template}) without windowing.}
-    
-    \label{fig:templsp}
+    \figcaption{templsp}{Comparison of the spectra of signal and noise. The red
+    curve shows the percentual of signal power below a given frequency. The
+    signal spectrum is computed with the discrete Fourier transform of the
+    cross-correlation filter template (figure~\ref{fig:template}) without
+    windowing.}
+
 \end{figure}

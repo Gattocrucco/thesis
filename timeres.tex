@@ -1,4 +1,5 @@
 \chapter{Temporal resolution of photon detection}
+\label{ch:timeres}
 
 In the previous chapter we studied the performance of filters, but we did not
 define an algorithm to search for signals. Neither we will do it here, we'll
@@ -47,9 +48,9 @@ even with recursive alignment you can't beat the trigger.}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figtoytempl}
     
-    \caption{The source \SI1{GSa/s} signal template used in the simulation.}
-    
-    \label{fig:toytempl}
+    \figcaption{toytempl}{The source \SI1{GSa/s} signal template used in the
+    simulation.}
+
 \end{figure}
 
 The template is at \SI1{GSa/s}, but the simulation is at \SI{125}{MSa/s}. We
@@ -73,11 +74,10 @@ it from the simulation altogether.}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figinterptempl}
 
-    \caption{The signal template downsampled from \SI1{GSa/s} to
-    \SI{125}{MSa/s} and translated continuously instead of by discrete steps
+    \figcaption{interptempl}{The signal template downsampled from \SI1{GSa/s}
+    to \SI{125}{MSa/s} and translated continuously instead of by discrete steps
     with linear interpolation.}
-    
-    \label{fig:interptempl}
+
 \end{figure}
 
 \subsection{Noise}
@@ -111,10 +111,9 @@ and so did not require downsampling for most of the simulations.
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{fignoise}
     
-    \caption{The LNGS noise at the original sampling frequency (normalized to
-    unit variance) and downsampled.}
-    
-    \label{fig:noise}
+    \figcaption{noise}{The LNGS noise at the original sampling frequency
+    (normalized to unit variance) and downsampled.}
+
 \end{figure}
 
 \subsection{Event layout}
@@ -147,13 +146,12 @@ Figure~\ref{fig:toyevent} shows a complete example event.
     \hspace{-0.15\textwidth}
     \includegraphics[width=1.30\textwidth]{figtoyevent}
     
-    \caption{A simulation event. The dots are the minima of the filters output.
-    The minima are searched in the shaded region only; this makes no difference
-    with high enough SNR like in this example, but in the limit SNR = 0 the
-    minimum fluctuates around uniformly: the search range sets the endpoints of
-    this distribution.}
-    
-    \label{fig:toyevent}
+    \figcaption{toyevent}{A simulation event. The dots are the minima of the
+    filters output. The minima are searched in the shaded region only; this
+    makes no difference with high enough SNR like in this example, but in the
+    limit SNR = 0 the minimum fluctuates around uniformly: the search range
+    sets the endpoints of this distribution.}
+
 \end{figure}
 
 \section{Temporal localization}
@@ -177,13 +175,12 @@ averaging nearby samples. See figure~\ref{fig:toyfilttempl}.
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figtoyfilttempl}
     
-    \caption{Some cross correlation filter templates for different lengths. It
-    may appear strange that the endpoint on the left has a different height
-    than the endpoint on the right for a given template, since we choose the
-    truncation to maximize the norm; it happens because we downsample
-    \emph{after} truncation.}
-    
-    \label{fig:toyfilttempl}
+    \figcaption{toyfilttempl}{Some cross correlation filter templates for
+    different lengths. It may appear strange that the endpoint on the left has
+    a different height than the endpoint on the right for a given template,
+    since we choose the truncation to maximize the norm; it happens because we
+    downsample \emph{after} truncation.}
+
 \end{figure}
 
 To allow for a localization eventually more precise than the sampling timebase,
@@ -204,14 +201,13 @@ all filters for a choice of SNR and filter length.
     \hspace{-0.07\textwidth}
     \includegraphics[width=1.13\textwidth]{figlochist}
     
-    \caption{Histograms of the temporal localization error, i.e.\ the
-    difference between the filter output minimum and the signal template start,
-    translated to have zero median, for a choice of SNR and filters length. The
-    error bars mark the \SI{16}\% and the \SI{84}\% quantiles. As definition of
-    temporal resolution we take half the distance between those quantiles.
-    The sampling step is \SI{8}{ns}.}
-    
-    \label{fig:lochist}
+    \figcaption{lochist}{Histograms of the temporal localization error, i.e.\
+    the difference between the filter output minimum and the signal template
+    start, translated to have zero median, for a choice of SNR and filters
+    length. The error bars mark the \SI{16}\% and the \SI{84}\% quantiles. As
+    definition of temporal resolution we take half the distance between those
+    quantiles. The sampling step is \SI{8}{ns}.}
+
 \end{figure}
 
 We see that the distribution of localizations can be non-gaussian, so to
@@ -232,11 +228,10 @@ choosing appropriately the number of samples.
     \hspace{-0.09\textwidth}
     \includegraphics[width=1.17\textwidth]{figrescurve}
     
-    \caption{Photodetection temporal resolution for a range of SNR and filter
-    lengths. The shaded region marks the sampling step (\SI{8}{ns}). The right
-    endpoint of the cross correlation filter curves is at \SI{3}{ns}.}
-    
-    \label{fig:rescurve}
+    \figcaption{rescurve}{Photodetection temporal resolution for a range of SNR
+    and filter lengths. The shaded region marks the sampling step (\SI{8}{ns}).
+    The right endpoint of the cross correlation filter curves is at \SI{3}{ns}.}
+
 \end{figure}
 
 The online processing of the PDM output in the experiment will be done in two
@@ -281,13 +276,12 @@ higher so it's more legible at lower temporal resolutions.}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figrescomp}
     
-    \caption{Photodetection temporal resolution vs. SNR for various filters.
-    The shaded region marks the sampling step (\SI{8}{ns}). The hatched band is
-    the interval of SNR observed in Proto0; the vertical line is the SNR in the
-    LNGS data (after downsampling to \SI{125}{MSa/s}). Where not specified, the
-    noise is from Proto0.}
-    
-    \label{fig:rescomp}
+    \figcaption{rescomp}{Photodetection temporal resolution vs. SNR for various
+    filters. The shaded region marks the sampling step (\SI{8}{ns}). The
+    hatched band is the interval of SNR observed in Proto0; the vertical line
+    is the SNR in the LNGS data (after downsampling to \SI{125}{MSa/s}). Where
+    not specified, the noise is from Proto0.}
+
 \end{figure}
 
 \section{Data reduction}
@@ -324,26 +318,24 @@ computed at a fixed SNR that does not follow the value on the x-axis.
     \hspace{-0.20\textwidth}
     \includegraphics[width=1.40\textwidth]{figwindowevent}
     
-    \caption{Left panel: a simulation event filtered with the exponential
-    moving average. Right panel: the same event filtered with a long cross
-    correlation filter, both using the whole waveform and using only the
-    samples in the shaded window, which is centered using the localization from
-    the filter in the left panel.}
-    
-    \label{fig:windowevent}
+    \figcaption{windowevent}{Left panel: a simulation event filtered with the
+    exponential moving average. Right panel: the same event filtered with a
+    long cross correlation filter, both using the whole waveform and using only
+    the samples in the shaded window, which is centered using the localization
+    from the filter in the left panel.}
+
 \end{figure}
 
 \begin{figure}
     \hspace{-0.14\textwidth}
     \includegraphics[width=1.28\textwidth]{figwindowtempres}
     
-    \caption{Photodetection temporal resolution with a long cross correlation
-    filter applied only on a short window of samples centered using a shorter
-    cross correlation filter (left panels) or an exponential moving average
-    (right panels). The various curves correspond to different window lengths,
-    while the black dots are the resolution without windowing.}
-    
-    \label{fig:windowtempres}
+    \figcaption{windowtempres}{Photodetection temporal resolution with a long
+    cross correlation filter applied only on a short window of samples centered
+    using a shorter cross correlation filter (left panels) or an exponential
+    moving average (right panels). The various curves correspond to different
+    window lengths, while the black dots are the resolution without windowing.}
+
 \end{figure}
 
 By looking at figure~\ref{fig:windowtempres}, we conclude that probably it is
@@ -374,13 +366,12 @@ resolution, while going to \SI{31}{MSa/s} lowers it visibly.
     \hspace{-0.22\textwidth}
     \includegraphics[width=1.43\textwidth]{figtempresdowns}
     
-    \caption{Photodetection temporal resolution at different sampling
+    \figcaption{tempresdowns}{Photodetection temporal resolution at different sampling
     frequencies with a cross correlation filter with template length
     \SI{2048}{ns}. The SNR scale is at \SI{125}{MSa/s}; curves for different
     sampling frequencies are rescaled horizontally by the factor written in the
     legend to account for the noise variance reduction with downsampling.}
-    
-    \label{fig:tempresdowns}
+
 \end{figure}
 
 Since we are downsampling we also need to check if we lose signal to noise
