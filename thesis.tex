@@ -10,6 +10,7 @@
 \usepackage[font={sf}]{caption} % sans font in captions
 \usepackage{fancyhdr}
 \usepackage[style=alphabetic]{biblatex}
+\usepackage{booktabs}
 
 \addbibresource{thesis.bib}
 
@@ -17,22 +18,25 @@
 
 \sisetup{%
     detect-all, % for units, use the font of the text where they appear
+    table-number-alignment=center, % the S columns of tabular are center-aligned
 }
 
 \let\oldmarginpar\marginpar
 \renewcommand\marginpar[1]{\oldmarginpar{\sffamily\scriptsize #1}}
 
-% caption command for figures
-% usage: \figcaption{ref label without initial `fig:`}{caption}
+% caption command
+% usage: \scriptcaption{label prefix}{script prefix}{label}{caption}
 % the command will define the label and append a link to the python script
 % on github
-\newcommand\repofileurl{https://github.com/Gattocrucco/sipmfilter/blob/master/}
-\newcommand\figcaption[2]{
+\newcommand\repofileurl{https://github.com/Gattocrucco/sipmfilter/blob/master}
+\newcommand\scriptcaption[4]{
     \caption{
-        \label{fig:#1} #2
-        \texttt{(\href{\repofileurl/figthesis/fig#1.py}{fig#1.py})}
+        \label{#1:#3} #4
+        \texttt{(\href{\repofileurl/figthesis/#2#3.py}{#2#3.py})}
     }
 }
+\newcommand\figcaption[2]{\scriptcaption{fig}{fig}{#1}{#2}}
+\newcommand\tabcaption[2]{\scriptcaption{tab}{fig}{#1}{#2}}
 
 \author{Giacomo Petrillo\\University of Pisa}
 

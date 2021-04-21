@@ -49,9 +49,11 @@ The mean number of threshold upcrossings $r$ in the interval $(0,1)$ by a
 zero-mean stationary and appropriately smooth Gaussian process is given by
 \cite[81]{rasmussen2006}
 %
-\begin{equation}
-    r = \sqrt{-\frac{k''(0)}{2\pi}} \operatorname{gauss}(u;0,\sigma),
-\end{equation}
+\begin{align}
+    r &= \sqrt{-\frac{k''(0)}{2\pi}} \operatorname{gauss}(u;0,\sigma) = \\
+      &= \frac 1 {2\pi} \frac {\sqrt{-k''(0)}} \sigma
+         \exp \left( -\frac12 (u/\sigma)^2 \right),
+\end{align}
 %
 where $u$ is the threshold, $\sigma$ the noise standard deviation (the RMS),
 $\operatorname{gauss}(x;\mu,\sigma)$ a Gaussian probability density on $x$ with
@@ -85,7 +87,8 @@ $y_i = f(t_0 + i\Delta t)$ the samples, we have:
 \begin{align}
     k''(0) &\mapsto f_s^2 k_2, \\
     k_2 &\equiv \operatorname{Cov}[y_i, y_{i+1}+y_{i-1}-2y_i], \label{eq:k2} \\
-    r &= f_s \sqrt{-\frac{k_2}{2\pi}} \operatorname{gauss}(u;0,\sigma).
+    r &= f_s \frac 1 {2\pi} \frac {\sqrt{-k_2}} \sigma
+         \exp \left( -\frac12 (u/\sigma)^2 \right).
     \label{eq:rcont}
 \end{align}
 %
@@ -171,7 +174,7 @@ we have to use a $k_2$ that matches $c$:
     &= \operatorname{Cov}[y_i,y_{i+1}]
     + \operatorname{Cov}[y_i,y_{i-1}]
     - 2 \operatorname{Cov}[y_i,y_i] = \notag \\
-    &= 2 (c - \sigma^2).
+    &= 2 (c - \sigma^2). \label{eq:c2k2}
 \end{align}
 %
 We use $\sigma=1$, $c = \SI{99}\%$, $\Delta u = 1/100$, $N=500$ (we decreased
@@ -211,7 +214,7 @@ Assuming that the crossings are a Poisson process, the formula to correct a
 rate $R$ for the effect of the dead time is \cite[120]{knoll2000}:
 %
 \begin{equation}
-    R \mapsto \frac R {1 - RT}.
+    R \mapsto \frac R {1 - RT}. \label{eq:deadrate}
 \end{equation}
 
 The crossings of a Gaussian process are not in general a Poisson process. We
@@ -351,6 +354,229 @@ effects are negligible, so we will keep the whole filtered region.
 
 \subsection{Algorithm}
 
+The simplest way to count the threshold crossings as a function of the
+threshold is to repeat the calculation varying the threshold. The computational
+complexity is $O(nN)$ where $n$ is the number of thresholds and $N$ the number
+of samples.
 
+To produce a smooth curve (large $n$) we use instead a reverse histogram. We
+choose an evenly spaced range of thresholds. For each pair of consecutive
+samples, if the second sample is higher than the first, we determine the
+subrange of thresholds that falls between the samples, and increment their
+counts. To apply the dead time, we keep a per-threshold last occurence time.
+
+Since the range of thresholds is evenly spaced, the subrange can be found
+arithmetically, so the complexity is just $O(N)$, it does not depend on the
+number of thresholds.
 
 \subsection{Results}
+
+In figure~\ref{fig:fakerate1} we compare the measured threshold crossings with
+the continuous-derived formula~\eqref{eq:rcont} for a single tile over the
+entire threshold range. The coefficients $\sigma$ and $k_2$ for the formula are
+computed on each filtered event and then averaged. Finally, the dead time is
+accounted for with~\eqref{eq:deadrate}. For the data, the conversion from count
+to rate is done dividing by the length of the filtered waveform (so \SI2{\micro
+s} less than the initial length per event).
+
+The agreement is decent at low and high rates, less so in an intermediate
+region. The agreement at high rate is probably a sort of saturation due to dead
+time, since the maximum rate allowed by dead time is $1/(\SI1{\micro s}) =
+\SI1{Mcps}$. Keep into account that the scale is logarithmic, so even where the
+lines are closer they still differ by a factor~1.3, while the Poisson error is
+approx.~\SI3\% since the count is~1000.
+
+\begin{figure}
+    
+    \hspace{-0.11\textwidth}
+    \includegraphics[width=1.23\textwidth]{figfakerate1}
+
+    \figcaption{fakerate1}{Measured and predicted fake rate for tile~31 in
+    Proto0 with a noise-only acquisition. The right scale shows the actual
+    count of threshold crossings for the data, with a gray band marking one
+    crossing.}
+    
+\end{figure}
+
+In figure~\ref{fig:fakerate} we show the same comparison together for all
+datasets, divided in three groups (tile~15 LNGS data, Proto0 data, LNGS other
+tiles). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
+are listed in table~\ref{tab:fakerate}.
+
+In the second group above some threshold the measured rate stops decreasing and
+remains constant at approximately 10 counts. This is probably due to pulses
+which our very simple veto can not filter away, we guess 1 pe dark/random
+pulses.
+
+In figure~\ref{fig:fakerate} we highlight the measured rates for tile~53
+because they are evident outliers. The rate remains higher than the theory
+predicts and than the other tiles as the threshold increases. This is visibile
+in Proto0, and in LNGS at \SI6{VoV}, but not at \SI7{VoV}.
+
+Analogously, from table~\ref{tab:fakerate} we see that the quantity $f_s
+\sqrt{-k_2}/(2\pi\sigma)$ that multiplies the exponential in~\eqref{eq:rcont}
+is different from the others for tile~53, in the same cases as the data, but
+with the opposite trend. This variation seems to depend only on an increase in
+$\sigma$ and not on $k_2$.
+
+Even though it's weird that this problem disappears at \SI7{VoV}, it can't be a
+coincidence that it arises for the same tile in different setups, showing up
+both as an increased noise RMS and an higher threshold crossing rate, so it
+must be some property of the tile itself.
+
+Comparing the 2D histograms for tile~53 (figure~\ref{fig:hist2dtile53}) to the
+others (figure~\ref{fig:hist2dtile155759}) there is no apparent difference.
+Three possible explanations come to mind: 1) a violation of Gaussianity, 2)
+stray pulses, 3) electrical noise.
+
+Regarding Gaussianity, we checked the distribution of the samples before
+filtering and it agrees very well with a Gaussian. If they are stray pulses,
+they do not have the same height, otherwise they would show up as a flat rate
+curve. It could be electrical noise with a frequency of approx.~$1/(\SI2{\micro
+s}) = \SI{500}{kHz}$, since our filter would be very good at picking that up.
+
+\begin{table}
+    
+    \hspace{-0.16\textwidth}
+    \begin{tabular}{
+        c
+        S[table-format=2]
+        S[table-format=>1]
+        S[table-format=3]
+        S[table-format=2.1]
+        S[table-format=+1.4]
+        S[table-format=2.3]
+        S[table-format=1.1]
+        *2S[table-format=1.2]
+    }
+        \toprule
+        \multicolumn3c{Data}
+        &
+        &
+        &
+        &
+        &
+        & \multicolumn2c{Rate @ $4\,\sigma$} \\
+        \cmidrule(r){1-3} \cmidrule(r){9-10}
+        
+        Setup
+        & {Tile}
+        & {Overvoltage}
+        & {$T$}
+        & {$\sigma$}
+        & {$k_2$}
+        & {$\operatorname{Std}[\bar{k_2}]\sqrt T$}
+        & {$f_s \sqrt{-k_2}/(2\pi\sigma)$}
+        & {Theory}
+        & {Data} \\
+        
+        &
+        & {[\si{V}]}
+        & {[\si{ms}]}
+        & {[\si{u}]}
+        & {[\si{u^2}]}
+        & {[\si{u^2 ns^{1/2}}]}
+        & {[\si{Mcps}]}
+        & {[\si{kcps}]}
+        & {[\si{kcps}]} \\
+        \midrule
+        
+  LNGS & 15 &  0 & 138 &  1.6 & -0.0017 & 0.012 & 4.2 &  1.4 &  1.1 \\
+  LNGS & 15 &  2 & 138 &  1.5 & -0.0017 & 0.012 & 4.3 &  1.4 &  1.2 \\
+  LNGS & 15 &  4 & 138 &  1.5 & -0.0017 & 0.012 & 4.3 &  1.4 &  1.3 \\
+  LNGS & 15 &  6 & 138 &  1.5 & -0.0017 & 0.012 & 4.4 &  1.5 &  1.1 \\
+  LNGS & 15 &  8 & 138 &  1.5 & -0.0017 & 0.012 & 4.5 &  1.5 &  1.4 \\
+  LNGS & 15 &  9 & 138 &  1.4 & -0.0017 & 0.012 & 4.6 &  1.5 &  1.3 \\  \midrule
+  LNGS & 53 &  6 &  69 &  3.8 & -0.0044 & 0.030 & 2.7 & 0.92 &  2.6 \\
+  LNGS & 53 &  7 &  69 &  2.1 & -0.0043 & 0.029 & 5.0 &  1.7 &  1.0 \\
+  LNGS & 57 &  6 &  68 &  2.2 & -0.0043 & 0.031 & 4.8 &  1.6 &  1.2 \\
+  LNGS & 59 &  6 &  69 &  2.2 & -0.0040 & 0.028 & 4.6 &  1.5 &  1.0 \\  \midrule
+Proto0 & 29 & <0 & 499 &  8.3 &   -0.86 &   10. & 2.2 & 0.74 & 0.77 \\
+Proto0 & 30 & <0 & 499 &  6.9 &   -0.75 &   6.0 & 2.5 & 0.84 & 0.67 \\
+Proto0 & 31 & <0 & 499 &  7.7 &   -0.82 &   7.0 & 2.3 & 0.78 & 0.60 \\
+Proto0 & 32 & <0 & 499 &  7.0 &   -0.76 &   6.6 & 2.5 & 0.83 & 0.67 \\
+Proto0 & 34 & <0 & 499 &  6.5 &   -0.78 &   6.2 & 2.7 & 0.90 & 0.62 \\
+Proto0 & 36 & <0 & 499 &  7.7 &   -0.84 &   7.1 & 2.4 & 0.79 & 0.63 \\
+Proto0 & 37 & <0 & 499 &  6.5 &   -0.69 &   5.4 & 2.5 & 0.85 & 0.67 \\
+Proto0 & 38 & <0 & 499 &  7.7 &   -0.84 &   7.1 & 2.4 & 0.80 & 0.59 \\
+Proto0 & 39 & <0 & 499 &  7.6 &   -0.91 &   7.5 & 2.5 & 0.84 & 0.68 \\
+Proto0 & 41 & <0 & 499 &  7.5 &   -0.87 &   7.1 & 2.5 & 0.83 & 0.71 \\
+Proto0 & 42 & <0 & 499 &  7.0 &   -0.82 &   6.8 & 2.6 & 0.87 & 0.63 \\
+Proto0 & 52 & <0 & 499 &  7.8 &   -0.82 &   6.5 & 2.3 & 0.77 & 0.61 \\
+Proto0 & 53 & <0 & 499 & 10.1 &   -0.90 &   8.0 & 1.9 & 0.63 &  2.3 \\
+Proto0 & 54 & <0 & 499 &  8.0 &   -0.89 &   7.4 & 2.4 & 0.79 & 0.59 \\
+Proto0 & 55 & <0 & 499 &  8.0 &   -0.85 &   7.1 & 2.3 & 0.77 & 0.63 \\
+Proto0 & 57 & <0 & 499 &  7.8 &   -0.88 &   7.4 & 2.4 & 0.80 & 0.69 \\
+Proto0 & 58 & <0 & 499 &  7.6 &   -0.82 &   6.4 & 2.4 & 0.79 & 0.65 \\
+Proto0 & 59 & <0 & 499 &  7.6 &   -0.79 &   6.6 & 2.3 & 0.77 & 0.55 \\
+Proto0 & 60 & <0 & 499 &  7.5 &   -0.77 &   6.3 & 2.3 & 0.78 & 0.61 \\
+Proto0 & 61 & <0 & 499 &  8.0 &   -0.89 &   7.4 & 2.4 & 0.79 & 0.60 \\
+Proto0 & 62 & <0 & 499 &  7.6 &   -0.80 &   6.6 & 2.3 & 0.78 & 0.62 \\
+Proto0 & 63 & <0 & 499 &  8.1 &   -0.86 &   7.1 & 2.3 & 0.76 & 0.61 \\
+Proto0 & 64 & <0 & 499 &  7.9 &   -0.81 &   6.9 & 2.3 & 0.76 & 0.66 \\
+Proto0 & 65 & <0 & 499 &  7.5 &   -0.80 &   6.4 & 2.4 & 0.80 & 0.62 \\
+Proto0 & 66 & <0 & 499 &  8.2 &   -0.91 &   7.5 & 2.3 & 0.77 & 0.61 \\
+        
+        \bottomrule
+    \end{tabular}
+    
+    \tabcaption{fakerate}{The coefficients measured on the filtered waveforms
+    needed to evaluate the formula for the threshold upcrossing rate. $T$ is
+    the total duration, $\sigma$ the standard deviation, $k_2$ the covariance
+    of the waveform with its second derivative (equation~\ref{eq:k2}),
+    $\operatorname{Std}[\bar{k_2}]$ the uncertainty on the value of $k_2$
+    determined as the standard deviation of the sample mean of $k_2$ values
+    across events. The unit ``\si{u}'' is the ADC digit.}
+    
+\end{table}
+
+\begin{figure}
+    
+    \hspace{-0.12\textwidth}
+    \includegraphics[width=1.25\textwidth]{figfakerate}
+    
+    \figcaption{fakerate}{The threshold upcrossing rate both counting directly
+    the crossings on data and computing it with formula~\eqref{eq:rcont}.}
+    
+\end{figure}
+
+We didn't investigate further the discrepancy for tile~53. Anyway, for all
+other tiles we looked at it works well enough.
+
+We now want to estimate the minimum amount of data required for the procedure.
+From table~\ref{tab:fakerate} we see that the relative error on $k_2$ times the
+square root of the time, $C \equiv
+\operatorname{Std}[\bar{k_2}]\sqrt{T}/|k_2|$, is approximately \SI8{ns^{1/2}}
+in all cases. The error should be proportional to $T^{-1/2}$, so to have an
+\SI1\% error we need $T_{\SI1\%} = (100 C)^2 = \SI{0.7}{ms}$.
+
+For convenience we summarize all the steps to compute the fake rate:
+%
+\begin{enumerate}
+    
+    \item Acquire \SI1{ms} of noise data.
+    
+    \item Filter the data (including baseline subtraction) producing a
+    filtered waveform $\mathbf y$.
+    
+    \item Compute the standard deviation $\sigma$ and $k_2 =
+    \operatorname{Cov}[y_i, y_{i+1} + y_{i-1} - 2y_i]$.
+    
+    \item Compute the fake rate for threshold $u$ using $r =
+    f_s\sqrt{k_2/(2\pi)}\operatorname{gauss}(u;0,\sigma)$ where $f_s$ is the
+    sampling frequency.
+    
+\end{enumerate}
+%
+The probability of the formula not working due to mysterious reasons is \SI4\%.
+If it works, the uncertainty for low rate is \SI{\pm50}\% and the result is an
+overestimate with probability \SI{90}\%. (These assessments are based on
+table~\ref{tab:fakerate} but are somewhat subjective.)
+
+Alternatively, if one has a noise spectrum available but not the noise
+waveform, obtain the autocovariance by doing the discrete Fourier transform of
+the power spectrum \cite[84]{ferrante2015} and then normalizing it to be
+$\sigma^2$ in 0. Then $k_2$ is obtained by the covariance at lag 1 $c$ with
+\eqref{eq:c2k2}. (If the spectrum was obtained from the discrete Fourier
+transform of a noise waveform, $c$ is the first coefficient after the central
+one in the autocovariance.)

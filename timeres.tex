@@ -40,10 +40,6 @@ a small difference, and worse alignment means the peak of the signal is smeared
 thus yielding lower performance in signal localization, and so our choice is
 irrelevant at best, conservative at worst.)
 
-\marginpar{I now have trigger alignment in my own code (optional, disabled by
-default), so I can do a plot of the two templates. I still need to mention that
-even with recursive alignment you can't beat the trigger.}
-
 \begin{figure}
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figtoytempl}
@@ -390,11 +386,17 @@ well defined.}
 
 \begin{table}
     \centering
-    \begin{tabular}{c|cccc}
-               & \SI{1}{GSa/s} & \SI{125}{MSa/s} & \SI{62.5}{MSa/s} & \SI{31.2}{MSa/s} \\ \hline
+    
+    \begin{tabular}{c*4S[table-format=1.1]}
+        \toprule
+               & \multicolumn4c{SNR after over before filtering} \\
+        \cmidrule(r){2-5}
+         Noise & {\SI{1}{GSa/s}} & {\SI{125}{MSa/s}} & {\SI{62.5}{MSa/s}} & {\SI{31.2}{MSa/s}} \\
+        \midrule
         Proto0 &               &             3.6 &              3.6 &              3.6 \\
           LNGS &           6.3 &             6.3 &              6.5 &              6.6 \\
-         White &           4.7 &             4.7 &              4.7 &              4.7
+         White &           4.7 &             4.7 &              4.7 &              4.7 \\
+        \bottomrule
     \end{tabular}
     
     \caption{Ratio of SNR after over before filtering with a cross correlation
