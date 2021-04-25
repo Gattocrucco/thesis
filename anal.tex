@@ -1,3 +1,82 @@
-\chapter{Noise analysis}
+\chapter{Analysis of correlated SiPM noise}
+\label{ch:anal}
 
-The analysis of DCR, cross talk and afterpulses on LNGS data.
+%     Spiego che i SiPM hanno del rumore e che lo studiamo
+%     Gli obiettivi sono sia per il VETO che per la simulazione
+
+In the previous chapters we studied the sources of noise in the procedure to
+identify and measure a single signal. However the photodetector itself produces
+pulses which are not due to a detected photon. We considered the following
+sources of spurious signals:
+%
+\begin{description}
+    
+    \item[Dark count] The SiPM produces random pulses due to thermal
+    excitations in the silicon.
+    
+    \item[Direct cross talk (DiCT)] The SiPM is composed of many single
+    photodiodes, called \emph{cells}. When a cell fires, it emits thermal
+    photons that can trigger nearby cells. The output is thus a single pulse
+    but with an increased height proportional to the number of cells involved.
+    
+    \item[Afterpulses] The discharge can leave around electrons in metastable
+    states that can more easily be excited by thermal fluctuations, thus after
+    a pulse there is a probability of having a close successive pulse, with the
+    probability decaying with delay from the originating pulse.
+
+\end{description}
+
+\marginpar{The DCR is both due to thermal excitations and tunneling. At 77 K
+the tunneling should be prevalent (Savarese p.~59). There's the delayed cross
+talk which I have not seen, it's mentioned in Savarese and Nagy 2014. Delayed
+afterpulses too, but if the delayed cross talk is rare I guess delayed AP too.}
+
+The DiCT and the afterpulses are called \emph{correlated noises} because they
+are produced by and appear close to an initial source.
+
+\section{Theory}
+%         Un grafico con lo schema dei cross talk disegnato sulle celle
+%         Modello per il DiCT
+%         Decadimento degli afterpulse, spiegare la questione di quanti tau, l'altezza e la probabilità a delay piccoli
+%         I numeri che ci aspettiamo circa di vedere (da Savarese)
+
+\section{Data}
+%         Elenco dei file con il percorso
+%         Istogrammi 2D di tutti i file _2 (salto _1 perché a 5 VoV ha i doppi picchi), ricordarsi di togliere il digit 0 per non occupare il range dinamico con la saturazione
+%         Controllo i trigger degli altri file
+%         Doppi picchi
+
+\section{Peak finding}
+
+\subsection{Filtering}
+
+\subsection{Baseline}
+
+\subsection{Laser peak}
+
+\subsection{Other peaks}
+
+\subsection{PE}
+
+\subsection{Filter deconvolution}
+
+\section{Random pulses rate}
+
+\section{Afterpulses}
+%         Spiegare per bene come faccio i fit bayesiani con minimi quadrati e cosa significa statisticamente correggere con sqrt(chi2/dof)
+
+\section{Direct cross talk}
+
+\subsection{Random pulses}
+
+\subsection{Afterpulses}
+
+\subsection{Laser pulses}
+
+\subsection{Results}
+
+\section{Conclusions}
+
+% VETO
+% simulazione
+% peak finding (citare LUX, dove stava? sta nei documenti che mi ha mandato Stracka?)

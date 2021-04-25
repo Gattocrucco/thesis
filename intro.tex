@@ -1,3 +1,47 @@
 \chapter*{Introduction}
 
-Explain the chapter structure and how to reach the code for each figure.
+The goal of this thesis is to do some studies on the silicon photomultipliers
+(SiPMs) photodetection modules (PDMs) that will be used in the DarkSide20k dark
+matter detection experiment, needed in order to decide some details of the data
+acquisition system (DAQ) and of the layout of the readout electronics. Similar
+work in the DarkSide collaboration has been reported in \cite[chapters~3
+and~5]{savarese2018}.
+
+\marginpar{Officially, is it photo\emph{detection} or \emph{detector} modules?}
+
+The thesis is divided in eight chapters. The first two chapters provide a brief
+introduction to dark matter and to the DarkSide experiment. They do not contain
+new material and are included only for the sake of completeness.
+Chapter~\ref{ch:data} is a reference for the sources of the datasets used in
+the analyses. Chapters~\ref{ch:snr}, \ref{ch:timeres} and~\ref{ch:rate} deal
+with the performance of single pulse detection in the PDM output (signal to
+noise ratio, temporal resolution, and fake rate). Chapter~\ref{ch:anal}
+analyzes additional pulses noise (cross talk and afterpulsing).
+
+This layout has more chapters than is currently conventional for this kind of
+document. This is done to keep each somewhat self-contained topic well
+separated, such that it should be quicker to pull out specific information.
+
+To the same end, for each figure and table we provide a Python script that
+reproduces the content. Each script is referenced at the end of the caption
+like this: \scriptlink{fignoise.py}. The link is to a preview of the file in an
+online repository, \url{https://github.com/Gattocrucco/sipmfilter}. To run
+these scripts, clone or download the repository. The scripts are located in the
+directory \nolinkurl{figthesis}. The file \nolinkurl{README.md} provides detailed
+instructions on how to set up the working environment.
+
+Some scripts require no input. Others require large data files which are not
+included in the repository. Of the latter, some have a cache of the data they
+need, others just can not be executed without the original data. For people
+outside of the DarkSide collaboration it may not be possible to obtain the data
+files; in any case, they can check what the code is doing exactly.
+
+The \LaTeX{} code for this thesis is itself available at
+\url{https://github.com/Gattocrucco/thesis}. Moreover, the
+\nolinkurl{sipmfilter} repository contains slides on this work which we
+presented at DarkSide meetings. The Python code is covered by the MIT license,
+while the thesis and the slides are covered by the CC-BY~4.0. These licenses
+grant anyone the right to reuse this material, even without releasing
+themselves the modifications as open source, provided they cite the original
+author and keep the copyright and license notices. The licenses do not cover
+figures which we copied from other sources nor the DarkSide data.

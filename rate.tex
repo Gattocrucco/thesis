@@ -1,4 +1,5 @@
 \chapter{Fake rate of photon detection}
+\label{ch:rate}
 
 In chapter~\ref{ch:snr} we measured the signal to noise ratio after filtering.
 The point of using the SNR is expressing the signal height relative to the
@@ -6,6 +7,9 @@ width of the noise distribution, because the threshold required to reject noise
 with a fixed probability is proportional to that scale. So it is convenient to
 express the threshold relative to the same scale, and check it is less than the
 SNR so that signals are not selected away.
+
+\marginpar{The title is misleading, since ``fake rate of \emph{photon}
+detection'' would imply that DCR is included.}
 
 Even assuming that the noise is gaussian, the probability that a random
 fluctuation gets over the threshold is not given simply by computing the
@@ -25,6 +29,9 @@ not decided at this point, for brevity we will just see how to compute the
 threshold crossing rate of the noise, called fake rate, for a specific example
 filter, and check that it works. The method can then be applied to any filter
 of choice.
+
+\marginpar{Add that the model may be useful to extrapolate to very low rates
+and to have a quick recipe.}
 
 \section{Theory}
 
@@ -122,6 +129,9 @@ to the sampling frequency~\SI{125}{MSa/s}. If the typical time between
 crossings is much longer than the autocorrelation time, then we can ignore
 correlations. Thus the crossing rate is $r = f_s P$.
 
+\marginpar{Correction: we are interested in fake rates \emph{less} than 10,
+to be compared with the filter length \SI2{\micro s}.}
+
 The integrand in equation~\ref{eq:crossingprob} is a bivariate gaussian
 distribution, which explicitly is
 %
@@ -183,17 +193,21 @@ for Gaussian processes agree very well, while differing visibly from the
 survival function. We will henceforth use the continuous formula for its
 simplicity.
 
+\marginpar{Use the formula for white noise with \SI{40}{MHz} low-pass from the
+Yellow book or Savarese and put it in figure~\ref{fig:crossingprob}. The
+\SI{40}{MHz} is from Savarese pag.~98 right after formula~5.4.}
+
 \begin{figure}
+    
     \hspace{0.00\textwidth}
     \includegraphics[width=1.00\textwidth]{figcrossingprob}
 
-    \caption{\label{fig:crossingprob} The threshold upcrossing rate expressed
-    as per-sample crossing probability (i.e.\ the rate if the sampling
-    frequency is~1) for an autocorrelated Gaussian waveform, estimated using
-    three formulae: 1) the probability for a single sample to be higher than
-    the threshold, 2) a formula for continuous processes
-    (equation~\ref{eq:rcont}), 3) an approximation of the discrete case
-    (equation~\ref{eq:rdisc}).}
+    \figcaption{crossingprob}{The threshold upcrossing rate expressed as
+    per-sample crossing probability (i.e.\ the rate if the sampling frequency
+    is~1) for an autocorrelated Gaussian waveform, estimated using three
+    formulae: 1) the probability for a single sample to be higher than the
+    threshold, 2) a formula for continuous processes (equation~\ref{eq:rcont}),
+    3) an approximation of the discrete case (equation~\ref{eq:rdisc}).}
     
 \end{figure}
 
@@ -211,10 +225,10 @@ non-restartable dead time, i.e.\ a crossing that happens within $T$ of a
 previous one is ignored only if the latter has not been ignored itself.
 
 Assuming that the crossings are a Poisson process, the formula to correct a
-rate $R$ for the effect of the dead time is \cite[120]{knoll2000}:
+rate $R$ for the effect of the dead time is \cite[120]{knoll2010}:
 %
 \begin{equation}
-    R \mapsto \frac R {1 - RT}. \label{eq:deadrate}
+    R \mapsto \frac R {1 + RT}. \label{eq:deadrate}
 \end{equation}
 
 The crossings of a Gaussian process are not in general a Poisson process. We
@@ -265,6 +279,8 @@ tiles 57 and 59 (figure~\ref{fig:hist2dtile155759}).
 
 \marginpar{No need for more explanations of the time-value histograms since
 there will be some of them in chapter 3.}
+
+\marginpar{Move the histograms to the end of the chapter.}
 
 \begin{figure}
     
@@ -398,6 +414,8 @@ approx.~\SI3\% since the count is~1000.
     
 \end{figure}
 
+\marginpar{Add reference to the formula in figure~\ref{fig:fakerate1}.}
+
 In figure~\ref{fig:fakerate} we show the same comparison together for all
 datasets, divided in three groups (tile~15 LNGS data, Proto0 data, LNGS other
 tiles). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
@@ -434,6 +452,11 @@ filtering and it agrees very well with a Gaussian. If they are stray pulses,
 they do not have the same height, otherwise they would show up as a flat rate
 curve. It could be electrical noise with a frequency of approx.~$1/(\SI2{\micro
 s}) = \SI{500}{kHz}$, since our filter would be very good at picking that up.
+
+\marginpar{Looking at the spectrum it is evident that there's a very low
+frequency component ($<\SI{10}{kHZ} = 1/(\SI{100}{\micro s})$) absent in other
+tiles. Maybe they are sudden changes of baseline? I should look at events where
+crossings with high threshold happen.}
 
 \begin{table}
     
@@ -536,7 +559,9 @@ Proto0 & 66 & <0 & 499 &  8.2 &   -0.91 &   7.5 & 2.3 & 0.77 & 0.61 \\
     \includegraphics[width=1.25\textwidth]{figfakerate}
     
     \figcaption{fakerate}{The threshold upcrossing rate both counting directly
-    the crossings on data and computing it with formula~\eqref{eq:rcont}.}
+    the crossings on data and computing it with formula~\eqref{eq:rcont}. The
+    gray band marks the rate corresponding to a single crossing counted in the
+    data.}
     
 \end{figure}
 
@@ -563,7 +588,7 @@ For convenience we summarize all the steps to compute the fake rate:
     \operatorname{Cov}[y_i, y_{i+1} + y_{i-1} - 2y_i]$.
     
     \item Compute the fake rate for threshold $u$ using $r =
-    f_s\sqrt{k_2/(2\pi)}\operatorname{gauss}(u;0,\sigma)$ where $f_s$ is the
+    f_s\sqrt{-k_2/(2\pi)}\operatorname{gauss}(u;0,\sigma)$ where $f_s$ is the
     sampling frequency.
     
 \end{enumerate}
