@@ -1,7 +1,7 @@
 \chapter{Fake rate of photon detection}
 \label{ch:rate}
 
-In chapter~\ref{ch:snr} we measured the signal to noise ratio after filtering.
+In \autoref{ch:snr} we measured the signal to noise ratio after filtering.
 The point of using the SNR is expressing the signal height relative to the
 width of the noise distribution, because the threshold required to reject noise
 with a fixed probability is proportional to that scale. So it is convenient to
@@ -101,7 +101,7 @@ $y_i = f(t_0 + i\Delta t)$ the samples, we have:
 %
 The reader can check that discretizing directly $k''(0)$ yields the same result.
 
-The covariance in equation~\ref{eq:k2} can be estimated with the sample
+The covariance in \autoref{eq:k2} can be estimated with the sample
 covariance on a filtered waveform array~$\mathbf y$.
 
 \subsection{Direct discrete derivation}
@@ -132,7 +132,7 @@ correlations. Thus the crossing rate is $r = f_s P$.
 \marginpar{Correction: we are interested in fake rates \emph{less} than 10,
 to be compared with the filter length \SI2{\micro s}.}
 
-The integrand in equation~\ref{eq:crossingprob} is a bivariate gaussian
+The integrand in \autoref{eq:crossingprob} is a bivariate gaussian
 distribution, which explicitly is
 %
 \begin{equation}
@@ -175,7 +175,7 @@ The integral on $y_1$ can be computed using the error function. $\Delta u$
 should be chosen small compared to $\sigma$, while $N$ large relative to
 $\sigma / \Delta u$.
 
-In figure~\ref{fig:crossingprob} we compare formula~\eqref{eq:rcont} (with $f_s
+In \autoref{fig:crossingprob} we compare formula~\eqref{eq:rcont} (with $f_s
 = 1$) with $P$ and with the Gaussian survival function. To make the comparison
 we have to use a $k_2$ that matches $c$:
 %
@@ -194,7 +194,7 @@ survival function. We will henceforth use the continuous formula for its
 simplicity.
 
 \marginpar{Use the formula for white noise with \SI{40}{MHz} low-pass from the
-Yellow book or Savarese and put it in figure~\ref{fig:crossingprob}. The
+Yellow book or Savarese and put it in \autoref{fig:crossingprob}. The
 \SI{40}{MHz} is from Savarese pag.~98 right after formula~5.4.}
 
 \begin{figure}
@@ -206,8 +206,8 @@ Yellow book or Savarese and put it in figure~\ref{fig:crossingprob}. The
     per-sample crossing probability (i.e.\ the rate if the sampling frequency
     is~1) for an autocorrelated Gaussian waveform, estimated using three
     formulae: 1) the probability for a single sample to be higher than the
-    threshold, 2) a formula for continuous processes (equation~\ref{eq:rcont}),
-    3) an approximation of the discrete case (equation~\ref{eq:rdisc}).}
+    threshold, 2) a formula for continuous processes (\autoref{eq:rcont}),
+    3) an approximation of the discrete case (\autoref{eq:rdisc}).}
     
 \end{figure}
 
@@ -274,8 +274,8 @@ we take the pre-trigger part of the events, and ignore events where any
 pre-trigger sample is less than~750 (860 for tile~15).
 
 We plot the time-value histogram of the data for tile 53 in Proto0 and LNGS
-(figure~\ref{fig:hist2dtile53}), for tile 15 at maximum overvoltage, and for
-tiles 57 and 59 (figure~\ref{fig:hist2dtile155759}).
+(\autoref{fig:hist2dtile53}), for tile 15 at maximum overvoltage, and for
+tiles 57 and 59 (\autoref{fig:hist2dtile155759}).
 
 \marginpar{No need for more explanations of the time-value histograms since
 there will be some of them in chapter 3.}
@@ -327,7 +327,7 @@ there will be some of them in chapter 3.}
 
 We filter using a \SI1{\micro s} moving average with \SI1{\micro s} of baseline
 and \SI1{\micro s} of dead time, without delay between the baseline and the
-signal averages. In figure~\ref{fig:sqfilt} we show an example filtered
+signal averages. In \autoref{fig:sqfilt} we show an example filtered
 waveform and the filter shape.
 
 \begin{figure}
@@ -343,7 +343,7 @@ waveform and the filter shape.
 
 \end{figure}
 
-From chapters~\ref{ch:snr} and~\ref{ch:timeres} we know this is not the optimal
+From Chapters~\ref{ch:snr} and~\ref{ch:timeres} we know this is not the optimal
 filter by SNR neither by temporal resolution. However since we don't know which
 filter will be used it is appropriate to make a conservative choice.
 
@@ -387,7 +387,7 @@ number of thresholds.
 
 \subsection{Results}
 
-In figure~\ref{fig:fakerate1} we compare the measured threshold crossings with
+In \autoref{fig:fakerate1} we compare the measured threshold crossings with
 the continuous-derived formula~\eqref{eq:rcont} for a single tile over the
 entire threshold range. The coefficients $\sigma$ and $k_2$ for the formula are
 computed on each filtered event and then averaged. Finally, the dead time is
@@ -414,24 +414,24 @@ approx.~\SI3\% since the count is~1000.
     
 \end{figure}
 
-\marginpar{Add reference to the formula in figure~\ref{fig:fakerate1}.}
+\marginpar{Add reference to the formula in \autoref{fig:fakerate1}.}
 
-In figure~\ref{fig:fakerate} we show the same comparison together for all
+In \autoref{fig:fakerate} we show the same comparison together for all
 datasets, divided in three groups (tile~15 LNGS data, Proto0 data, LNGS other
 tiles). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
-are listed in table~\ref{tab:fakerate}.
+are listed in \autoref{tab:fakerate}.
 
 In the second group above some threshold the measured rate stops decreasing and
 remains constant at approximately 10 counts. This is probably due to pulses
 which our very simple veto can not filter away, we guess 1 pe dark/random
 pulses.
 
-In figure~\ref{fig:fakerate} we highlight the measured rates for tile~53
+In \autoref{fig:fakerate} we highlight the measured rates for tile~53
 because they are evident outliers. The rate remains higher than the theory
 predicts and than the other tiles as the threshold increases. This is visibile
 in Proto0, and in LNGS at \SI6{VoV}, but not at \SI7{VoV}.
 
-Analogously, from table~\ref{tab:fakerate} we see that the quantity $f_s
+Analogously, from \autoref{tab:fakerate} we see that the quantity $f_s
 \sqrt{-k_2}/(2\pi\sigma)$ that multiplies the exponential in~\eqref{eq:rcont}
 is different from the others for tile~53, in the same cases as the data, but
 with the opposite trend. This variation seems to depend only on an increase in
@@ -442,8 +442,8 @@ coincidence that it arises for the same tile in different setups, showing up
 both as an increased noise RMS and an higher threshold crossing rate, so it
 must be some property of the tile itself.
 
-Comparing the 2D histograms for tile~53 (figure~\ref{fig:hist2dtile53}) to the
-others (figure~\ref{fig:hist2dtile155759}) there is no apparent difference.
+Comparing the 2D histograms for tile~53 (\autoref{fig:hist2dtile53}) to the
+others (\autoref{fig:hist2dtile155759}) there is no apparent difference.
 Three possible explanations come to mind: 1) a violation of Gaussianity, 2)
 stray pulses, 3) electrical noise.
 
@@ -546,7 +546,7 @@ Proto0 & 66 & <0 & 499 &  8.2 &   -0.91 &   7.5 & 2.3 & 0.77 & 0.61 \\
     \tabcaption{fakerate}{The coefficients measured on the filtered waveforms
     needed to evaluate the formula for the threshold upcrossing rate. $T$ is
     the total duration, $\sigma$ the standard deviation, $k_2$ the covariance
-    of the waveform with its second derivative (equation~\ref{eq:k2}),
+    of the waveform with its second derivative (\autoref{eq:k2}),
     $\operatorname{Std}[\bar{k_2}]$ the uncertainty on the value of $k_2$
     determined as the standard deviation of the sample mean of $k_2$ values
     across events. The unit ``\si{u}'' is the ADC digit.}
@@ -569,7 +569,7 @@ We didn't investigate further the discrepancy for tile~53. Anyway, for all
 other tiles we looked at it works well enough.
 
 We now want to estimate the minimum amount of data required for the procedure.
-From table~\ref{tab:fakerate} we see that the relative error on $k_2$ times the
+From \autoref{tab:fakerate} we see that the relative error on $k_2$ times the
 square root of the time, $C \equiv
 \operatorname{Std}[\bar{k_2}]\sqrt{T}/|k_2|$, is approximately \SI8{ns^{1/2}}
 in all cases. The error should be proportional to $T^{-1/2}$, so to have an
@@ -596,7 +596,7 @@ For convenience we summarize all the steps to compute the fake rate:
 The probability of the formula not working due to mysterious reasons is \SI4\%.
 If it works, the uncertainty for low rate is \SI{\pm50}\% and the result is an
 overestimate with probability \SI{90}\%. (These assessments are based on
-table~\ref{tab:fakerate} but are somewhat subjective.)
+\autoref{tab:fakerate} but are somewhat subjective.)
 
 Alternatively, if one has a noise spectrum available but not the noise
 waveform, obtain the autocovariance by doing the discrete Fourier transform of

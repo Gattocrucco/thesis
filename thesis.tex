@@ -68,19 +68,17 @@ for the DarkSide20k experiment}
 
 \begin{document}
     
-    \pagestyle{fancyplain}
-    \fancyhf{}
+    \newcommand\sharedstyle{%
+        \renewcommand\headrulewidth{0pt}
+        \fancyhf{}
+        \fancyhfoffset{2.9cm}
+        \fancyfoot[RO,LE]\thepage
+    }
     
-    \renewcommand\headrulewidth{0pt}
-    
-    \newcommand\pagenumbermargin{2.7cm}
-    \fancyfoot[LO]{~\hspace{\textwidth}\makebox[\pagenumbermargin][r]\thepage}
-    \fancyfoot[LE]{~\hspace{-\pagenumbermargin}\makebox[\pagenumbermargin][l]\thepage}
-    
-    \newcommand\chaptermarkwidth{3cm}
-    \newcommand\chaptermarker{\ifnumcomp{\value{chapter}}{>}{0}{CHAPTER~\thechapter}{}}
-    \fancyhead[LO]{\fancyplain{}{~\hspace{\textwidth}\makebox[\chaptermarkwidth][r]{\chaptermarker}}}
-    \fancyhead[LE]{\fancyplain{}{~\hspace{-\chaptermarkwidth}\makebox[\chaptermarkwidth][l]{\chaptermarker}}}
+    \fancypagestyle{plain}\sharedstyle
+    \pagestyle{fancy}
+    \sharedstyle
+    \fancyhead[RO,LE]{\ifnumcomp{\value{chapter}}{>}{0}{CHAPTER~\thechapter}}
     
     \maketitle
         

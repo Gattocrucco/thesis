@@ -8,7 +8,7 @@ signal.
 
 To this end, we make a simulation where each ``event'' contains only one signal
 at a known position. In principle we could use the LNGS data
-(section~\ref{sec:lngsdata}), but we don't know the jitter of the trigger pulse
+(\autoref{sec:lngsdata}), but we don't know the jitter of the trigger pulse
 and we may reach a temporal resolution below the sampling period, while in the
 simulation we have the exact actual temporal location of signals.
 
@@ -26,10 +26,10 @@ not matter because we are not simulating digitalization.
 \label{sec:toysignal}
 
 We obtain the signal waveform by averaging single photon pulses from the LNGS
-data (see section~\ref{sec:lngsdata} for a description of the dataset). We do
+data (see \autoref{sec:lngsdata} for a description of the dataset). We do
 not try to align the signals, assuming that they are aligned relative to the
 beginning of each acquisition event. We take 3584 \SI1{GSa/s} samples.
-Figure~\ref{fig:toytempl} shows the obtained signal template.
+\autoref{fig:toytempl} shows the obtained signal template.
 
 \marginpar{After I explained the template in the first chapter, refer to that.
 Redo everything using the filter-aligned template instead of the unaligned or
@@ -56,7 +56,7 @@ temporal position where we want to place the template, we round it by excess
 and defect to the \SI{1}{ns} timebase. Then we downsample the template by
 averaging samples in groups of~8, once with the groups aligned to the floor
 rounded position, once with the ceiling rounded one. Finally we interpolate
-linearly between the two downsampled templates. Figure~\ref{fig:interptempl}
+linearly between the two downsampled templates. \autoref{fig:interptempl}
 shows a series of waveforms obtained in this way.
 
 (Downsampling with an average is not the best antialiasing filter doable, but
@@ -97,10 +97,10 @@ we normalized separately for each event in case the variance changed.
 
 We downsample the noise in the same way as the signal, by averaging nearby
 samples. Both noises have spectra that go down with frequency (see
-section~\ref{sec:spectrum}), so this crappy antialiasing should be sufficient.
+\autoref{sec:spectrum}), so this crappy antialiasing should be sufficient.
 The normalization to the desired variance is done after downsampling. The order
 matters because downsampling with averaging reduces the variance of the noise.
-See figure~\ref{fig:noise}. The Proto0 noise data is already at \SI{125}{MSa/s}
+See \autoref{fig:noise}. The Proto0 noise data is already at \SI{125}{MSa/s}
 and so did not require downsampling for most of the simulations.
 
 \begin{figure}
@@ -136,7 +136,7 @@ obtained at different SNR (or with different filters), keep this in mind when
 the smoothness of some plots would seem to suggest that the Monte Carlo error
 is negligible.
 
-Figure~\ref{fig:toyevent} shows a complete example event.
+\autoref{fig:toyevent} shows a complete example event.
 
 \begin{figure}
     \hspace{-0.15\textwidth}
@@ -152,7 +152,7 @@ Figure~\ref{fig:toyevent} shows a complete example event.
 
 \section{Temporal localization}
 
-We run the three filters described in section~\ref{sec:filters} (moving
+We run the three filters described in \autoref{sec:filters} (moving
 average, exponential moving average, cross correlation), then take the minimum
 (the signals are negative) of the filtered waveform as the location of the
 signal. We also take the minimum of the unfiltered waveform as baseline
@@ -163,9 +163,9 @@ location, this is not a problem since the choice of the point of the signal to
 be taken as reference is already arbitrary.
 
 To make the template for the cross correlation filter, we first cut the signal
-template (section~\ref{sec:toysignal}) to the required filter length, keeping
+template (\autoref{sec:toysignal}) to the required filter length, keeping
 the part of the template with maximum euclidean norm, then we downsample it by
-averaging nearby samples. See figure~\ref{fig:toyfilttempl}.
+averaging nearby samples. See \autoref{fig:toyfilttempl}.
 
 \begin{figure}
     \hspace{0.00\textwidth}
@@ -188,7 +188,7 @@ prior to filtering to check if it improves performance.
 
 We repeat the simulation for 1000 events for each filter, filter length
 parameter, and SNR in some range, using the Proto0 noise.
-Figure~\ref{fig:lochist} shows the histograms of the temporal localization for
+\autoref{fig:lochist} shows the histograms of the temporal localization for
 all filters for a choice of SNR and filter length.
 
 \marginpar{Specify how the signal template position varies.}
@@ -212,7 +212,7 @@ distance between the \SI{16}\% and \SI{84}\% quantiles, which is equivalent to
 a standard deviation for a gaussian, but gives a meaningful measure for the
 width of the distribution even when it's highly skewed or with heavy tails.
 
-Figure~\ref{fig:rescurve} shows the temporal resolution thus defined for each
+\autoref{fig:rescurve} shows the temporal resolution thus defined for each
 filter, filter length, and SNR. The exponential moving average has a
 consistently poor performance compared to the other filters. The
 cross-correlation filter is the best one, with performance improving with
@@ -260,7 +260,7 @@ Thus out of all the temporal resolution curves the ones that matter are:
     %
 \end{itemize}
 %
-We plotted these curves together in figure~\ref{fig:rescomp}, adding some
+We plotted these curves together in \autoref{fig:rescomp}, adding some
 curves done with the LNGS and white noises. Note that a different noise
 spectrum makes a large difference at low SNR. We also plot a curve computed
 with upsampling; it does not improve significantly the performance.
@@ -304,8 +304,8 @@ filter feasible on the digitizers, calibrated to have the median aligned to the
 beginning of the signal template. The window then extends a given number of
 samples to the left and to the right of this localization.
 
-Figure~\ref{fig:windowevent} shows this procedure graphically for a single
-event. Figure~\ref{fig:windowtempres} shows the temporal resolution versus
+\autoref{fig:windowevent} shows this procedure graphically for a single
+event. \autoref{fig:windowtempres} shows the temporal resolution versus
 unfiltered SNR curves for various choices of window length, noise, and filter
 used to align the window, where for reasons of computation time the latter was
 computed at a fixed SNR that does not follow the value on the x-axis.
@@ -334,7 +334,7 @@ computed at a fixed SNR that does not follow the value on the x-axis.
 
 \end{figure}
 
-By looking at figure~\ref{fig:windowtempres}, we conclude that probably it is
+By looking at \autoref{fig:windowtempres}, we conclude that probably it is
 sufficient to save \SI1{\micro s} of waveform to obtain practically the same
 temporal resolution achievable without windowing.
 
@@ -350,7 +350,7 @@ in the detector.
 \subsection{Downsampling}
 
 Another way of reducing the data throughput is downsampling. In
-figure~\ref{fig:tempresdowns} we show the temporal resolution achieved with a
+\autoref{fig:tempresdowns} we show the temporal resolution achieved with a
 long cross correlation filter, for white and LNGS noise, at different sampling
 frequencies. We can observe that downsampling by a factor of 2 from
 \SI{125}{MSa/s} to \SI{62}{MSa/s} maintains almost the same temporal
@@ -371,7 +371,7 @@ resolution, while going to \SI{31}{MSa/s} lowers it visibly.
 \end{figure}
 
 Since we are downsampling we also need to check if we lose signal to noise
-ratio in the filter output. In table~\ref{tab:filtsnrdowns} we report the
+ratio in the filter output. In \autoref{tab:filtsnrdowns} we report the
 ratio between SNR after and before filtering. It does not change significantly
 with downsampling.
 

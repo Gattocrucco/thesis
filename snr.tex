@@ -10,7 +10,7 @@ nanoseconds, which decays slowly in some microseconds.
 Each SiPM is made up of many single photodiodes (called ``cells''), so when
 different photons hit simultaneously different cells, the output is a signal
 with an amplitude proportional to the number of photons. See
-figure~\ref{fig:signals} for an example.
+\autoref{fig:signals} for an example.
 
 \marginpar{Bibliography for the SiPM.}
 
@@ -18,11 +18,11 @@ figure~\ref{fig:signals} for an example.
     \includegraphics[width=\textwidth]{figsignals}
 
     \figcaption{signals}{Example PDM signals taken from the LNGS test data
-    (section \ref{sec:lngsdata}). The different curves correspond to an
-    increasing number of photons being detected simultaneously, with the
-    resulting signal being the sum of single-photon signals. Notice that the
-    noise amplitude is the same in all curves, which means that it is produced
-    mostly outside of the PDM.}
+    (\autoref{sec:lngsdata}). The different curves correspond to an increasing
+    number of photons being detected simultaneously, with the resulting signal
+    being the sum of single-photon signals. Notice that the noise amplitude is
+    the same in all curves, which means that it is produced mostly outside of
+    the PDM.}
 
 \end{figure}
 
@@ -40,7 +40,7 @@ setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
 regular time intervals on the PDM. Both the laser trigger and the detector
 output are sampled at \SI{1}{GSa/s} with a 10 bit ADC and saved separating the
 data in ``events'' where each event correspond to a single laser pulse. See
-figure~\ref{fig:lngs}.
+\autoref{fig:lngs}.
 
 \marginpar{Bibliography for the LNGS data. Maybe add a 2D histogram of the
 data.}
@@ -49,11 +49,11 @@ data.}
     \hspace{-0.26\textwidth}\includegraphics[width=1.52\textwidth]{figlngs}
     
     \figcaption{lngs}{A pair of events from the LNGS test data
-    (section~\ref{sec:lngsdata}).}
+    (\autoref{sec:lngsdata}).}
 
 \end{figure}
 
-We used the PDM slot 8 data, which as per figure~\ref{fig:pdmadcch} corresponds
+We used the PDM slot 8 data, which as per \autoref{fig:pdmadcch} corresponds
 to tile 57 which means the data is in the directory
 \url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \nolinkurl{nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav}.
 
@@ -89,7 +89,7 @@ This reasoning may fail depending on the details of filtering and the specific
 relative timing of the signals, however the final most important consideration
 is that I expect less than 100 spurious late pulses since there are 72 early
 ones and the laser pulse is in the middle of the event, so less than \SI1\%.
-See figure~\ref{fig:spurious} for some examples of spurious/saturated signals.
+See \autoref{fig:spurious} for some examples of spurious/saturated signals.
 
 \marginpar{The afterpulse stuff I had not understood properly may change all
 this.}
@@ -98,7 +98,7 @@ this.}
     \hspace{-0.26\textwidth}\includegraphics[width=1.53\textwidth]{figspurious}
     
     \figcaption{spurious}{Examples of spurious signals in the LNGS test data
-    (section~\ref{sec:lngsdata}).}
+    (\autoref{sec:lngsdata}).}
 
 \end{figure}
 
@@ -179,7 +179,7 @@ We tried implementing the matched filter with mixed results we will not report
 in detail. We computed the noise covariance matrix on the event samples before
 the signal. Since the noise is stationary, $R$ is a Toeplitz matrix, i.e. the
 covariance depends only on the lag between two samples.
-Figure~\ref{fig:autocorrlngs} shows the noise covariance obtained.
+\autoref{fig:autocorrlngs} shows the noise covariance obtained.
 
 \marginpar{Add the autocorrelation of the Proto0 noise to the plot.}
 
@@ -198,13 +198,13 @@ Figure~\ref{fig:autocorrlngs} shows the noise covariance obtained.
 The matched filter worked slightly better than the cross-correlation filter, as
 expected, but only for $N$ sufficiently small, getting worse as $N$ increased.
 This could be due to numerical accuracy problems in solving the linear system
-$R$ in equation~\ref{eq:matched}, or in computing $R$. We didn't work on this
+$R$ in \autoref{eq:matched}, or in computing $R$. We didn't work on this
 further since the gain is probably small.
 
 We computed the template for the cross-correlation filter by taking the median
 of single photoelectron signals. We did not align the signals, we operated as
 if they occurred always with the same alignment relative to the event time
-window. The template obtained is shown in figure~\ref{fig:template}. When using
+window. The template obtained is shown in \autoref{fig:template}. When using
 the template, we normalize it to unit sum such that the output from the
 cross-correlation filter is comparable to the output from the moving averages,
 i.e. if we send a flat waveform into the filter, the output has the same value
@@ -233,7 +233,7 @@ to unit sum is done after truncation.
 
 \end{figure}
 
-See figure~\ref{fig:filters} for an example of filter output.
+See \autoref{fig:filters} for an example of filter output.
 
 \begin{figure}
     \hspace{0.00\textwidth}
@@ -262,7 +262,7 @@ filters. Effectively we computed the SNR without exactly respecting the
 definition above, we'll see in detail.
 
 For each event we compute the filter output at a fixed temporal delay from the
-leading edge of the laser trigger pulse (see figure~\ref{fig:filtersample}).
+leading edge of the laser trigger pulse (see \autoref{fig:filtersample}).
 Then we compute the average of the samples before the trigger pulse and take
 that value as ``baseline''. We subtract the baseline from the filter output,
 and finally we change the sign to obtain positive values since the signals are
@@ -283,7 +283,7 @@ negative.
 
 We take the list of these baseline and sign corrected filter outputs and
 compute an histogram. One of these histograms is shown in
-figure~\ref{fig:fingerplot}. It is called ``fingerplot'' due to the descending
+\autoref{fig:fingerplot}. It is called ``fingerplot'' due to the descending
 peaks reminding of fingers.
 
 \begin{figure}
@@ -335,7 +335,7 @@ due to noise peaks. Instead, by fixing the point independently from the data,
 the random oscillation due to noise is symmetrical and the averaging recovers
 the actual amplitude of the filter output for the signal.
 
-The resulting SNR curves are shown in figure~\ref{fig:snrplot}, repeated for a
+The resulting SNR curves are shown in \autoref{fig:snrplot}, repeated for a
 range of values of the filters length parameter. For the moving average and
 cross-correlation filter, the length parameter is the number of samples, $N$.
 For the exponential moving average, it is the scale of the exponential decay
@@ -354,7 +354,7 @@ The maximum of each curve gives the actual SNR figure we are interested in. We
 expect by intuition that the width of the maximum is approximately proportional
 to the temporal resolution we could achieve if we used the filter output to
 locate temporally the signal. So we do another plot
-(figure~\ref{fig:snrmaxplot}) where we show the maximum SNR value and the width
+(\autoref{fig:snrmaxplot}) where we show the maximum SNR value and the width
 of the peak versus the filter length parameter. We measure the width as the
 distance between the two points where the SNR is 1 less than its maximum value.
 
@@ -395,7 +395,7 @@ data processing chain.
 
 To get an idea of the effect of the baseline, we repeat everything computing
 the baseline with just 1000 or 200 samples. The result is in
-figure~\ref{fig:changebs}. We see that, for example, going from 8000 to 200
+\autoref{fig:changebs}. We see that, for example, going from 8000 to 200
 baseline samples the maximum SNR drops from about 20 to about 9.
 
 \marginpar{Explain why the SNR of the cross correlation filter drops with
@@ -407,9 +407,9 @@ but gets a constant contribution from the baseline variance.}
     \hspace{-0.27\textwidth}
     \includegraphics[width=1.55\textwidth]{figchangebs}
     
-    \figcaption{changebs}{The same plot of figure~\ref{fig:snrmaxplot} repeated
+    \figcaption{changebs}{The same plot of \autoref{fig:snrmaxplot} repeated
     changing the number of pre-signal samples used to compute the baseline. The
-    left column is the same data from figure~\ref{fig:snrmaxplot}, with 8000
+    left column is the same data from \autoref{fig:snrmaxplot}, with 8000
     baseline samples. The performance decreases with a lower number of samples
     because the standard deviation of the baseline increases and the baseline
     is compared to the filtered signal amplitude to discriminate signals.}
@@ -425,7 +425,7 @@ median instead of the average in case there were spurious signals or
 irregularities we missed. We do the same for data obtained with the same sensor
 but when it was in the Proto0 setup, biased below breakdown voltage and sampled
 at \SI{125}{MSa/s}. We thus obtain two plausible noise spectra, shown in
-figure~\ref{fig:spectra}.
+\autoref{fig:spectra}.
 
 \marginpar{Source and details of the Proto0 noise data.}
 
@@ -444,7 +444,7 @@ figure~\ref{fig:spectra}.
 We said the cross-correlation filter is optimal if the noise is white.
 Actually, it is sufficient that the noise spectrum is flat in the support of
 the signal spectrum, because if we filtered away frequencies outside of it, all
-the signal would still be in the waveform. In figure~\ref{fig:templsp} we show
+the signal would still be in the waveform. In \autoref{fig:templsp} we show
 the power spectrum of the signal and its integral. We see that \SI{90}\% of it
 is below XXX~\si{MHz}, which corresponds to an approximately flat region in the
 noise spectra. This means that the cross-correlation filter is close to
@@ -458,7 +458,7 @@ ascending part of the noise spectra.}
     \figcaption{templsp}{Comparison of the spectra of signal and noise. The red
     curve shows the percentual of signal power below a given frequency. The
     signal spectrum is computed with the discrete Fourier transform of the
-    cross-correlation filter template (figure~\ref{fig:template}) without
+    cross-correlation filter template (\autoref{fig:template}) without
     windowing.}
 
 \end{figure}
