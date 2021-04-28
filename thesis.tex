@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass[11pt]{report}
 
 \usepackage{geometry}
 \usepackage[T1]{fontenc}
@@ -7,25 +7,29 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[all]{hypcap} % ref link aligned to float top (KEEP AFTER HYPERREF!)
-\usepackage[font={sf}]{caption} % sans font in captions
+\usepackage[font={sf,small}]{caption} % smaller sans font in captions
 \usepackage{fancyhdr}
 \usepackage[style=alphabetic]{biblatex}
 \usepackage{booktabs} % \*rule commands for tabular
 \usepackage{lineno} % \linenumbers
 \usepackage{etoolbox} % \ifnumcomp
 
+\newlength\bindingoffset
+\setlength\bindingoffset{1cm}
 \geometry{%
     a4paper,
     asymmetric, % twoside, but marginpar are always to the right
     centering,
-    textwidth=345pt, % default LaTeX textwidth with 10pt
+    textwidth=360pt, % default LaTeX textwidth with 11pt (345pt for 10pt)
     top=1.8cm,
     bottom=1.8cm,
-    marginparwidth=3.5cm,
-    headsep=0cm,
-    footskip=0cm,
+    marginparwidth=3.4cm,
+    headsep=10pt,
+    footskip=17pt,
+    bindingoffset=\bindingoffset,
     % showframe,
 }
+\addtolength\marginparwidth{-0.5\bindingoffset}
 
 \linenumbers % print line numbers (for the draft)
 
@@ -66,19 +70,23 @@
 \title{Thesis draft:\\Online processing of the large area SiPM detector signals
 for the DarkSide20k experiment}
 
+\newlength\pagenumbermargin
+\setlength\pagenumbermargin{2.9cm}
+\addtolength\pagenumbermargin{-0.5\bindingoffset}
+
+\newcommand\sharedstyle{%
+    \renewcommand\headrulewidth{0pt}
+    \fancyhf{}
+    \fancyhfoffset\pagenumbermargin
+    \fancyfoot[RO,LE]\thepage
+}
+
+\fancypagestyle{plain}\sharedstyle
+\pagestyle{fancy}
+\sharedstyle
+\fancyhead[RO,LE]{\ifnumcomp{\value{chapter}}{>}{0}{CHAPTER~\thechapter}}
+
 \begin{document}
-    
-    \newcommand\sharedstyle{%
-        \renewcommand\headrulewidth{0pt}
-        \fancyhf{}
-        \fancyhfoffset{2.9cm}
-        \fancyfoot[RO,LE]\thepage
-    }
-    
-    \fancypagestyle{plain}\sharedstyle
-    \pagestyle{fancy}
-    \sharedstyle
-    \fancyhead[RO,LE]{\ifnumcomp{\value{chapter}}{>}{0}{CHAPTER~\thechapter}}
     
     \maketitle
         
