@@ -2,14 +2,15 @@
 
 \usepackage{geometry}
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{siunitx}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[all]{hypcap} % ref link aligned to float top (KEEP AFTER HYPERREF!)
 \usepackage[font={sf,small}]{caption} % smaller sans font in captions
-\usepackage{fancyhdr}
-\usepackage[style=alphabetic]{biblatex}
+\usepackage{fancyhdr} % header/footer customization
+\usepackage[style=alphabetic]{biblatex} % citations with style [Xyz12]
 \usepackage{booktabs} % \*rule commands for tabular
 \usepackage{lineno} % \linenumbers
 \usepackage{etoolbox} % \ifnumcomp
@@ -101,6 +102,14 @@ for the DarkSide20k experiment}
     \include{rate}
     \include{anal}
     \include{end}
+    
+    \clearpage
+    \fancyhead[RO,LE]{APPENDIX~\thechapter}
+    
+    \include{analplot}
+    
+    \clearpage
+    \fancyhead[RO,LE]{BIBLIOGRAPHY}
     
     \printbibliography
     
