@@ -187,8 +187,7 @@ the same time a fatter tail, while being lower in the few-DiCT cases.
 
 \begin{figure}
     
-    \hspace{-0.10\textwidth}
-    \includegraphics[width=1.19\textwidth]{figgeomborel}
+    \widecenter{\includempl{figgeomborel}}
 
     \figcaption{geomborel}{Top panels: comparison of the geometric and Borel
     distributions (Equations~\ref{eq:geometric} and~\ref{eq:borel}), used for
@@ -290,7 +289,7 @@ amplitude and scale could fit as well.
     pulses, selected with an upper bound on their amplitude to get afterpulses
     while removing dark count, and fitted with an exponential decay with
     constant $\tau_\text{AP}$ multiplied by the correction in
-    \autoref{eq:recfactor}.}
+    \autoref{eq:recfactor} with $\tau_\text{rec} = \SI{207}{ns}$.}
     
 \end{figure}
 
@@ -338,18 +337,98 @@ afterpulses}.
 
 \subsection{Expected values}
 
-%         I numeri che ci aspettiamo circa di vedere (da Savarese)
+\cite[tab.~3.1~p.~62]{savarese2018} summarizes the noise parameters for the FBK
+SiPMs at \SI{80}K and \SI{5}V overvoltage. In this analysis we will use newer
+LFoundry SiPMs, so we can just get a rough idea from that. There are various
+kinds of SiPM in the table, the low field near ultraviolet with medium
+quenching resistance (last column) is the only one with the same recharge time
+as ours ($\tau_\text{rec} = \SI{0.5}{\micro s}$) so we consider that values.
+The dark count rate, converted from rate per area to rate per PDM (area
+\SI{25}{cm^2}), is \SI{25}{cps}. The correlated noise probabilities are: DiCT
+\SI{17}\%, AP \SI{17}\%, DeCT \SI{1.5}\%.
+
+We did not make a model for DeCT (including delayed afterpulses) because we did
+not see clear evidence of it in our data. In
+\cite[fig.~3.8~p.~54]{savarese2018} we see that DeCT arrives within
+\SI{50}{ns}. We will not properly analyze correlated pulses with delay below
+\SI{100}{ns}. For the DeCT we will just give a very uncertain estimate. Since
+the probability is smaller than the other noise modes, we completely neglect
+second order effects due to DeCT.
 
 \section{Data}
-%         Elenco dei file con il percorso
-%         Istogrammi 2D di tutti i file _2 (salto _1 perché a 5 VoV ha i doppi picchi), ricordarsi di togliere il digit 0 per non occupare il range dinamico con la saturazione
-%         Controllo i trigger degli altri file
-%         Doppi picchi
 
-\marginpar{\cite[p.~2, after eq.~5]{nagy2014} says that they use a short
-wavelength (blue) laser such that photons get absorbed directly in the junction
-and not in the neutral region below and then diffuse. What's the situation in
-LNGS? Maybe \cite{savarese2018} says something on this.}
+We use LNGS laser data for tile 21, produced by LFoundry. The LNGS data files
+are:
+%
+\begin{verbatim}
+LFOUNDRY/pre-production-test/TILE_21/LF_TILE21_77K_54V_65VoV_X.wav
+LFOUNDRY/pre-production-test/TILE_21/LF_TILE21_77K_54V_69VoV_X.wav
+LFOUNDRY/pre-production-test/TILE_21/LF_TILE21_77K_54V_73VoV_X.wav
+\end{verbatim}
+%
+The `\texttt{X}' suffix in the file name stands for an index which goes from~1
+to~10. Each file contains $\approx\num{20000}$ events, so we have \num{200000}
+events per overvoltage.
+
+The overvoltage is obtained by subtracting the first voltage from the second in
+the file name and dividing by two. The first is the breakdown voltage while the
+second is the applied reverse bias; the division is because the SiPM connection
+layout in the PDM is parallel branches each with two SiPMs in series. Thus the
+overvoltages are \SI{5.5}V, \SI{7.5}V, \SI{9.5}V.
+
+We show the time-value histograms of a single file per overvoltage in
+\autoref{fig:hist2dtile21}. These files do not include the laser trigger
+waveform. Looking at the histograms it appears that the laser pulse arrives at
+$\approx\SI{9}{\micro s}$ as usual. To be confident that we can assume the
+trigger position, in \autoref{fig:triggerhist} we histogram all the triggers
+from a lot of LNGS files. The full range of the distribution is
+\SI[separate-uncertainty=true]{8969 \pm 11}{Sa}.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figtriggerhist}}
+    
+    \figcaption{triggerhist}{Cumulative histogram of the trigger leading edge
+    (the first sample less than 600 in the recorded waveform) for 96 LNGS
+    files. The distribution has the shape of a convolution between two uniforms
+    with length 16 and~8, we suppose these are the clocks of the digitizer and
+    laser triggers.}
+    
+\end{figure}
+
+In some files there are double peaks in the fingerplot, i.e.~there are two
+possible pulse amplitudes corresponding to the same number of PE. The worst
+offender is the first file at \SI{5.5}{VoV},
+\nolinkurl{LF_TILE21_77K_54V_65VoV_1.wav}. In \autoref{fig:doublepeak} we show
+the fingerplot, both global and as a function of time, computed with
+\SI{1.5}{\micro s} charge integration. It is evident that the pulse charge
+changes during the acquisition. Since it is still possible to separate the PE
+peaks, even if they are doubled, this will not be an issue. Moreover, with the
+filter we will use in the analysis the doubling will be much less marked.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figdoublepeak}}
+    
+    \figcaption{doublepeak}{The distribution of the mean of the waveforms from
+    sample 8958 to \num{10457} (1500 samples) in the first file at
+    \SI{5.5}{VoV}. Left panel: global distribution. Right panel: the same
+    distribution by groups of 200 events.}
+    
+\end{figure}
+
+\begin{figure}
+    
+    \widecenter{\includempl{fighist2dtile21-0}}
+
+    \widecenter{\includempl{fighist2dtile21-1}}
+
+    \widecenter{\includempl{fighist2dtile21-2}}
+    
+    \figcaption{hist2dtile21}{Time-value histograms of LFoundry tile~21 in LNGS
+    laser data at overvoltages \SI{5.5}V, \SI{7.5}V, and~\SI{9.5}V.}
+    
+\end{figure}
 
 \section{Peak finding}
 

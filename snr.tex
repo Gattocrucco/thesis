@@ -184,8 +184,7 @@ covariance depends only on the lag between two samples.
 \marginpar{Add the autocorrelation of the Proto0 noise to the plot.}
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figautocorrlngs}
+    \widecenter{\includempl{figautocorrlngs}}
     
     \figcaption{autocorrlngs}{Autocorrelation of the LNGS test data noise,
     computed on the part of the events before the trigger. The autocorrelation
@@ -229,8 +228,7 @@ possible (recall the template is negative). Of course normalizing the template
 to unit sum is done after truncation.
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figtemplate}
+    \widecenter{\includempl{figtemplate}}
     
     \figcaption{template}{The template used for the cross-correlation filter.
     It is the median of unaligned single photon events from the LNGS test data.}
@@ -240,8 +238,7 @@ to unit sum is done after truncation.
 See \autoref{fig:filters} for an example of filter output.
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figfilters}
+    \widecenter{\includempl{figfilters}}
     
     \figcaption{filters}{An event from the LNGS test data filtered with the
     three filters used. The number of averaged samples in the moving average
@@ -273,8 +270,7 @@ and finally we change the sign to obtain positive values since the signals are
 negative.
 
 \begin{figure}
-    \hspace{-0.25\textwidth}
-    \includegraphics[width=1.50\textwidth]{figfiltersample}
+    \widecenter{\includempl{figfiltersample}}
     
     \figcaption{filtersample}{Example of how a signal amplitude is computed in
     an event for the purpose of computing the SNR. The samples in the shaded
@@ -291,8 +287,7 @@ compute an histogram. One of these histograms is shown in
 peaks reminding of fingers.
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figfingerplot}
+    \widecenter{\includempl{figfingerplot}}
     
     \figcaption{fingerplot}{The fingerplot for the moving average filter with
     128 samples evaluated 128 samples after the trigger.}
@@ -346,8 +341,7 @@ For the exponential moving average, it is the scale of the exponential decay
 $\tau$.
 
 \begin{figure}
-    \hspace{-0.26\textwidth}
-    \includegraphics[width=1.51\textwidth]{figsnrplot}
+    \widecenter{\includempl{figsnrplot}}
     
     \figcaption{snrplot}{The SNR as a function of delay from trigger (x-axis)
     and filter length (shade of gray) for the three filters.}
@@ -366,8 +360,7 @@ distance between the two points where the SNR is 1 less than its maximum value.
 effect plot.}
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figsnrmaxplot}
+    \widecenter{\includempl{figsnrmaxplot}}
     
     \figcaption{snrmaxplot}{Top plot: maximum SNR achieved with each filter
     (different curves) and filter length (x-axis). Bottom plot: the width of
@@ -408,8 +401,7 @@ a mean, so its peak value drops as it gets longer; the noise rms decreases too
 but gets a constant contribution from the baseline variance.}
 
 \begin{figure}
-    \hspace{-0.27\textwidth}
-    \includegraphics[width=1.55\textwidth]{figchangebs}
+    \widecenter{\includempl{figchangebs}}
     
     \figcaption{changebs}{The same plot of \autoref{fig:snrmaxplot} repeated
     changing the number of pre-signal samples used to compute the baseline. The
@@ -434,8 +426,7 @@ at \SI{125}{MSa/s}. We thus obtain two plausible noise spectra, shown in
 \marginpar{Source and details of the Proto0 noise data.}
 
 \begin{figure}
-    \hspace{-0.28\textwidth}
-    \includegraphics[width=1.56\textwidth]{figspectra}
+    \widecenter{\includempl{figspectra}}
     
     \figcaption{spectra}{Spectrum for the PDM we used in the LNGS test data,
     both in the LNGS test data setup and in the Proto0 detector setup. While
@@ -456,8 +447,7 @@ optimal. \marginpar{False: most of the signal spectrum is in the rapidly
 ascending part of the noise spectra.}
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figtemplsp}
+    \widecenter{\includempl{figtemplsp}}
     
     \figcaption{templsp}{Comparison of the spectra of signal and noise. The red
     curve shows the percentual of signal power below a given frequency. The

@@ -41,8 +41,7 @@ thus yielding lower performance in signal localization, and so our choice is
 irrelevant at best, conservative at worst.)
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figtoytempl}
+    \widecenter{\includempl{figtoytempl}}
     
     \figcaption{toytempl}{The source \SI1{GSa/s} signal template used in the
     simulation.}
@@ -67,8 +66,7 @@ suppressed in the signal template.)
 it from the simulation altogether.}
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figinterptempl}
+    \widecenter{\includempl{figinterptempl}}
 
     \figcaption{interptempl}{The signal template downsampled from \SI1{GSa/s}
     to \SI{125}{MSa/s} and translated continuously instead of by discrete steps
@@ -104,8 +102,7 @@ See \autoref{fig:noise}. The Proto0 noise data is already at \SI{125}{MSa/s}
 and so did not require downsampling for most of the simulations.
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{fignoise}
+    \widecenter{\includempl{fignoise}}
     
     \figcaption{noise}{The LNGS noise at the original sampling frequency
     (normalized to unit variance) and downsampled.}
@@ -139,8 +136,7 @@ is negligible.
 \autoref{fig:toyevent} shows a complete example event.
 
 \begin{figure}
-    \hspace{-0.15\textwidth}
-    \includegraphics[width=1.30\textwidth]{figtoyevent}
+    \widecenter{\includempl{figtoyevent}}
     
     \figcaption{toyevent}{A simulation event. The dots are the minima of the
     filters output. The minima are searched in the shaded region only; this
@@ -168,8 +164,7 @@ the part of the template with maximum euclidean norm, then we downsample it by
 averaging nearby samples. See \autoref{fig:toyfilttempl}.
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figtoyfilttempl}
+    \widecenter{\includempl{figtoyfilttempl}}
     
     \figcaption{toyfilttempl}{Some cross correlation filter templates for
     different lengths. It may appear strange that the endpoint on the left has
@@ -194,8 +189,7 @@ all filters for a choice of SNR and filter length.
 \marginpar{Specify how the signal template position varies.}
 
 \begin{figure}
-    \hspace{-0.07\textwidth}
-    \includegraphics[width=1.13\textwidth]{figlochist}
+    \widecenter{\includempl{figlochist}}
     
     \figcaption{lochist}{Histograms of the temporal localization error, i.e.\
     the difference between the filter output minimum and the signal template
@@ -221,8 +215,7 @@ optimal. The moving average can get close to the cross-correlation filter by
 choosing appropriately the number of samples.
 
 \begin{figure}
-    \hspace{-0.09\textwidth}
-    \includegraphics[width=1.17\textwidth]{figrescurve}
+    \widecenter{\includempl{figrescurve}}
     
     \figcaption{rescurve}{Photodetection temporal resolution for a range of SNR
     and filter lengths. The shaded region marks the sampling step (\SI{8}{ns}).
@@ -269,8 +262,7 @@ with upsampling; it does not improve significantly the performance.
 higher so it's more legible at lower temporal resolutions.}
 
 \begin{figure}
-    \hspace{0.00\textwidth}
-    \includegraphics[width=1.00\textwidth]{figrescomp}
+    \widecenter{\includempl{figrescomp}}
     
     \figcaption{rescomp}{Photodetection temporal resolution vs. SNR for various
     filters. The shaded region marks the sampling step (\SI{8}{ns}). The
@@ -311,8 +303,7 @@ used to align the window, where for reasons of computation time the latter was
 computed at a fixed SNR that does not follow the value on the x-axis.
 
 \begin{figure}
-    \hspace{-0.20\textwidth}
-    \includegraphics[width=1.40\textwidth]{figwindowevent}
+    \widecenter{\includempl{figwindowevent}}
     
     \figcaption{windowevent}{Left panel: a simulation event filtered with the
     exponential moving average. Right panel: the same event filtered with a
@@ -323,8 +314,7 @@ computed at a fixed SNR that does not follow the value on the x-axis.
 \end{figure}
 
 \begin{figure}
-    \hspace{-0.14\textwidth}
-    \includegraphics[width=1.28\textwidth]{figwindowtempres}
+    \widecenter{\includempl{figwindowtempres}}
     
     \figcaption{windowtempres}{Photodetection temporal resolution with a long
     cross correlation filter applied only on a short window of samples centered
@@ -359,8 +349,7 @@ resolution, while going to \SI{31}{MSa/s} lowers it visibly.
 \marginpar{Explain the SNR rescaling.}
 
 \begin{figure}
-    \hspace{-0.22\textwidth}
-    \includegraphics[width=1.43\textwidth]{figtempresdowns}
+    \widecenter{\includempl{figtempresdowns}}
     
     \figcaption{tempresdowns}{Photodetection temporal resolution at different sampling
     frequencies with a cross correlation filter with template length
