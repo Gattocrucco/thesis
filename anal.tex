@@ -463,23 +463,100 @@ file name. The breakdown voltage is always the same because it is a property of
 the tile, so if it was reported incorrectly, the correction to the overvoltage
 would be a fixed offset. But in this case even if the ratio amplitude over
 overvoltage would vary, the slope would be preserved, while in
-\autoref{fig:templates} wee se that two equal overvoltage steps correspond to
+\autoref{fig:templates} wee see that two equal overvoltage steps correspond to
 clearly different absolute increases in amplitude.
 
 One could think that the reported bias was incorrect, but it is a very simple
 measurement. We will come back to this discussion after the analysis.
 
-% troncaggio dei filtri
-% tante lunghezze
-% scelta della lunghezza
+Filtering increases the signal to noise ratio, but degrades the separation
+between close peaks. Since we are studying correlated pulses, it is thus
+important to use a filter as short as possible. We filter the waveform with a
+logarithmic range of filter lengths: \SI{32}{ns}, \SI{64}{ns}, \ldots,
+\SI{1024}{ns}. The computations we will describe are carried in parallel with
+all filter lengths, and then we choose in the analysis which lengths to use.
+The truncation of the template to the desired length is done like in
+\autoref{ch:timeres}, keeping the fixed length subrange of samples that has
+maximum squared norm.
+
+We defer to \autoref{sec:pe} the description of how we select the filter length.
 
 \subsection{Baseline}
+
+To compute the height of the peaks we have to subtract the baseline value. We
+compute the baseline using the pre-trigger region of the waveforms. For
+robustness against deviations we use the median instead of the average. The ADC
+has relatively low resolution (10~bit), so since the median can output only one
+of the values of the input sequence it is quantized. To have a more continuous
+output we divide the array in 8 interleaved subarrays, i.e.\ the first subarray
+contains samples 0, 8, 16, \dots, the second 1, 9, 17, etc., take the median
+separately on each subarray, and then average the medians.
+
+If any pre-trigger sample in an event is less than 700, for that event we reuse
+the baseline obtained in a previous event.
+
+In \autoref{fig:baseline} we show the histogram of the obtained baseline values
+for the \SI{5.5}{VoV} data. We will carry on the discussion always on the
+\SI{5.5}{VoV} dataset as example, unless otherwise necessary.
+Appendix~\ref{ch:analplot} contains additional plots that complete the picture.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figbaseline}}
+    
+    \figcaption{baseline}{Distribution of the waveform baseline measured in
+    the pre-trigger region of the events. See \autoref{fig:baseline2} for all
+    overvoltages.}
+    
+\end{figure}
+
+The baseline distribution has a small tail to the left (note that the scale is
+logarithmic) and some far outliers. In \autoref{fig:bsoutlier} and
+\autoref{fig:bstail} we show the events corresponding to the lowest and highest
+measured baselines and a pair of events from the lower tail respectively. (The
+event visualization contains elements which we have not introduced yet, they
+will soon be explained.)
+
+\begin{figure}
+    
+    \widecenter{\includempl{figbsoutlier-0}\includempl{figbsoutlier-1}}
+
+    \figcaption{bsoutlier}{The events with the lowest and highest baseline.
+    See \autoref{fig:bsoutlier2} for all overvoltages.}
+
+\end{figure}
+
+\begin{figure}
+    
+    \widecenter{\includempl{figbstail-0}\includempl{figbstail-1}}
+
+    \figcaption{bstail}{A pair of events from the low baseline tail (baseline
+    between 955 and 956). See \autoref{fig:bstail2} for all overvoltages.}
+
+\end{figure}
+
+In all cases the extreme baseline events do not show anomalies, they have
+genuinely unusual baselines. At \SI{5.5}{VoV} and \SI{9.5}{VoV} the events
+corresponding to the lowest and highest baseline have close progressive
+indices, so they must occur close in time; we suppose then that these
+deviations are due to low-frequency transient oscillations.
+
+The events in the tail all have a pre-trigger pulse (we checked only the two
+ones we plotted, we did not handpick). This means that we will systematically
+underestimate the amplitude of pre-trigger pulses. However, as is already
+evident by looking at the event plots, the bias is small compared to the pulse
+height. If data with lower SNR was to be processed, we would up the baseline
+veto value from 700 to something as close as possible to the noise pedestal and
+segment the baseline computation to detect inhomogeneity, but in our present
+case we will go on without fixing this bias.
 
 \subsection{Laser peak}
 
 \subsection{Other peaks}
 
 \subsection{PE}
+\label{sec:pe}
+% scelta della lunghezza
 
 \subsection{Filter deconvolution}
 
