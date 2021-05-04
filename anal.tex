@@ -432,8 +432,46 @@ filter we will use in the analysis the doubling will be much less marked.
 
 \section{Peak finding}
 
+As input to the analysis we will measure the amplitude and temporal position of
+all the single pulses in the data. We will filter the waveforms to suppress
+noise and then run a peak finding algorithm.
+
 \subsection{Filtering}
-% il problema dei template non lineari
+
+We filter each event using a cross correlation filter (see
+\autoref{sec:filters}). We follow the procedure outlined in \autoref{ch:snr} to
+make the filter template. We do the template separately for each file, to check
+for unexpected variations in the pulse shape. The templates obtained are shown
+in \autoref{fig:templates}. Although the variations appear to be reasonably
+small, we use each template only for its own file.
+
+\marginpar{Add more precise reference when I fix the template stuff.}
+
+\begin{figure}
+    
+    \widecenter{\includempl{figtemplates}}
+    
+    \figcaption{templates}{Templates of the pulse shape obtained with averaging
+    for each file.}
+    
+\end{figure}
+
+An unexpected feature is the nonlinearity of the pulse amplitude with
+overvoltage. A possible explanation is mislabeling of the overvoltages. The
+overvoltage is determined from the bias and breakdown voltages reported in the
+file name. The breakdown voltage is always the same because it is a property of
+the tile, so if it was reported incorrectly, the correction to the overvoltage
+would be a fixed offset. But in this case even if the ratio amplitude over
+overvoltage would vary, the slope would be preserved, while in
+\autoref{fig:templates} wee se that two equal overvoltage steps correspond to
+clearly different absolute increases in amplitude.
+
+One could think that the reported bias was incorrect, but it is a very simple
+measurement. We will come back to this discussion after the analysis.
+
+% troncaggio dei filtri
+% tante lunghezze
+% scelta della lunghezza
 
 \subsection{Baseline}
 
@@ -444,6 +482,8 @@ filter we will use in the analysis the doubling will be much less marked.
 \subsection{PE}
 
 \subsection{Filter deconvolution}
+
+% assunzione semplificativa: gli afterpulse hanno la stessa forma ma riscalata
 
 \section{Random pulses rate}
 
