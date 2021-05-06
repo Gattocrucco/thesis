@@ -775,7 +775,74 @@ afterpulses correctly identified.
 
 \subsection{PE}
 \label{sec:pe}
-% scelta della lunghezza
+
+To assign the number of PE to the peaks we need to define bins for the height
+of the peaks. We want to choose the filter length that yields the optimal
+separation between PE in the height distribution. A longer filter suppresses
+the random height fluctuation due to noise; at the same time, however, it picks
+up afterpulses with the template tail, adding an upper tail to each PE height
+distribution. Since the afterpulse probability increases with the number of PE
+of the primary pulse, the distributions for 0 and 1~PE are the least touched.
+
+In our analysis we will care particularly about selecting 1~PE pulses and
+separating the afterpulses. So we use the following criterion: we take the
+shortest filter that allows to clearly separate the 1~PE distribution. These
+filter lengths are respectively \SI{128}{ns}, \SI{64}{ns}, \SI{64}{ns} for
+\SI{5.5}{VoV}, \SI{7.5}{VoV}, \SI{9.5}{VoV}. We show the templates for these
+lengths in \autoref{fig:trunc}.
+
+\begin{figure}
+
+    \widecenter{\includempl{figtrunc}}
+    
+    \figcaption{trunc}{The principal filter templates used in the analysis,
+    shown unnormalized.}
+    
+\end{figure}
+
+We tried selecting away the afterpulse tails using the peak finder to locate
+afterpulses, however we did not manage to reduce them significantly. We
+interpret this as the tail being composed mainly of close and short
+afterpulses, that can not be recognized individually due to their low height.
+Being located on the slope of the laser peak, the prominence of a close
+afterpulse tends to be lower that that of an isolated pulse with the same
+height. Thus the peak finder will always find two random peaks in the noise
+with higher prominence than a short afterpulse, forbidding us to try to use an
+aggressively low threshold with an high fake rate, since those afterpulses are
+not even present in the peaks list.
+
+There are other two minor factors that deform the height distribution: the
+saturation of the digitizer, and pre-trigger pulses close to the laser one.
+Thus we histogram the laser peak height excluding events with saturation and
+events where the peak finder locates a pre-trigger pulse higher than~8 within
+\SI{2.5}{\micro s} before the trigger using the longest filter. This
+histogram is shown in \autoref{fig:pe} for \SI{5.5}{VoV} and \autoref{fig:pe2}
+for all overvoltages.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figpe}}
+    
+    \figcaption{pe}{Histogram of the laser peak height, with a selection to
+    avoid biased heights. The dotted lines are the boundaries of the PE bins.
+    See \autoref{fig:pe2} for all overvoltages.}
+    
+\end{figure}
+
+We place the PE bin boundaries taking the midpoints between the two most
+distant consecutive heights in the range between each pair of consecutive
+height distribution peaks. Heights above the last boundaries are not assigned a
+number of PE, but they are not lost for the analysis, we will just use an
+overflow bin when necessary.
+
+Note the dips between the peaks in the histograms (the vertical scale is
+logarithmic). The lowest bin count is at most~4 in all cases. Let us put a
+rough upper bound on the contamination. There are more than \num{10000} events
+per peak. Supposing a worst case with 25 bins with 4 counts each penetrating
+into a neighboring peak, it gives \SI1\%. This means that it is surely less
+than the Poisson error on the count for each PE. The 1~PE peaks are well
+separated, with a row of 0 or 1~count bins around them, so we estimate a
+contamination of \SI{0.01}\%.
 
 \subsection{Filter deconvolution}
 
