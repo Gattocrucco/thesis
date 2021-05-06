@@ -491,7 +491,9 @@ As usual the template is normalized to unit sum for filtering, such that the
 filter behaves like an average and the baseline can be computed independently
 of the filter. This also means that signals will stay negative.
 
-We defer to \autoref{sec:pe} the description of how we select the filter length.
+To evaluate the filter near the boundaries, the waveform is prolonged with the
+estimated baseline value, described in the next section. We defer to
+\autoref{sec:pe} the description of how we select the filter length.
 
 \subsection{Baseline}
 
@@ -563,6 +565,7 @@ segment the baseline computation to detect inhomogeneity, but in our present
 case we will go on without fixing this bias.
 
 \subsection{Laser peak}
+\label{sec:laser}
 
 We know where the laser pulse should be, so we search it separately from other
 pulses. We take a window from the filtered waveform of \SI{\pm 30} samples
@@ -706,6 +709,69 @@ further. We will just keep in the back of our minds that there are these events
 and check case by case that ignoring them has a negligible effect.
 
 \subsection{Other peaks}
+
+We identify other pulses using a prominence-based peak finder. With
+``prominence'' we mean the topographical prominence, which is defined as
+follows: starting from the peak whose prominence is to be measured, go to the
+right and to the left until an higher elevation is found. For each side, take
+the minima between these stops and the peak. The prominence is the difference
+in elevation between the peak and the maximum of the two minima. See
+\autoref{fig:prominence} for an illustration.
+
+In this discussion we will use positive signal logic, so a peak is a local
+maximum. Remember that in the actual analysis the convention is swapped.
+
+\begin{figure}
+    
+    \widecenter{\includegraphics[width=0.8\textwidth]{prominence}}
+    
+    \caption{\label{fig:prominence} Illustration of the definition of
+    topographical prominence. The prominence of the circled peak is the length
+    of the thick vertical arrow.}
+    
+\end{figure}
+
+We search the peaks separately in the pre and post laser peak regions. When the
+laser peak is missing, we use the beginning of the laser peak search range as
+separator. This means that even if the laser peak is lower than the peak, the
+prominence ``exploration range'' stops there.
+
+If one of the minima occurs at the edge, it is ignored and the prominence is
+computed using the minimum on the other side, unless both minima occur at the
+edge. This is to avoid assigning a very low prominence to a pulse whose shape
+is truncated due to being close to a boundary.
+
+The minima are capped to the baseline: if a minimum is lower than the baseline,
+the value of the baseline is used instead to compute the prominence. This
+increases the ratio between the prominence of close pulses to the one of
+isolated pulses, because if the explored range is longer it is easier to find a
+deeper random oscillation.
+
+For each region, we save the two most prominent peaks. We do not make a
+selection on the prominence, we always fill the four slots per event. In this
+way we can observe the distribution of the height of random peaks and choose
+a good threshold afterwards.
+
+In peak finding algorithms it is customary to require a minimum distance
+between peaks. This is to avoid picking up close high peaks due to random
+oscillation that actually correspond to a single pulse. Selecting by prominence
+avoids this problem if the waveform is smooth, because close peaks will have a
+shallow dip between them and the prominence of the lower one will be measured
+relative to that. Our waveforms are smooth on the scale of the filter length,
+so it did not turn out necessary to add a distance criterion.
+
+In \autoref{fig:peakfinder} we show two examples of events with close
+afterpulses correctly identified.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figpeakfinder-0}\includempl{figpeakfinder-1}}
+    
+    \figcaption{peakfinder}{The events with the closest pair of pre-trigger
+    pulses (left panel) and post-trigger pulse closest to the laser pulse
+    (right panel) for at least 1 PE peaks.}
+    
+\end{figure}
 
 \subsection{PE}
 \label{sec:pe}
