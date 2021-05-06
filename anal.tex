@@ -336,6 +336,7 @@ afterpulses}, while the case with an afterpulse of an afterpulse \emph{series
 afterpulses}.
 
 \subsection{Expected values}
+\label{sec:expval}
 
 \cite[tab.~3.1~p.~62]{savarese2018} summarizes the noise parameters for the FBK
 SiPMs at \SI{80}K and \SI{5}V overvoltage. In this analysis we will use newer
@@ -417,6 +418,13 @@ filter we will use in the analysis the doubling will be much less marked.
     
 \end{figure}
 
+It was reported to us that in this data there could be a significative amount
+of light that hits the detectors after being reflected. Since the apparatus is
+small, we estimate an upper bound of \SI{1}m for the distance traveled by
+light, which corresponds to a \SI{3}{ns} delay. This delay is smaller than
+the scale of the variations of the signal shape and of the noise, so we can
+neglect this problem.
+
 \begin{figure}
     
     \widecenter{\includempl{fighist2dtile21-0}}
@@ -472,12 +480,16 @@ measurement. We will come back to this discussion after the analysis.
 Filtering increases the signal to noise ratio, but degrades the separation
 between close peaks. Since we are studying correlated pulses, it is thus
 important to use a filter as short as possible. We filter the waveform with a
-logarithmic range of filter lengths: \SI{32}{ns}, \SI{64}{ns}, \ldots,
+logarithmic range of filter lengths: \SI{16}{ns}, \SI{32}{ns}, \ldots,
 \SI{1024}{ns}. The computations we will describe are carried in parallel with
 all filter lengths, and then we choose in the analysis which lengths to use.
 The truncation of the template to the desired length is done like in
 \autoref{ch:timeres}, keeping the fixed length subrange of samples that has
 maximum squared norm.
+
+As usual the template is normalized to unit sum for filtering, such that the
+filter behaves like an average and the baseline can be computed independently
+of the filter. This also means that signals will stay negative.
 
 We defer to \autoref{sec:pe} the description of how we select the filter length.
 
@@ -552,6 +564,147 @@ case we will go on without fixing this bias.
 
 \subsection{Laser peak}
 
+We know where the laser pulse should be, so we search it separately from other
+pulses. We take a window from the filtered waveform of \SI{\pm 30} samples
+around the expected trigger position 8969. In this window we take the minimum
+local minimum, i.e.\ we consider the samples which have higher neighboring
+samples, and take the minimum of these. If there is no local minimum, which
+happens when the waveform is monotonically increasing or decreasing within the
+60 selected samples, we mark the laser peak as missing.
+
+To check that this is working we look at the distribution of the peak positions
+for 1 PE pulses (\autoref{fig:laserpos}, left panel). It is centered on 8969 as
+expected. However, it has a tail to the right when the filter length is short.
+An explanation that comes to mind is that maybe when the SNR is not high
+enough, the peak finder is picking up a close afterpulse instead of the main
+peak. Given the short delay this should be unlikely, but since we are
+particularly interested in afterpulses it is better to check this thoroughly.
+
+\begin{figure}
+
+    \widecenter{\includempl{figlaserpos-0}\includempl{figlaserpos-1}}
+
+    \figcaption{laserpos}{Left panel: histogram of the laser peak position,
+    only for 1 PE peaks, for all filter lengths. The zero of the scale is such
+    that the expected position is 8969. Right panel: 2D histogram of the laser
+    peak position and the amplitude, for the same selection of peaks, but only
+    with the \SI{128}{ns} filter. See \autoref{fig:laserpos2} for all
+    overvoltages.}
+    
+\end{figure}
+
+As a first diagnostic, we look at the joint distribution of the peak position
+and height (\autoref{fig:laserpos}, right panel). If the minimum was moving to
+the right due to an additional close peak, we would expect a positive
+correlation between height and position in the tail. Instead, we see a negative
+correlation.
+
+Then we look at the events themselves. In \autoref{fig:lptail} we show the
+event with the rightmost position at \SI{64}{ns}, filtered with \SI{64}{ns} and
+\SI{128}{ns}. With the longer filter the position goes back to the center of
+the distribution. We inspected a lot of events in the tail and they are almost
+all like the one we show.
+
+\begin{figure}
+
+    \widecenter{\includempl{figlptail-0}\includempl{figlptail-1}}
+
+    \figcaption{lptail}{Left panel: the event with the rightmost laser peak
+    position for 1 PE peaks with filter length \SI{64}{ns}. Right panel: the
+    same event with filter length \SI{128}{ns}. See \autoref{fig:lptail2} for
+    all overvoltages.}
+
+\end{figure}
+
+Finally, the tail contracts as the overvoltage increases (see
+\autoref{fig:laserpos2}). From these observations we induce that the right
+shift is caused by random fluctuation. The asymmetry of the tail reflects the
+asymmetry of the shape of the signal.
+
+We have not said how we are selecting 1 PE pulses. The explanation will come in
+\autoref{sec:pe}. Also, we have talked about the positions of the peaks in the
+filtered waveform without specifying the alignment of the filter output
+relative to the input. For example, in the histogram (\autoref{fig:laserpos})
+the position is centered on the assumed trigger 8969, while clearly in the
+event visualization (\autoref{fig:lptail}) the peak search range is after the
+trigger. The reader has to trust us that although we employ multiple
+conventions, we use them consistently each time.
+
+We said that with our procedure a laser peak can be missing. However we know
+that the laser is always present; even when there are no pulses, we need to
+count the event as a 0 PE laser signal to fit the Poisson+DiCT distributions.
+We have to make something of the ``missing laser'' events.
+
+First, we count these events for each filter length (\autoref{fig:missing},
+left panel). They are about \SI{1.5}\% of the total, so not negligible. We went
+through a lot of these events and they are almost all genuinely missing pulses.
+It turns out that the noise is actually quite likely not to produce a local
+minimum in a \SI{60}{ns} window after filtering. Nevertheless, there are some
+events which have a pulse which for some weird combination of noise
+oscillations is not detected properly.
+
+\begin{figure}
+
+    \widecenter{\includempl{figmissing}}
+    
+    \figcaption{missing}{Left panel: for each overvoltage, the fraction of
+    events where there is no local minimum in the laser peak search range, as a
+    function of filter length. Right panel: the fraction of events where the
+    minimum is missing for all filter lengths less than or equal to the one on
+    the abscissa.}
+
+\end{figure}
+
+As in the case of the right shift, the anomalies tend to appear only for a
+particular filter length choice and disappear on the same event with other
+lengths. So as a simple solution we use the shortest filter which yields a
+non-missing peak when the preferred filter does not work. The right panel of
+\autoref{fig:missing} shows how the fraction of missing events decreases as we
+allow more lengths to choose from. Even with this fix, however, there is a hard
+core of events which do not have a local minimum in any case; from \SI{0.03}\%
+at \SI{5.5}{VoV} to \SI{0.15}\% at \SI{9.5}{VoV}.
+
+These events are more interesting, so we show 12 of them at random for each
+overvoltage in Figures~\ref{fig:verymissing0}, \ref{fig:verymissing1},
+and~\ref{fig:verymissing2}. With our good old eyes, we identify three cases:
+1)~true missing pulses, 2)~delayed pulses which fall out of the window, and
+3)~pulses which are shadowed by a very high close consecutive pulse. In
+\autoref{tab:missing} we list the total number of hard misses and the counts
+of the three categories in the sample for all overvoltages.
+
+\begin{table}
+    
+    \widecenter{
+        \begin{tabular}{S[table-format=1.1] S[table-format=3] *3S[table-format=1]}
+            \toprule
+            & & \multicolumn3c{Count of 12} \\
+            \cmidrule(r){3-5}
+            {Overvoltage [\si{V}]} & {Total} & {True miss} & {Delayed} & {Close consecutive} \\
+            \midrule
+            5.5 &  56 & 4 & 3 & 5 \\
+            7.5 & 148 & 7 & 5 & 0 \\
+            9.5 & 303 & 5 & 0 & 7 \\
+            \bottomrule
+        \end{tabular}
+    }
+    
+    \tabcaption{missing}{The number of events where the laser peak is missing
+    with all filter lengths, and the counts, in a random sample of 12 of these
+    events, for the three categories of configurations that appear in this
+    selection.}
+    
+\end{table}
+
+The delayed pulses could be photons that produce carriers in an inactive region
+that then migrate to a diode junction (we are not sure about this, it is just
+speculation). The consecutive pulses could be DeCT with high DiCT, they would
+have the time scale we expect from \cite[fig.~3.8~p.~54]{savarese2018}
+already mentioned in \autoref{sec:expval}, or less likely afterpulses.
+
+Since these events are a small fraction of the sample we did not fix this
+further. We will just keep in the back of our minds that there are these events
+and check case by case that ignoring them has a negligible effect.
+
 \subsection{Other peaks}
 
 \subsection{PE}
@@ -566,6 +719,11 @@ case we will go on without fixing this bias.
 
 \section{Afterpulses}
 %         Spiegare per bene come faccio i fit bayesiani con minimi quadrati e cosa significa statisticamente correggere con sqrt(chi2/dof)
+
+% devo usare mainnpebackup==1 anziché mainnpe e vedere se cambia qualcosa,
+% magari questa variabile la aggiungo a quelle predefinite. Però come faccio
+% a fare minorpos-mainpos? Potrei riportare il mainpos da un filtro all'altro
+% usando gli offset. posY = posX - offsetX + offsetY.
 
 \section{Direct cross talk}
 
