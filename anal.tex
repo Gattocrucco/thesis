@@ -445,6 +445,7 @@ all the single pulses in the data. We will filter the waveforms to suppress
 noise and then run a peak finding algorithm.
 
 \subsection{Filtering}
+\label{sec:filtering}
 
 We filter each event using a cross correlation filter (see
 \autoref{sec:filters}). We follow the procedure outlined in \autoref{ch:snr} to
@@ -833,7 +834,8 @@ We place the PE bin boundaries taking the midpoints between the two most
 distant consecutive heights in the range between each pair of consecutive
 height distribution peaks. Heights above the last boundaries are not assigned a
 number of PE, but they are not lost for the analysis, we will just use an
-overflow bin when necessary.
+overflow bin when necessary. The ruler ticks that accompany the peaks in the
+event visualizations are these boundaries.
 
 Note the dips between the peaks in the histograms (the vertical scale is
 logarithmic). The lowest bin count is at most~4 in all cases. Let us put a
@@ -844,19 +846,178 @@ than the Poisson error on the count for each PE. The 1~PE peaks are well
 separated, with a row of 0 or 1~count bins around them, so we estimate a
 contamination of \SI{0.01}\%.
 
-\subsection{Filter deconvolution}
+\subsection{Amplitude of close pulses}
 
-% assunzione semplificativa: gli afterpulse hanno la stessa forma ma riscalata
+When two pulses are close to each other, the height contains a contribution
+from the tail of the other pulse. We need to compute the amplitude of the
+single pulse, i.e.\ the height it would have if it was isolated. To simplify
+the problem, we make the following assumptions:
+%
+\begin{enumerate}
+    
+    \item the position of a peak does not depend on the presence of other
+    pulses;
+    
+    \item the shape of afterpulses is the same as normal pulses.
+    
+\end{enumerate}
+
+About the first assumption: we have seen that the peaks in the output of the
+cross correlation filter have a sharp cusp. A perfectly sharp cusp, even if
+summed to a sloping shape, remains in the same position. A rounded peak,
+instead, will move slightly in the uphill direction when summed to a slope.
+Actually, given the short filters we are using, these cusps are not really
+sharp. Look at the second panel of \autoref{fig:peakfinder}. The peak in the
+square box has a radius of less than \SI{10}{ns}. By intuition we expect the
+peak to drift less than its radius, so we estimate that the typical error will
+be \SI{5}{ns}.
+
+About the second assumption: it seems that in the literature this is implicitly
+given for. But, as we said before, it depends on the assumption that the pulse
+shape does not change with overvoltage, such that while the cell is recharging,
+its behavior will just be the rescaled version of its fully charged self. In
+\autoref{sec:filtering} we have seen that the pulse amplitude does not depend
+linearly on overvoltage. If you look closely at \autoref{fig:templates}, you
+can notice that the shapes are also a bit different. We make a clearer
+comparison in \autoref{fig:shape} by plotting the templates normalized to have
+the same peak amplitude. They are indeed different, but the difference is small
+enough to justify the working hypothesis.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figshape}}
+
+    \figcaption{shape}{The signal templates at different overvoltages compared
+    fixing the peak amplitude to~1. The thickness of the stroke is twice the
+    standard deviation over the 10 files per overvoltage, while the center of
+    the stroke is the mean.}
+    
+\end{figure}
+
+Now, let $\mathbf y$ be the output of the filter applied to a single noiseless
+pulse, which we compute by filtering the signal template. Let $t_\alpha$ be the
+position of peak $\alpha$ and $a_\alpha$ the unknown amplitude. Since the
+filter is linear, the filtered sum of the pulses and the noise is the sum of
+each component filtered separately, so the model for the complete filtered
+waveform $\mathbf w$ is
+%
+\begin{equation}
+    w_i = \sum_\alpha a_\alpha y_{i - t_\alpha} + \epsilon_i,
+\end{equation}
+%
+where $\boldsymbol\epsilon$ is the filtered noise. There is some freedom in the
+definition of $\mathbf y$: we fix that the peak occurs at $y_0$ and that $y_0 =
+1$, such that if there is only one peak then $w_{t_1} = a_1 + \epsilon_{t_1}$.
+
+It is well known that the minimum variance in estimating $\mathbf a$ is
+obtained by using least squares with the inverse of the covariance matrix $V$
+of $\boldsymbol\epsilon$ as quadratic form. Let $H_{i\alpha} = y_{i-t_\alpha}$,
+then the solution is \cite[628]{zyla2020}
+%
+\begin{equation}
+    \hat{\mathbf a} = (H^\top V^{-1} H)^{-1} H^T V^{-1} \mathbf w.
+    \label{eq:lsq}
+\end{equation}
+%
+We note, however, that to solve the system it is just necessary to have as many
+datapoints as the number of peaks. It then comes natural to solve for
+simplicity this system of equations instead:
+%
+\begin{equation}
+    w_{t_\beta} = \sum_\alpha \hat a_\alpha y_{t_\beta - t_\alpha},
+    \label{eq:amplsystem}
+\end{equation}
+%
+i.e.\ we use only the observed peak heights $w_{t_\beta}$ instead of the full
+waveform.
+
+What are we losing with this simplification? In \autoref{sec:filters} we said
+that the matched filter is equivalent to linear least squares. We now indeed
+show that, if we were using the matched filter, solving \eqref{eq:amplsystem}
+would be equivalent to least squares and thus optimal. Just for this proof, let
+us use all the above notation, but without the filter applied, i.e.\ $\mathbf
+w$ is the unfiltered waveform, $\mathbf y$ is the unfiltered signal, $V$ is the
+covariance of the unfiltered noise.
+
+The template of the matched filter is
+%
+\begin{equation}
+    \mathbf h = V^{-1} \mathbf y.
+\end{equation}
+%
+The model (noise implicit) is
+%
+\begin{equation}
+    \mathbf w = H \mathbf a.
+\end{equation}
+%
+The filter is applied by operating with the matrix
+\begin{equation}
+    F_{ij} \equiv h_{j-i} = V^{-1}_{j-i,k} y_k,
+\end{equation}
+%
+so applying the filter we have
+%
+\begin{align}
+    F \mathbf w &= F H \mathbf a. \label{eq:noindices}
+\end{align}
+%
+We want to use only the peak heights in the filter output, assuming that we
+know exactly the true signal positions. These are
+%
+\begin{equation}
+    W_\beta \equiv (F \mathbf w)_{t_\beta} = V^{-1}_{j-t_\beta,k} y_k w_j. 
+\end{equation}
+%
+The noise is stationary, so we can sum the same offset to the indices of
+$V^{-1}$. Using this fact, the symmetry of $V$, and redefining the mute index
+$k$, we obtain
+%
+\begin{equation}
+    W_\beta = V^{-1}_{jk} y_{k-t_\beta} w_j = V^{-1}_{jk} H_{k\beta} w_j
+    \rightarrow \mathbf W = H^\top V^{-1} \mathbf w.
+\end{equation}
+%
+So, considering only the $W_\beta$ on the left hand side of
+\eqref{eq:noindices} and putting the indices on the right hand side, we have
+%
+\begin{align}
+    W_\beta &= V^{-1}_{j-t_\beta,k} y_k H_{j\alpha} a_\alpha = \\
+    &= V^{-1}_{j,k} y_{k-t_\beta} H_{j\alpha} a_\alpha = \\
+    &= (H^\top V^{-1} H)_{\beta\alpha} a_\alpha,
+\end{align}
+%
+thus the solution is
+%
+\begin{equation}
+    \mathbf a = (H^\top V^{-1} H)^{-1} H^\top V^{-1} \mathbf w,
+\end{equation}
+%
+which is the least squares estimator \eqref{eq:lsq}. \hfill $\square$
+
+Our filter differs in two ways from the matched filter: it does not keep into
+account the noise correlation, and it is truncated. So our method for computing
+the amplitude is worse than the optimal one as much as the filter is worse than
+the matched filter.
 
 \section{Random pulses rate}
 
 \section{Afterpulses}
-%         Spiegare per bene come faccio i fit bayesiani con minimi quadrati e cosa significa statisticamente correggere con sqrt(chi2/dof)
+
+% Spiegare per bene come faccio i fit bayesiani con minimi quadrati e cosa
+% significa statisticamente correggere con sqrt(chi2/dof)
 
 % devo usare mainnpebackup==1 anziché mainnpe e vedere se cambia qualcosa,
-% magari questa variabile la aggiungo a quelle predefinite. Però come faccio
-% a fare minorpos-mainpos? Potrei riportare il mainpos da un filtro all'altro
+% magari questa variabile la aggiungo a quelle predefinite. Però come faccio a
+% fare minorpos-mainpos? Potrei riportare il mainpos da un filtro all'altro
 % usando gli offset. posY = posX - offsetX + offsetY.
+
+% aggiungere il fit con due tau. plottarli insieme. devo inventare un metodo
+% generico per fare due fit insieme. Idea: quando pmf_or_cdf e prior sono liste,
+% fa più fit. gli altri parametri dovrebbero riguardare solo i dati quindi non
+% li vettorizzo. Per fare il modello con più tau: la cdf vede se tau è un
+% array, se è un array estrae anche un array con le normalizzazioni e calcola
+% il modello multicomponente.
 
 \section{Direct cross talk}
 
