@@ -52,6 +52,10 @@ pulse will have duration and amplitude uniquely determined by the resistor and
 the capacitance of the diode junction, independently of the initial release of
 energy that triggered the current.
 
+The difference between the bias and the breakdown voltage is called
+\emph{overvoltage}, and is often indicated with the unit ``\si{VoV}'' meaning
+``Volt overvoltage''.
+
 The output from all the cells is summed analogically, so if multiple cells are
 triggered simultaneously, the amplitude of the output pulse is discretized and
 proportional to the number of fired cells. As we already said in
@@ -487,6 +491,11 @@ all filter lengths, and then we choose in the analysis which lengths to use.
 The truncation of the template to the desired length is done like in
 \autoref{ch:timeres}, keeping the fixed length subrange of samples that has
 maximum squared norm.
+
+\marginpar{Currently the range is from \SI{64}{ns} to \SI{2048}{ns} in the
+cached analysis and so in the plots, but the one stated in the text in the
+code that would be run if the cache was deleted. Also, when I fix the
+template stuff, the chapter for the truncation will be \autoref{ch:snr}.}
 
 As usual the template is normalized to unit sum for filtering, such that the
 filter behaves like an average and the baseline can be computed independently
@@ -972,7 +981,11 @@ know exactly the true signal positions. These are
 The noise is stationary, so we can sum the same offset to the indices of
 $V^{-1}$. Using this fact, the symmetry of $V$, and redefining the mute index
 $k$, we obtain
-%
+
+\marginpar{This translation of the indices of $V^{-1}$ holds only in the limit
+of an infinitely long waveform. In practice for a waveform with some margin
+around the pulses.}
+
 \begin{equation}
     W_\beta = V^{-1}_{jk} y_{k-t_\beta} w_j = V^{-1}_{jk} H_{k\beta} w_j
     \rightarrow \mathbf W = H^\top V^{-1} \mathbf w.
@@ -1000,7 +1013,146 @@ account the noise correlation, and it is truncated. So our method for computing
 the amplitude is worse than the optimal one as much as the filter is worse than
 the matched filter.
 
+In each event we have to decide which peaks to input in \eqref{eq:amplsystem}.
+Most of the time, peaks are random noise oscillation. If the amplitude of
+random peaks had mean zero, adding a fake peak would increase the error but not
+introduce a bias. But, since we are selecting peaks by highest prominence, it
+is guaranteed that in a region of some microseconds we will find a peak with
+height comparable to the noise standard deviation. Indeed in the next section
+we will look at the height distribution for the peak finder output and see that
+it is positively biased. So we compute the amplitude only for peaks higher than
+a threshold. As threshold we pick the the PE bin boundary between 0 and 1~PE.
+
+When we use the computed pulse amplitude instead of the peak height, we would
+like to also see the distribution of the fake peaks such that we can be sure at
+a glance that we have no contamination, but most of the fake peaks do not have
+an amplitude since they do not pass the threshold prerequisite. The $y$
+normalization we have chosen makes the amplitude ``have the same units'' of the
+height, so we construct a variable which is the amplitude when available, and
+the height otherwise. In the following sections we mean this variable when we
+talk about ``amplitude''.
+
+Note that with this selection we are not excluding short afterpulses from the
+amplitude computation, because even if their amplitude is smaller, sitting on
+the tail of their parent pulse their height is still above threshold.
+
 \section{Random pulses rate}
+
+When counting afterpulses there will be a background from the dark count rate,
+which we have to subtract, so we measure it in the pre-trigger region. The
+laser trigger frequency should be less than \SI{1}{kHz}, so the events are
+distant between each other and there is not the possibility of correlated noise
+from a laser pulse leaking into the successive event.
+
+\marginpar{What is the laser trigger rate? Specify this better if I know after
+writing \autoref{ch:data}.}
+
+The title of this section reads ``random pulses rate'' instead of dark count
+rate because we will see we have reason to believe that in the data there are
+actually more random pulses than the dark count. It does not matter for
+background subtraction though.
+
+By looking at the time-value histograms in \autoref{fig:hist2dtile21} we see
+that in \num{20000} events there are just a few pre-trigger pulses, so we
+neglect the case of a double random pulse in the same event. If there are two
+pre-trigger pulses, one must be the afterpulse of the other, so the event
+counts as one random pulse. For the rate we do not care to know which pulse is
+the primary, but we will need it when fitting the DiCT model to the random
+pulses.
+
+The primary pulse is of course the first in chronological order, but to
+distinguish the one pulse from the two pulses case we are forced to put a
+threshold on the amplitude before looking at the distribution. We do something
+similar as we did for the amplitude. The initial variables are the position,
+height and amplitude of the two most prominent pre-trigger peaks. When both
+heights are above the 0 to 1~PE boundary, the first set of variables is set to
+the first peak in chronological order; otherwise to the most prominent peak.
+
+In the left panel of \autoref{fig:pretrigger} we show the scatter plot of the
+first pulse amplitude versus position. There are some problems at the edges. On
+the left edge, the negative amplitudes are actually very large values that we
+mapped to \num{-10}. They are probably due to the amplitude linear system
+\eqref{eq:amplsystem} being degenerate, but we did not investigate why this may
+happen. On the right edge conversely there are some zeroes and anomalously
+small values. Thus we ignore the first \SI{100}{ns} and the last \SI{500}{ns}
+of the pre-trigger region. The wider margin on the right is just to be safe in
+case the presence of the laser pulse was having some effects. The selected
+region is marked by the gray vertical band in the plot.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figpretrigger-0}\includempl{figpretrigger-1}}
+    
+    \figcaption{pretrigger}{Left panel: scatter plot amplitude vs.\ position of
+    the chronological first pre-trigger peak in each event. Right panel:
+    histogram of the amplitude for the peaks contained in the vertical gray
+    band in the left plot. See \autoref{fig:pretrigger2} for all overvoltages.}
+    
+\end{figure}
+
+The right panel of \autoref{fig:pretrigger} shows the histogram of the
+amplitude of the pulses in the temporal cut. The separation between random
+peaks and 1~PE pulses is clear; the amplitude threshold we use is marked with a
+gray band also reported in the left panel. The dotted lines are the PE bin
+boundaries. As we anticipated, the distribution of the amplitude of the random
+peaks is biased upward, and leaks a bit above the 0 to 1~PE boundary.
+
+To compute the rate, we count the number of pulses satisfying the cuts, and
+divide by the number of events times the pre-trigger region duration minus the
+cuts. The uncertainty is given by the Poisson error of the count. In
+\autoref{tab:ptrate} we report the obtained values.
+
+\begin{table}
+    
+    \widecenter{
+        \raisebox{-0.5\height}{\includempl{figptrate}}
+        \begin{tabular}{
+            S[table-format=1.1]
+            S[table-format=6]
+            S[table-format=1.2]
+            S[table-format=1.2]
+            S[table-format=3]
+            S[table-format=3(2), separate-uncertainty=true]
+        }
+            \toprule
+            &
+            & \multicolumn2c{Time}
+            & \multicolumn2c{Pulses} \\
+            \cmidrule(r){3-4} \cmidrule(r){5-6}
+            {Overvoltage}
+            & {Events}
+            & {Per event}
+            & {Total}
+            & {Count}
+            & {Rate} \\
+            {[\si V]}
+            &
+            & {[\si{\micro s}]}
+            & {[\si s]}
+            &
+            & {[\si{cps}]} \\
+            \midrule
+            5.5 & 200028 & 8.37 & 1.67 &  73 &   44 \pm 5 \\
+            7.5 & 200021 & 8.37 & 1.67 & 277 & 165 \pm 10 \\
+            9.5 & 200025 & 8.37 & 1.67 & 186 &  111 \pm 8 \\
+            \bottomrule
+        \end{tabular}
+    }
+    
+    \tabcaption{ptrate}{The rate of primary pre-trigger pulses in a fiducial
+    region and the intermediate quantities used to compute it.}
+    
+\end{table}
+
+We notice that the rate at \SI{7.5}{VoV} is substantially higher than the one
+at \SI{9.5}{VoV}. The dark count rate steadily increases with overvoltage (see
+for example \cite[fig.~3.13~p.~61]{savarese2018}), because an higher field in
+the diode lowers the potential barrier than a carrier must overcome to become
+conducive. So we induce that there must be an additional source of random
+pulses. Maybe the experimental setup was not light-tight. Anyway, these values
+can be considered an upper bound for the dark count rate. For reference, the
+maximum dark count rate allowed by the DarkSide20k specifications is
+\SI{250}{cps} \cite[tab.~3.1~p.~62]{savarese2018}.
 
 \section{Afterpulses}
 
