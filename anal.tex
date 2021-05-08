@@ -352,8 +352,8 @@ The dark count rate, converted from rate per area to rate per PDM (area
 \SI{25}{cm^2}), is \SI{25}{cps}. The correlated noise probabilities are: DiCT
 \SI{17}\%, AP \SI{17}\%, DeCT \SI{1.5}\%.
 
-We did not make a model for DeCT (including delayed afterpulses) because we did
-not see clear evidence of it in our data. In
+We did not make a model for DeCT (including delayed afterpulses) because we do
+not have a clean selection of it in our data. In
 \cite[fig.~3.8~p.~54]{savarese2018} we see that DeCT arrives within
 \SI{50}{ns}. We will not properly analyze correlated pulses with delay below
 \SI{100}{ns}. For the DeCT we will just give a very uncertain estimate. Since
@@ -485,17 +485,15 @@ measurement. We will come back to this discussion after the analysis.
 Filtering increases the signal to noise ratio, but degrades the separation
 between close peaks. Since we are studying correlated pulses, it is thus
 important to use a filter as short as possible. We filter the waveform with a
-logarithmic range of filter lengths: \SI{16}{ns}, \SI{32}{ns}, \ldots,
-\SI{1024}{ns}. The computations we will describe are carried in parallel with
+logarithmic range of filter lengths: \SI{32}{ns}, \SI{64}{ns}, \ldots,
+\SI{2048}{ns}. The computations we will describe are carried in parallel with
 all filter lengths, and then we choose in the analysis which lengths to use.
 The truncation of the template to the desired length is done like in
 \autoref{ch:timeres}, keeping the fixed length subrange of samples that has
 maximum squared norm.
 
-\marginpar{Currently the range is from \SI{64}{ns} to \SI{2048}{ns} in the
-cached analysis and so in the plots, but the one stated in the text in the
-code that would be run if the cache was deleted. Also, when I fix the
-template stuff, the chapter for the truncation will be \autoref{ch:snr}.}
+\marginpar{When I fix the template stuff, the chapter for the truncation will
+be \autoref{ch:snr}.}
 
 As usual the template is normalized to unit sum for filtering, such that the
 filter behaves like an average and the baseline can be computed independently
@@ -1036,6 +1034,10 @@ Note that with this selection we are not excluding short afterpulses from the
 amplitude computation, because even if their amplitude is smaller, sitting on
 the tail of their parent pulse their height is still above threshold.
 
+In the event visualizations, the ruler associated to each peak starts from a
+dot placed such that the distance from the dot to the peak is the amplitude.
+In the legend, the amplitude is given under ``$a = \ldots$''.
+
 \section{Random pulses rate}
 
 When counting afterpulses there will be a background from the dark count rate,
@@ -1147,7 +1149,7 @@ cuts. The uncertainty is given by the Poisson error of the count. In
 We notice that the rate at \SI{7.5}{VoV} is substantially higher than the one
 at \SI{9.5}{VoV}. The dark count rate steadily increases with overvoltage (see
 for example \cite[fig.~3.13~p.~61]{savarese2018}), because an higher field in
-the diode lowers the potential barrier than a carrier must overcome to become
+the diode lowers the potential barrier that a carrier must overcome to become
 conducive. So we induce that there must be an additional source of random
 pulses. Maybe the experimental setup was not light-tight. Anyway, these values
 can be considered an upper bound for the dark count rate. For reference, the
@@ -1156,20 +1158,26 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 
 \section{Afterpulses}
 
-% Spiegare per bene come faccio i fit bayesiani con minimi quadrati e cosa
-% significa statisticamente correggere con sqrt(chi2/dof)
+% dire come li seleziono (anche che prendo il primo a sinistra)
+% come calcolo l'ampiezza, questione di quando non è definita
+% grafico: scatterplot affiancato all'istogramma temporale (solo con il taglio in ampiezza), in scala logaritmica così si dovrebbero vedere gli esponenziali
+% spiegare la questione del "primo venuto"
+% grafico del fit
+% tabella con i fit e conteggi, colonne:
+%     Delay cut           Fit parameters           Fit quality
+% vov lcut rcut count bkg tau1 tau2 p1 factor rate chi2 dof pv
+% grafico tipo afterpulse però zoomato usando la prominenza che si vedono i
+% DeCT, faccio un riquadro incrociando due span e scrivo i conteggi nel testo
 
-% devo usare mainnpebackup==1 anziché mainnpe e vedere se cambia qualcosa,
-% magari questa variabile la aggiungo a quelle predefinite. Però come faccio a
-% fare minorpos-mainpos? Potrei riportare il mainpos da un filtro all'altro
-% usando gli offset. posY = posX - offsetX + offsetY.
+\begin{figure}
+    
+    \widecenter{\includempl{figapampl-0}\includempl{figapampl-1}}
 
-% aggiungere il fit con due tau. plottarli insieme. devo inventare un metodo
-% generico per fare due fit insieme. Idea: quando pmf_or_cdf e prior sono liste,
-% fa più fit. gli altri parametri dovrebbero riguardare solo i dati quindi non
-% li vettorizzo. Per fare il modello con più tau: la cdf vede se tau è un
-% array, se è un array estrae anche un array con le normalizzazioni e calcola
-% il modello multicomponente.
+    \widecenter{\includempl{figapampl-2}\includempl{figapampl-3}}
+    
+    \figcaption{apampl}{}
+    
+\end{figure}
 
 \section{Direct cross talk}
 
@@ -1195,3 +1203,6 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 % peak finding, citare LZ:
 % Conferenza dance machine learning workshop
 % https://indico.physics.lbl.gov/event/1192/contributions/4934/
+
+% cosa che si può migliorare: usare il filtro lungo quando calcolo l'ampiezza.
+% ma questo sta già nella discussione di LZ.
