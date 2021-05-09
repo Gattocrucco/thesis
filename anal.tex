@@ -1160,14 +1160,7 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 
 % dire come li seleziono (anche che prendo il primo a sinistra)
 % come calcolo l'ampiezza, questione di quando non è definita
-% grafico: scatterplot affiancato all'istogramma temporale (solo con il taglio in ampiezza), in scala logaritmica così si dovrebbero vedere gli esponenziali
 % spiegare la questione del "primo venuto"
-% grafico del fit
-% tabella con i fit e conteggi, colonne:
-%     Delay cut           Fit parameters           Fit quality
-% vov lcut rcut count bkg tau1 tau2 p1 factor rate chi2 dof pv
-% grafico tipo afterpulse però zoomato usando la prominenza che si vedono i
-% DeCT, faccio un riquadro incrociando due span e scrivo i conteggi nel testo
 
 \begin{figure}
     
@@ -1176,6 +1169,122 @@ maximum dark count rate allowed by the DarkSide20k specifications is
     \widecenter{\includempl{figapampl-2}\includempl{figapampl-3}}
     
     \figcaption{apampl}{}
+    
+\end{figure}
+
+\begin{figure}
+    
+    \widecenter{\includempl{figapscatter-0}\includempl{figapscatter-1}}
+
+    \figcaption{apscatter}{See \autoref{fig:apscatter2} for all overvoltages.}
+    
+\end{figure}
+
+\begin{figure}
+    
+    \widecenter{\includempl{figapfit-0}\includempl{figapfit-1}}
+
+    \figcaption{apfit}{See \autoref{fig:apfit2} for all overvoltages.}
+    
+\end{figure}
+
+\begin{table}
+    
+    \widecenter{
+        \scriptsize\sffamily
+        \setlength\tabcolsep{4pt}
+        \begin{tabular}{
+            S[table-format=1.1]
+            S[table-format=3]
+            S[table-format=4]
+            S[table-format=5]
+            S[table-format=3]
+            S[table-format=1.2]
+            S[table-format=2.1(2)]
+            S[table-format=2.1(2)]
+            S[table-format=3(2)]
+            S[table-format=1.2(2)]
+            S[table-format=2.1(2)]
+            S[table-format=1.3(2)]
+            S[table-format=1.2(2)]
+            S[table-format=2]
+            S[table-format=2]
+            S[table-format=1.2]
+        }
+            \toprule
+
+            & \multicolumn2c{Delay cut}
+            & {}
+            & {}
+            & {}
+            & {}
+            & \multicolumn4c{Fit parameters}
+            & {}
+            & {}
+            & \multicolumn3c{Fit quality} \\
+            \cmidrule(r){2-3} \cmidrule(r){8-11} \cmidrule(r){14-16}
+            {OV}
+            & {From}
+            & {To}
+            & {Events}
+            & {Cnt}
+            & {Time}
+            & {Random}
+            & {Random}
+            & {tau1}
+            & {tau2}
+            & {p1}
+            & {Correction}
+            & {Prob.}
+            & {chi2}
+            & {dof}
+            & {pval} \\
+            {[\si V]}
+            & {[\si{ns}]}
+            & {[\si{ns}]}
+            &
+            &
+            & {[\si s]}
+            &
+            &
+            & {[\si{ns}]}
+            & {[\si{\micro s}]}
+            & {[\si\%]}
+            &
+            & {[\si\%]}
+            &
+            &
+            & \\
+            \midrule
+5.5 & 300 & 5500 & 46990 & 535 & 0.24 & 10.7 \pm 1.2 & 11.6 \pm 1.2 & 399 \pm 19 &        {n.d.} &       {n.d.} &   2.12 \pm 0.16 & 2.37 \pm 0.21 & 77 & 17 & {<1e-6} \\
+5.5 & 300 & 5500 & 46990 & 535 & 0.24 & 10.7 \pm 1.2 & 10.7 \pm 1.2 & 285 \pm 27 & 2.24 \pm 0.64 & 71.9 \pm 4.2 & 2.116 \pm 0.084 & 2.36 \pm 0.14 & 22 & 17 &     0.17 \\ \midrule
+7.5 & 300 & 5500 & 38404 & 590 & 0.20 & 33.0 \pm 2.0 & 35.1 \pm 1.9 & 432 \pm 22 &        {n.d.} &       {n.d.} &   2.00 \pm 0.14 & 2.91 \pm 0.24 & 75 & 18 & {<1e-6} \\
+7.5 & 300 & 5500 & 38404 & 590 & 0.20 & 33.0 \pm 2.0 & 33.2 \pm 2.0 & 283 \pm 30 & 2.04 \pm 0.59 & 68.5 \pm 4.9 & 2.049 \pm 0.080 & 2.97 \pm 0.17 & 20 & 18 &     0.31 \\ \midrule
+9.5 & 300 & 5500 & 28301 & 605 & 0.15 & 16.4 \pm 1.2 & 17.0 \pm 1.2 & 537 \pm 27 &        {n.d.} &       {n.d.} & 1.749 \pm 0.096 & 3.64 \pm 0.25 & 69 & 18 & {<1e-6} \\
+9.5 & 300 & 5500 & 28301 & 605 & 0.15 & 16.4 \pm 1.2 & 16.3 \pm 1.2 & 227 \pm 38 & 1.13 \pm 0.15 & 47.7 \pm 7.6 & 1.908 \pm 0.068 & 3.97 \pm 0.22 & 11 & 18 &     0.91
+            \\ \bottomrule
+        \end{tabular}
+    }
+    
+    \scriptcaption{tab}{tab}{ap}{}
+    
+\end{table}
+
+\begin{figure}
+    
+    \widecenter{\includempl{figapresults}}
+
+    \figcaption{apresults}{}
+
+\end{figure}
+
+\section{Delayed cross talk}
+
+\begin{figure}
+    
+    \widecenter{\includempl{figdect}}
+    
+    \figcaption{dect}{}
     
 \end{figure}
 
