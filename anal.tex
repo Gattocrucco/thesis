@@ -242,6 +242,7 @@ for the Poisson+DiCT distribution with $\text{PE} \le 11$
 \cite[p.~4~fig.~2]{vinogradov2012}.
 
 \subsection{Afterpulse model}
+\label{sec:aptheory}
 
 For the afterpulses we have to model not just the number of pulses, but also
 their temporal distribution and amplitude.
@@ -853,6 +854,9 @@ than the Poisson error on the count for each PE. The 1~PE peaks are well
 separated, with a row of 0 or 1~count bins around them, so we estimate a
 contamination of \SI{0.01}\%.
 
+\marginpar{I forgot to mention that doing this with the amplitude is the same,
+and that anyway we are doing it with the amplitude.}
+
 \subsection{Amplitude of close pulses}
 
 When two pulses are close to each other, the height contains a contribution
@@ -1158,9 +1162,38 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 
 \section{Afterpulses}
 
-% dire come li seleziono (anche che prendo il primo a sinistra)
-% come calcolo l'ampiezza, questione di quando non è definita
-% spiegare la questione del "primo venuto"
+To study afterpulses we consider the post-trigger peaks in events with a 1~PE
+laser pulse. Using the terminology introduced at the end of
+\autoref{sec:aptheory}, a single PE initial pulse implies that there are no
+parallel afterpulses. The parameter we are interested in is the probability for
+a single cell to generate an afterpulse, thus even if there are two series
+afterpulses, we only care about the first. So, like we did for pre-trigger
+peaks, when there are two peaks with height above the 0 to 1~PE boundary we
+select the first.
+
+The case with an afterpulse and a random pulse is quite unlikely. From
+\autoref{tab:ptrate} we compute that the probability of having a random pulse
+in the post-trigger region is within \SI{0.1}\%. We will see that the
+probability of an afterpulse is below \SI{5}\%, so the coincidence probability
+is less than \SI{0.005}\%, in less than \num{50000} events, so we expect less
+than 2.5 afterpulse+random events. Since the distribution of randoms is flat,
+while the afterpulses are concentrated at short delays, and keeping into
+account that even if both were uniform in half of the cases the afterpulse
+would come first by chance, we are sure that the expected afterpulses lost due
+to random are less than 1 and so we neglect this problem.
+
+The amplitude of the afterpulses is shorter than normal at low delays. It would
+be convenient to select them with a straight cut. This will be even more useful
+when fitting the DiCT model on the afterpulses. We empirically observe that the
+height of the afterpulses is approximately constant, although a bit higher at
+short delays, like if the rule was that an afterpulse reaches a normal height
+when ``sitting'' on the tail of its parent (see the top right panel of
+\autoref{fig:apampl}). The slight increase for close pulses can be interpreted
+as an effect of the smearing of the filter. So we do the following: we take the
+\emph{unfiltered} signal template, normalize it to have peak amplitude as a
+1~PE \emph{filtered} pulse, take its value at a delay from its peak equal to
+the delay from the post-trigger to the laser peak, and sum this to the
+post-trigger pulse amplitude.
 
 \begin{figure}
     
@@ -1168,17 +1201,110 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 
     \widecenter{\includempl{figapampl-2}\includempl{figapampl-3}}
     
-    \figcaption{apampl}{}
+    \figcaption{apampl}{Various ways of measuring the magnitude of post-trigger
+    pulses. Top left: the prominence computed by the peak finder; it decreases
+    with short delays so it does not allow a straight cut. Top right: the
+    height from the baseline; it is straighter but leaks a bit above the 2~PE
+    threshold. Bottom left: the amplitude; it yields a better separation than
+    the prominence but has to be rectified. Bottom right: the corrected
+    amplitude which we use in our analysis.}
     
 \end{figure}
+
+The obtained \emph{corrected amplitude} is shown in the bottom right panel of
+\autoref{fig:apampl}. Note that this correction is not equivalent to dividing
+by the expected recharge factor \eqref{eq:recfactor}, it is just an empirical
+procedure that rectifies the observed distribution. This may indicate that the
+model is inaccurate, however we did not investigate further.
+
+We can now discuss an additional issue with selecting the first peak when there
+are two of them. Before computing the amplitude we select by height. Pulses
+sitting on the tail of the laser pulse have a height bonus, and we said this is
+useful to avoid selecting away short afterpulses at this stage. However some of
+these short pulses will turn out to be noise. If it happens that there is a
+second true pulse, it will be hidden by the first noise pulse. So we take the
+first chronological only when both have their corrected amplitude above the 0
+to 1~PE threshold. We checked that at \SI{5.5}{VoV} there would be at most 13
+cases with this problem, to be compared to about 500 selected post-trigger
+pulses, so the effect would be small anyway.
+
+To select the afterpulses we have to ignore short delays because we can not
+separate too short pulses from the noise. Moreover, like with the random
+pulses, the threshold on the corrected amplitude has to be set higher that the
+1~PE boundary because the amount of noise is overwhelming compared to the
+pulses. We also truncate the delay distribution at approximately \SI{500}{ns}
+from the end of the waveform just to stay safe from boundary effects. We first
+do the temporal selection, and then determine the threshold with our usual
+procedure of taking the midpoint between the two most distant consecutive
+samples. These selections are shown in \autoref{fig:apscatter}.
 
 \begin{figure}
     
     \widecenter{\includempl{figapscatter-0}\includempl{figapscatter-1}}
 
-    \figcaption{apscatter}{See \autoref{fig:apscatter2} for all overvoltages.}
+    \figcaption{apscatter}{Left panel: corrected amplitude versus delay from
+    laser peak; the gray bands mark the selected ranges. Right panel: the
+    histogram of the amplitude for the points that fall in the vertical band in
+    the scatterplot. See \autoref{fig:apscatter2} for all overvoltages.}
     
 \end{figure}
+
+We have done a temporal cut, thus to count the afterpulses we have to calculate
+how many we have lost. To do this we need to determine the temporal
+distribution and compute the probability mass that falls outside of the
+selected range. We histogram the delay of the pulses and fit two distributions,
+one with an exponential decay component and one with two.
+
+Since we are selecting the first pulse after the laser peak, normally it would
+be necessary to correct the distribution for a ``first arrived'' effect: an
+eventual second pulse would not be counted, so the observed counts decay faster
+with delay than the actual distribution. Simple example: start from a uniform
+distribution, and take the first event after a fixed point in time; the
+distribution transforms into the well known exponential. \cite[2]{cova1991} and
+\cite[4]{garutti2014} both take this into account. In our case, however, we
+have a model where caring only about the first pulse is ``built-in'' so to say.
+Just for reference, asymptotically the correction would amount to the
+probability of afterpulses, which as we will see is less than \SI{5}\%.
+
+This is not true for the background of random pulses, which would need the
+correction, but its probability is so small that the correction can be
+neglected. In other words: we approximate the exponential background of random
+pulses with a uniform because the rate is very low compared to the observed
+time interval.
+
+We do an approximate Bayesian fit using least squares. This is described in
+detail in \autoref{ch:fit}; for the impatient, just consider that this is
+almost a standard least squares fit of a histogram, with additional squared
+terms that represent the prior, and our sample size is enough to make the
+influence of the prior choice very small.
+
+The priors of the fit are:
+%
+\begin{itemize}
+    
+    \item The expected uniform background, computed from the random pulse rate
+    in \autoref{tab:ptrate}. The variance is determined only from the variance
+    of the rate; the afterpulse count i.e.\ the histogram normalization is an
+    errorless input.
+    
+    \item For the one component fit, the prior on the logarithm of the
+    exponential decay constant in nanoseconds is $\log(1000) \pm 1$. Consider
+    than a $\pm 1$ error on the natural logarithm corresponds to a \SI{100}\%
+    relative error with first order propagation.
+    
+    \item For the two components fit, the priors on the logarithms are
+    $\log(400) \pm 1$, $\log(800) \pm 1$, while the prior on the relative
+    weight of the short component is a uniform in $(0, 1)$.
+    
+\end{itemize}
+
+All the parameters are bounded, so they are fit transformed. The background
+density and the exponential scales are transformed with the logarithm, while
+the component weight is mapped to the unitary interval using the error
+function, which makes the prior on it uniform.
+
+\marginpar{It may be useful to compute the number of afterpulses weighted with
+the amplitude, since the afterpulses get denser as they get shorter.}
 
 \begin{figure}
     
@@ -1207,7 +1333,7 @@ maximum dark count rate allowed by the DarkSide20k specifications is
             S[table-format=2.1(2)]
             S[table-format=1.3(2)]
             S[table-format=1.2(2)]
-            S[table-format=2]
+            S[table-format=3]
             S[table-format=2]
             S[table-format=1.2]
         }
@@ -1256,12 +1382,12 @@ maximum dark count rate allowed by the DarkSide20k specifications is
             &
             & \\
             \midrule
-5.5 & 300 & 5500 & 46990 & 535 & 0.24 & 10.7 \pm 1.2 & 11.6 \pm 1.2 & 399 \pm 19 &        {n.d.} &       {n.d.} &   2.12 \pm 0.16 & 2.37 \pm 0.21 & 77 & 17 & {<1e-6} \\
-5.5 & 300 & 5500 & 46990 & 535 & 0.24 & 10.7 \pm 1.2 & 10.7 \pm 1.2 & 285 \pm 27 & 2.24 \pm 0.64 & 71.9 \pm 4.2 & 2.116 \pm 0.084 & 2.36 \pm 0.14 & 22 & 17 &     0.17 \\ \midrule
-7.5 & 300 & 5500 & 38404 & 590 & 0.20 & 33.0 \pm 2.0 & 35.1 \pm 1.9 & 432 \pm 22 &        {n.d.} &       {n.d.} &   2.00 \pm 0.14 & 2.91 \pm 0.24 & 75 & 18 & {<1e-6} \\
-7.5 & 300 & 5500 & 38404 & 590 & 0.20 & 33.0 \pm 2.0 & 33.2 \pm 2.0 & 283 \pm 30 & 2.04 \pm 0.59 & 68.5 \pm 4.9 & 2.049 \pm 0.080 & 2.97 \pm 0.17 & 20 & 18 &     0.31 \\ \midrule
-9.5 & 300 & 5500 & 28301 & 605 & 0.15 & 16.4 \pm 1.2 & 17.0 \pm 1.2 & 537 \pm 27 &        {n.d.} &       {n.d.} & 1.749 \pm 0.096 & 3.64 \pm 0.25 & 69 & 18 & {<1e-6} \\
-9.5 & 300 & 5500 & 28301 & 605 & 0.15 & 16.4 \pm 1.2 & 16.3 \pm 1.2 & 227 \pm 38 & 1.13 \pm 0.15 & 47.7 \pm 7.6 & 1.908 \pm 0.068 & 3.97 \pm 0.22 & 11 & 18 &     0.91
+5.5 & 300 & 5500 & 46990 & 542 & 0.24 & 10.7 \pm 1.2 & 11.6 \pm 1.2 & 413 \pm 20 &        {n.d.} &       {n.d.} &   2.07 \pm 0.15 & 2.34 \pm 0.20 &  76 & 17 & {<1e-6} \\
+5.5 & 300 & 5500 & 46990 & 542 & 0.24 & 10.7 \pm 1.2 & 10.7 \pm 1.2 & 286 \pm 28 & 2.12 \pm 0.56 & 70.5 \pm 4.5 & 2.078 \pm 0.081 & 2.35 \pm 0.14 &  20 & 17 &    0.26 \\ \midrule
+7.5 & 300 & 5500 & 38404 & 599 & 0.20 & 33.0 \pm 2.0 & 35.1 \pm 1.9 & 432 \pm 21 &        {n.d.} &       {n.d.} &   2.00 \pm 0.14 & 2.95 \pm 0.24 &  76 & 18 & {<1e-6} \\
+7.5 & 300 & 5500 & 38404 & 599 & 0.20 & 33.0 \pm 2.0 & 33.1 \pm 2.0 & 289 \pm 29 & 2.15 \pm 0.65 & 69.4 \pm 4.7 & 2.047 \pm 0.079 & 3.02 \pm 0.17 &  21 & 18 &    0.28 \\ \midrule
+9.5 & 200 & 5500 & 28301 & 856 & 0.15 & 16.7 \pm 1.2 & 17.6 \pm 1.2 & 378 \pm 15 &        {n.d.} &       {n.d.} & 1.698 \pm 0.090 & 5.03 \pm 0.32 & 131 & 21 & {<1e-6} \\
+9.5 & 200 & 5500 & 28301 & 856 & 0.15 & 16.7 \pm 1.2 & 16.7 \pm 1.2 & 170 \pm 18 & 1.01 \pm 0.10 & 53.9 \pm 4.6 & 1.841 \pm 0.054 & 5.46 \pm 0.25 &  21 & 21 &    0.46
             \\ \bottomrule
         \end{tabular}
     }
@@ -1279,6 +1405,8 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 \end{figure}
 
 \section{Delayed cross talk}
+
+% grafici per dire che dovrebbe aumentare con l'ov: savarese p. 59, 64.
 
 \begin{figure}
     
@@ -1309,6 +1437,8 @@ maximum dark count rate allowed by the DarkSide20k specifications is
 % come selezione iniziale per gli afterpulse, modellare meglio l'altezza degli
 % afterpulse, studiare un modello empirico intermedio per il cross talk,
 % tenere conto dei doppi picchi nei fit.
+% alla fine gli afterpulse non sembrano calare con una scala=trec vicino
+% a delay piccoli
 % peak finding, citare LZ:
 % Conferenza dance machine learning workshop
 % https://indico.physics.lbl.gov/event/1192/contributions/4934/
