@@ -430,19 +430,6 @@ light, which corresponds to a \SI{3}{ns} delay. This delay is smaller than
 the scale of the variations of the signal shape and of the noise, so we can
 neglect this problem.
 
-\begin{figure}
-    
-    \widecenter{\includempl{fighist2dtile21-0}}
-
-    \widecenter{\includempl{fighist2dtile21-1}}
-
-    \widecenter{\includempl{fighist2dtile21-2}}
-    
-    \figcaption{hist2dtile21}{Time-value histograms of LFoundry tile~21 in LNGS
-    laser data at overvoltages \SI{5.5}V, \SI{7.5}V, and~\SI{9.5}V.}
-    
-\end{figure}
-
 \section{Peak finding}
 
 As input to the analysis we will measure the amplitude and temporal position of
@@ -986,7 +973,9 @@ $k$, we obtain
 
 \marginpar{This translation of the indices of $V^{-1}$ holds only in the limit
 of an infinitely long waveform. In practice for a waveform with some margin
-around the pulses.}
+around the pulses. However the initial mistake was not translating properly the
+indices of $V^{-1}$ when defining the filter template; after fixing that it
+should not be necessary to translate them later.}
 
 \begin{equation}
     W_\beta = V^{-1}_{jk} y_{k-t_\beta} w_j = V^{-1}_{jk} H_{k\beta} w_j
@@ -1174,7 +1163,7 @@ select the first.
 The case with an afterpulse and a random pulse is quite unlikely. From
 \autoref{tab:ptrate} we compute that the probability of having a random pulse
 in the post-trigger region is within \SI{0.1}\%. We will see that the
-probability of an afterpulse is below \SI{5}\%, so the coincidence probability
+probability of an afterpulse is about \SI{5}\%, so the coincidence probability
 is less than \SI{0.005}\%, in less than \num{50000} events, so we expect less
 than 2.5 afterpulse+random events. Since the distribution of randoms is flat,
 while the afterpulses are concentrated at short delays, and keeping into
@@ -1215,7 +1204,9 @@ The obtained \emph{corrected amplitude} is shown in the bottom right panel of
 \autoref{fig:apampl}. Note that this correction is not equivalent to dividing
 by the expected recharge factor \eqref{eq:recfactor}, it is just an empirical
 procedure that rectifies the observed distribution. This may indicate that the
-model is inaccurate, however we did not investigate further.
+model is inaccurate, however we did not investigate further. In the event
+visualizations, the amplitude shown for post-trigger pulses is actually the
+corrected amplitude.
 
 We can now discuss an additional issue with selecting the first peak when there
 are two of them. Before computing the amplitude we select by height. Pulses
@@ -1229,14 +1220,16 @@ cases with this problem, to be compared to about 500 selected post-trigger
 pulses, so the effect would be small anyway.
 
 To select the afterpulses we have to ignore short delays because we can not
-separate too short pulses from the noise. Moreover, like with the random
-pulses, the threshold on the corrected amplitude has to be set higher that the
-1~PE boundary because the amount of noise is overwhelming compared to the
-pulses. We also truncate the delay distribution at approximately \SI{500}{ns}
-from the end of the waveform just to stay safe from boundary effects. We first
-do the temporal selection, and then determine the threshold with our usual
-procedure of taking the midpoint between the two most distant consecutive
-samples. These selections are shown in \autoref{fig:apscatter}.
+separate too short pulses from the noise, and because the peak finder could be
+losing some pulses if they are short and close to the laser peak. Moreover,
+like with the random pulses, the threshold on the corrected amplitude has to be
+set higher that the 1~PE boundary because the amount of noise is overwhelming
+compared to the pulses. We also truncate the delay distribution at
+approximately \SI{500}{ns} from the end of the waveform just to stay safe from
+boundary effects. We first do the temporal selection, and then determine the
+threshold with our usual procedure of taking the midpoint between the two most
+distant consecutive samples. These selections are shown in
+\autoref{fig:apscatter}.
 
 \begin{figure}
     
@@ -1245,7 +1238,8 @@ samples. These selections are shown in \autoref{fig:apscatter}.
     \figcaption{apscatter}{Left panel: corrected amplitude versus delay from
     laser peak; the gray bands mark the selected ranges. Right panel: the
     histogram of the amplitude for the points that fall in the vertical band in
-    the scatterplot. See \autoref{fig:apscatter2} for all overvoltages.}
+    the scatterplot. See \autoref{fig:apscatter2} for all overvoltages
+    and a zoom in of the scatterplot.}
     
 \end{figure}
 
@@ -1264,7 +1258,7 @@ distribution transforms into the well known exponential. \cite[2]{cova1991} and
 \cite[4]{garutti2014} both take this into account. In our case, however, we
 have a model where caring only about the first pulse is ``built-in'' so to say.
 Just for reference, asymptotically the correction would amount to the
-probability of afterpulses, which as we will see is less than \SI{5}\%.
+probability of afterpulses, which as we will see is about \SI{5}\%.
 
 This is not true for the background of random pulses, which would need the
 correction, but its probability is so small that the correction can be
@@ -1275,8 +1269,7 @@ time interval.
 We do an approximate Bayesian fit using least squares. This is described in
 detail in \autoref{ch:fit}; for the impatient, just consider that this is
 almost a standard least squares fit of a histogram, with additional squared
-terms that represent the prior, and our sample size is enough to make the
-influence of the prior choice very small.
+terms that represent the prior.
 
 The priors of the fit are:
 %
@@ -1303,6 +1296,63 @@ density and the exponential scales are transformed with the logarithm, while
 the component weight is mapped to the unitary interval using the error
 function, which makes the prior on it uniform.
 
+Since the density varies a lot over the observed range of about \SI{5}{\micro
+s}, we use uneven bins for the fit. As simple criterion we compute the bins
+that would yield uniform counts with an exponential with scale \SI{1.5}{\micro
+s}:
+%
+\begin{equation}
+    b_i = t_L - \tau_0 \log\left(1 - \frac in
+    \left(1 - \exp\left(-\frac{t_R - t_L}{\tau_0}\right)\right)\right),
+    \quad i = 0, \ldots, n,
+\end{equation}
+%
+where there are $n$ bins, $b_i$ is the $i$-th bin edge, $\tau_0 =
+\SI{1.5}{\micro s}$, and $(t_L, t_R)$ is the total range. For $n$ we take 3/4
+of the square root of the total count. With these criteria it never happened
+to have a bin with a count less than~5.
+
+We are using somewhat large bins, so we have to fit against the integral of the
+distribution instead of the usual approximation of taking the density in the
+center of the bin. The cumulative density functions for the two models are:
+%
+\begin{align}
+    P_1(t_L < t' < t;\tau,R) &=
+    \left(1-\frac RN\right)
+    \left(1 - e^{-t/\tau}\right)
+    + \frac RN \frac t{t_R-t_L}, \\
+    %
+    P_2(t_L < t' < t;\tau_1,\tau_2,p_1,R) &=
+    \left(1-\frac RN\right)
+    \left[p_1 \left(1 - e^{-t/\tau_1}\right)\right. \notag \\
+    \phantom x &+ \left.(1 - p_1)
+    \left(1 - e^{-t/\tau_2}\right) \right] \notag \\
+    \phantom x &+ \frac RN \frac t{t_R-t_L},
+\end{align}
+%
+where $\tau$, $\tau_1$ and $\tau_2$ are the exponential scales, $p_1$ is
+the weight of the component with the shorter prior, $R$ is the number of
+random pulses, and $N$ is the total histogram count.
+
+Once we have the fitted parameters, we correct the afterpulse count by
+subtracting the fitted background and dividing by the probability mass
+contained in the range:
+%
+\begin{align}
+    N_1 &= \frac {N-R} {\exp(-t_L/\tau) - \exp(-t_R/\tau)},
+    \label{eq:n1} \\
+    %
+    N_2 &= \frac {N-R} {p_1 (e^{-t_L/\tau_1} - e^{-t_R/\tau_1})
+    + (1-p_1) (e^{-t_L/\tau_2} - e^{-t_R/\tau_2})},
+    \label{eq:n2}
+\end{align}
+%
+then we divide by the number of events to compute the afterpulse probability.
+In \autoref{fig:apfit} we show the fit, while in \autoref{tab:ap} and
+\autoref{fig:apresults} we summarize the results for all overvoltages. In all
+the calculations, when necessary, we have kept into account the correlations to
+propagate the error.
+
 \marginpar{It may be useful to compute the number of afterpulses weighted with
 the amplitude, since the afterpulses get denser as they get shorter.}
 
@@ -1310,7 +1360,11 @@ the amplitude, since the afterpulses get denser as they get shorter.}
     
     \widecenter{\includempl{figapfit-0}\includempl{figapfit-1}}
 
-    \figcaption{apfit}{See \autoref{fig:apfit2} for all overvoltages.}
+    \figcaption{apfit}{Left panel: fit of the temporal distribution of
+    post-trigger pulses. Right panel: the histogram with even bins and without
+    the temporal cuts. In the legend, `const' is the excess background density,
+    i.e.\ $(R/N)/((t_R-t_L)(1-R/N))$, in \si{ns^{-1}}. See \autoref{fig:apfit2}
+    for all overvoltages.}
     
 \end{figure}
 
@@ -1339,7 +1393,7 @@ the amplitude, since the afterpulses get denser as they get shorter.}
         }
             \toprule
 
-            & \multicolumn2c{Delay cut}
+            & \multicolumn2c{Delay range}
             & {}
             & {}
             & {}
@@ -1348,15 +1402,15 @@ the amplitude, since the afterpulses get denser as they get shorter.}
             & {}
             & {}
             & \multicolumn3c{Fit quality} \\
-            \cmidrule(r){2-3} \cmidrule(r){8-11} \cmidrule(r){14-16}
+            \cmidrule(lr){2-3} \cmidrule(lr){8-11} \cmidrule(l){14-16}
             {OV}
-            & {From}
-            & {To}
+            & {tL}
+            & {tR}
             & {Events}
-            & {Cnt}
+            & {N}
             & {Time}
-            & {Random}
-            & {Random}
+            & {R prior}
+            & {R}
             & {tau1}
             & {tau2}
             & {p1}
@@ -1364,7 +1418,7 @@ the amplitude, since the afterpulses get denser as they get shorter.}
             & {Prob.}
             & {chi2}
             & {dof}
-            & {pval} \\
+            & {pvalue} \\
             {[\si V]}
             & {[\si{ns}]}
             & {[\si{ns}]}
@@ -1382,17 +1436,21 @@ the amplitude, since the afterpulses get denser as they get shorter.}
             &
             & \\
             \midrule
-5.5 & 300 & 5500 & 46990 & 542 & 0.24 & 10.7 \pm 1.2 & 11.6 \pm 1.2 & 413 \pm 20 &        {n.d.} &       {n.d.} &   2.07 \pm 0.15 & 2.34 \pm 0.20 &  76 & 17 & {<1e-6} \\
-5.5 & 300 & 5500 & 46990 & 542 & 0.24 & 10.7 \pm 1.2 & 10.7 \pm 1.2 & 286 \pm 28 & 2.12 \pm 0.56 & 70.5 \pm 4.5 & 2.078 \pm 0.081 & 2.35 \pm 0.14 &  20 & 17 &    0.26 \\ \midrule
-7.5 & 300 & 5500 & 38404 & 599 & 0.20 & 33.0 \pm 2.0 & 35.1 \pm 1.9 & 432 \pm 21 &        {n.d.} &       {n.d.} &   2.00 \pm 0.14 & 2.95 \pm 0.24 &  76 & 18 & {<1e-6} \\
-7.5 & 300 & 5500 & 38404 & 599 & 0.20 & 33.0 \pm 2.0 & 33.1 \pm 2.0 & 289 \pm 29 & 2.15 \pm 0.65 & 69.4 \pm 4.7 & 2.047 \pm 0.079 & 3.02 \pm 0.17 &  21 & 18 &    0.28 \\ \midrule
-9.5 & 200 & 5500 & 28301 & 856 & 0.15 & 16.7 \pm 1.2 & 17.6 \pm 1.2 & 378 \pm 15 &        {n.d.} &       {n.d.} & 1.698 \pm 0.090 & 5.03 \pm 0.32 & 131 & 21 & {<1e-6} \\
-9.5 & 200 & 5500 & 28301 & 856 & 0.15 & 16.7 \pm 1.2 & 16.7 \pm 1.2 & 170 \pm 18 & 1.01 \pm 0.10 & 53.9 \pm 4.6 & 1.841 \pm 0.054 & 5.46 \pm 0.25 &  21 & 21 &    0.46
+5.5 & 250 & 5500 & 46990 &  620 & 0.25 & 10.8 \pm 1.3 & 11.8 \pm 1.2 & 398 \pm 18 &          {n.d.} &       {n.d.} &   1.87 \pm 0.11 & 2.42 \pm 0.18 &  79 & 18 & {<1e-6} \\
+5.5 & 250 & 5500 & 46990 &  620 & 0.25 & 10.8 \pm 1.3 & 10.8 \pm 1.3 & 266 \pm 25 &   1.78 \pm 0.39 & 69.6 \pm 4.6 & 1.916 \pm 0.064 & 2.48 \pm 0.13 &  14 & 18 &    0.76 \\ \midrule
+7.5 & 250 & 5500 & 38404 &  702 & 0.20 & 33.4 \pm 2.0 & 35.6 \pm 2.0 & 380 \pm 17 &          {n.d.} &       {n.d.} &   1.93 \pm 0.12 & 3.35 \pm 0.24 &  82 & 19 & {<1e-6} \\
+7.5 & 250 & 5500 & 38404 &  702 & 0.20 & 33.4 \pm 2.0 & 33.5 \pm 2.0 & 270 \pm 23 &   2.08 \pm 0.58 & 73.2 \pm 3.8 & 1.967 \pm 0.066 & 3.42 \pm 0.18 &  22 & 19 &    0.30 \\ \midrule
+9.5 & 150 & 5500 & 28301 & 1071 & 0.15 & 16.8 \pm 1.2 & 17.9 \pm 1.2 & 299 \pm 11 &          {n.d.} &       {n.d.} & 1.651 \pm 0.083 & 6.14 \pm 0.36 & 187 & 24 & {<1e-6} \\
+9.5 & 150 & 5500 & 28301 & 1071 & 0.15 & 16.8 \pm 1.2 & 16.9 \pm 1.2 & 143 \pm 12 & 0.960 \pm 0.084 & 57.9 \pm 3.5 & 1.782 \pm 0.045 & 6.64 \pm 0.26 &  23 & 24 &    0.53
             \\ \bottomrule
         \end{tabular}
     }
     
-    \scriptcaption{tab}{tab}{ap}{}
+    \scriptcaption{tab}{tab}{ap}{Intermediate quantities and results of the
+    afterpulse analysis. For each overvoltage the data is fitted either with
+    one or two exponential decay components. ``Prob.'' is the afterpulse
+    probability. ``Correction'' is the inverse of the denominator in
+    \eqref{eq:n1} or \eqref{eq:n2}.}
     
 \end{table}
 
@@ -1400,19 +1458,49 @@ the amplitude, since the afterpulses get denser as they get shorter.}
     
     \widecenter{\includempl{figapresults}}
 
-    \figcaption{apresults}{}
+    \figcaption{apresults}{Results of the afterpulse analysis. The first panel
+    gives the probability for a 1 PE pulse to generate at least one afterpulse.
+    The second shows together the exponential decay constants for the one and
+    two components models. The third contains the relative weight of the short
+    component for the two components model.}
 
 \end{figure}
 
-\section{Delayed cross talk}
+The one component fit has poor quality, so to compute the errors on the
+correction and on the afterpulse probability, we rescale the covariance matrix
+of the fitted parameters dividing by the factor $\chi^2/\text{dof}$. The two
+components fit seems good so we do not rescale the errors. See \autoref{ch:fit}
+for details on this procedure. In \autoref{tab:ap}, the errors on the fit
+parameters are not rescaled, while the errors on the parameters entering into
+the calculation of ``Correction'' and ``Prob.'' are.
 
-% grafici per dire che dovrebbe aumentare con l'ov: savarese p. 59, 64.
+Even if the two models differ, the resulting corrections and thus afterpulse
+probabilities are compatible with each other for each overvoltage.
+
+% grafici per il dect: savarese p. 59, 64.
+
+In the top left panel of \autoref{fig:apampl}, which shows the prominence
+versus delay from the laser pulse of post-trigger pulses, we notice that at
+short delays, less than \SI{100}{ns}, there is a dense lump of points around
+the 1~PE height. These may appear as good candidates for delayed cross talk;
+however, they are all without exception cases where the laser peak is delayed
+with the short filter and classified as post-trigger pulse, and the event is
+still selected as 1~PE laser because we use a longer filter for the selection.
+This was discussed in \autoref{sec:laser}. The same goes for the lump at 2~PE,
+but by inspecting the events one by one we found a single event at
+\SI{9.5}{VoV} that has a good chance of being DeCT. There are about \num{30000}
+selected events for that overvoltage; supposing to have missed some cases since
+we inspected by hand, we give this rough estimate: $10/\num{30000} =
+\SI{0.03}\%$. The event we are talking about is shown in
+\autoref{fig:dectevent}.
 
 \begin{figure}
     
-    \widecenter{\includempl{figdect}}
+    \widecenter{\includempl{figdectevent}}
     
-    \figcaption{dect}{}
+    \figcaption{dectevent}{An event where the post-trigger pulse appears to
+    have an integer number of PE with normal amplitude (right panel) instead
+    of corrected amplitude (left panel).}
     
 \end{figure}
 
