@@ -214,6 +214,9 @@ length, and at a length of 96 samples (\SI{512}{ns}) is already practically
 optimal. The moving average can get close to the cross-correlation filter by
 choosing appropriately the number of samples.
 
+\marginpar{For \autoref{fig:rescurve} and similar, use a more legible color
+spectrum. Probably \nolinkurl{colormap.py} is already sufficient.}
+
 \begin{figure}
     \widecenter{\includempl{figrescurve}}
     
@@ -379,7 +382,7 @@ well defined.}
     \begin{tabular}{c*4S[table-format=1.1]}
         \toprule
                & \multicolumn4c{SNR after over before filtering} \\
-        \cmidrule(r){2-5}
+        \cmidrule(l){2-5}
          Noise & {\SI{1}{GSa/s}} & {\SI{125}{MSa/s}} & {\SI{62.5}{MSa/s}} & {\SI{31.2}{MSa/s}} \\
         \midrule
         Proto0 &               &             3.6 &              3.6 &              3.6 \\
