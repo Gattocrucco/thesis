@@ -134,6 +134,7 @@ cell. See \autoref{fig:sipmnoiseampl}.
 \end{figure}
 
 \subsection{DiCT model}
+\label{sec:dicttheory}
 
 As we said, noise pulses can themselves produce other noise pulses as well. We
 can imagine quite complicated interactions, for example: a DiCT induces a DeCT
@@ -1514,6 +1515,31 @@ corrected amplitude.
 Since the PE bins do not cover the full amplitude range, we put all the
 uncovered pulses in an overflow bin which is fitted against the survival
 function of the distribution. Saturated pulses are included.
+
+The bins are fixed a priori independently of the effective data range, so it
+does happen that there are empty bins for high PE. So for each dataset we
+aggregate bins to the overflow bin starting from the last one until there are
+at least 4, sometimes 5, samples in the overflow bin.
+
+For the \SI{9.5}{VoV} laser data the overflow bin seems to be a particular
+source of data-model discrepancy, so we also fit it without overflow. In this
+case the bins if necessary are aggregated to the last bin. In the spirit of
+avoiding arbitrary choices, we do the same at all overvoltages and also for the
+afterpulses, reporting both results.
+
+The 0~PE probability in the laser model only depends on the initial Poisson
+mean $\mu_P$. Since in most of the cases the laser fit has poor quality, we are
+interested in ``fixing'' the first datapoint, i.e.\ assuming that the Poisson
+model is correct and that all the problems come from the DiCT model. As usual
+we will rescale the fit errors with $\sqrt{\chi^2/\mathrm{dof}}$, so what we
+want to obtain is that, after the rescaling, the error on the first datapoint
+is the Poisson error. So we would like to first divide that error by what would
+turn out to be the $\sqrt{\chi^2/\mathrm{dof}}$ considering the modified error.
+As an approximation, we instead divide the error by the
+$\sqrt{\chi^2/\mathrm{dof}}$ obtained with the normal fit.
+
+In \autoref{fig:ctfitrandom} and~\ref{fig:ctfitaplaser} we show individual
+fits. In \autoref{fig:ctresults}
 
 \begin{figure}
     
