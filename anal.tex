@@ -78,8 +78,8 @@ ways in the proliferation of pulses are (see \autoref{fig:sipmnoise}):
 
 \begin{description}
 
-    \item[Afterpulses] During the avalanche, charge carriers can remain trapped
-    into impurities and imperfections of the crystal. They are released
+    \item[Afterpulses (AP)] During the avalanche, charge carriers can remain
+    trapped into impurities and imperfections of the crystal. They are released
     afterwards at random, starting another avalanche in the same cell.
     
     \item[Direct cross talk (DiCT)] A photon emitted by an avalanche can
@@ -1033,6 +1033,7 @@ dot placed such that the distance from the dot to the peak is the amplitude.
 In the legend, the amplitude is given under ``$a = \ldots$''.
 
 \section{Random pulses rate}
+\label{sec:random}
 
 When counting afterpulses there will be a background from the dark count rate,
 which we have to subtract, so we measure it in the pre-trigger region. The
@@ -1539,13 +1540,31 @@ As an approximation, we instead divide the error by the
 $\sqrt{\chi^2/\mathrm{dof}}$ obtained with the normal fit.
 
 In \autoref{fig:ctfitrandom} and~\ref{fig:ctfitaplaser} we show individual
-fits. In \autoref{fig:ctresults}
+fits. In \autoref{fig:ctresults} we show together the obtained values for the
+DiCT parameters $\mu_B$ (Borel model) and $p$ (Geometric model) for the three
+categories of pulses. Additionally we also show the same comparison with the
+DiCT probability, i.e.\ the probability of having more than one PE, which is
+$1-e^{-\mu_B}$ for the Borel model and just $p$ for the Geometric model, and
+with the average excess PE, i.e.\ the mean number of PE minus one, which is
+respectively $1/(1-\mu_B)-1$ or $1/(1-p)-1$. Note that to first order these
+quantities are equal to the parameter.
+
+In \autoref{fig:ctopt} and~\ref{fig:ctpoisson} we compare the results for the
+laser and afterpulse datasets varying the two options, which are including or
+not the overflow and fixing or not the 0~PE bin. Finally, in \autoref{tab:ct}
+we list the complete results for all fits. As can be seen in the table, there
+is a clear separation between poor and good quality fits. In the comparison
+plots and in the table the errors are shown with the $\chi^2/\mathrm{dof}$
+correction if applied, while in the individual fit plots they are
+$\chi^2/\mathrm{dof}$-less.
 
 \begin{figure}
     
     \widecenter{\includempl{figctfitrandom}}
     
-    \figcaption{ctfitrandom}{}
+    \figcaption{ctfitrandom}{Fit of the DiCT models \eqref{eq:borel} and
+    \eqref{eq:geometric} on pre-trigger pulses for all overvoltages. The
+    selection of pulses is described in \autoref{sec:random}.}
     
 \end{figure}
 
@@ -1553,8 +1572,11 @@ fits. In \autoref{fig:ctresults}
     
     \widecenter{\includempl{figctfitaplaser}}
 
-    \figcaption{ctfitaplaser}{For all options and overvoltages, see
-    Figures~\ref{fig:ctfitlaser0}, \ref{fig:ctfitlaser1} and~\ref{fig:ctfitap}.}
+    \figcaption{ctfitaplaser}{Fit of the DiCT models on laser pulses
+    (Equations~\ref{eq:genpoisson} and~\ref{eq:geompoisson}) and afterpulses
+    (Equations~\ref{eq:borel} and~\ref{eq:geometric}) at~\SI{5.5}{VoV}. For all
+    options and overvoltages, see Figures~\ref{fig:ctfitlaser0},
+    \ref{fig:ctfitlaser1} and~\ref{fig:ctfitap}.}
     
 \end{figure}
 
@@ -1562,7 +1584,12 @@ fits. In \autoref{fig:ctresults}
     
     \widecenter{\includempl{figctresults}}
     
-    \figcaption{ctresults}{}
+    \figcaption{ctresults}{Comparison of the DiCT parameters between models and
+    datasets. For the afterpulses and laser pulses, the fits used include the
+    overflow bin. For the laser pulses, the 0~PE bin is \emph{not} fixed. The
+    left panel shows the parameters, the central panel the DiCT probability
+    ($1-e^{-\mu_B}$ or $p$) and the right panel the average excess PE
+    ($1/(1-\mu_B)-1$ or $1/(1-p)-1$).}
     
 \end{figure}
 
@@ -1570,7 +1597,9 @@ fits. In \autoref{fig:ctresults}
     
     \widecenter{\includempl{figctopt}}
     
-    \figcaption{ctopt}{}
+    \figcaption{ctopt}{Comparison of the DiCT parameters for afterpulses and
+    laser pulses varying the options. `OF' stands for overflow bin included,
+    while `FZ' stands for 0~PE bin ``fixed''.}
     
 \end{figure}
 
@@ -1578,7 +1607,10 @@ fits. In \autoref{fig:ctresults}
     
     \widecenter{\includempl{figctpoisson}}
 
-    \figcaption{ctpoisson}{}
+    \figcaption{ctpoisson}{Initial Poisson mean $\mu_P$ for the laser pulses
+    fit, compared varying the options. `OF' stands for overflow bin included,
+    while `FZ' stands for 0~PE bin ``fixed''. The last panel shows the `OF'
+    values vs.\ overvoltage.}
 
 \end{figure}
 
@@ -1674,8 +1706,13 @@ fits. In \autoref{fig:ctresults}
         \end{tabular}
     }
     
-    \scriptcaption{tab}{tab}{ct}{}
-    
+    \scriptcaption{tab}{tab}{ct}{List of all the DiCT fits. For fits with
+    p-value less than 1e6, the errors on the fit parameters and on the derived
+    quantities are rescaled with $\sqrt{\chi^2/\mathrm{dof}}$. `OF' stands for
+    overflow bin included, while `FZ' stands for 0~PE bin ``fixed''. ``Prob.''
+    is the probability of having more than 1~PE under the model, while ``pe''
+    is the average number of PE minus~1.}
+
 \end{table}
 
 \section{Conclusions}
