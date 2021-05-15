@@ -24,6 +24,7 @@ the article where I found the Borel the first time, \cite{chmill2017}. I may
 do this in the local conclusions.}
 
 \section{Theory}
+\label{sec:analtheory}
 
 \marginpar{In chapter~\ref{ch:snr} I will add a qualitative description that
 can be deduced from the 2d histogram without previous knowledge apart from the
@@ -348,11 +349,11 @@ afterpulses}.
 SiPMs at \SI{80}K and \SI{5}V overvoltage. In this analysis we will use newer
 LFoundry SiPMs, so we can just get a rough idea from that. There are various
 kinds of SiPM in the table, the low field near ultraviolet with medium
-quenching resistance (last column) is the only one with the same recharge time
-as ours ($\tau_\text{rec} = \SI{0.5}{\micro s}$) so we consider that values.
-The dark count rate, converted from rate per area to rate per PDM (area
-\SI{25}{cm^2}), is \SI{25}{cps}. The correlated noise probabilities are: DiCT
-\SI{17}\%, AP \SI{17}\%, DeCT \SI{1.5}\%.
+quenching resistance (last column) is the one with the recharge time most
+similar to ours, which is $\tau_\text{rec} \approx \SI{0.3}{\micro s}$, so we
+consider that values. The dark count rate, converted from rate per area to rate
+per PDM (area \SI{25}{cm^2}), is \SI{25}{cps}. The correlated noise
+probabilities are: DiCT \SI{17}\%, AP \SI{17}\%, DeCT \SI{1.5}\%.
 
 We did not make a model for DeCT (including delayed afterpulses) because we do
 not have a clean selection of it in our data. In
@@ -1522,6 +1523,9 @@ does happen that there are empty bins for high PE. So for each dataset we
 aggregate bins to the overflow bin starting from the last one until there are
 at least 4, sometimes 5, samples in the overflow bin.
 
+The priors for the fit parameters are: uniform in $(0,1)$ for $\mu_B$ and $p$,
+and $0 \pm 1$ for $\log(\mu_P)$.
+
 For the \SI{9.5}{VoV} laser data the overflow bin seems to be a particular
 source of data-model discrepancy, so we also fit it without overflow. In this
 case the bins if necessary are aggregated to the last bin. In the spirit of
@@ -1644,7 +1648,7 @@ $\chi^2/\mathrm{dof}$-less.
             & \multicolumn3c{Fit quality} \\
             \cmidrule(r){1-3} \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(l){12-14}
             {OV}
-            & Data
+            & Pulses
             & {N}
             & OF
             & FZ
@@ -1715,22 +1719,187 @@ $\chi^2/\mathrm{dof}$-less.
 
 \end{table}
 
-\section{Conclusions}
+\section{Discussion}
+\label{sec:analconcl}
 
-% VETO
-% simulazione (confronto con cosa c'è in Pyreco, dire che è quasi il nostro
-% stesso modello)
-% dire che i casini per delay piccoli con gli afterpulse alla fine non
-% dovrebbero contare troppo perché l'ampiezza è più piccola
-% scusarsi per non aver fatto gli ovvi miglioramenti: fittare con più di 1 pe
-% come selezione iniziale per gli afterpulse, modellare meglio l'altezza degli
-% afterpulse, studiare un modello empirico intermedio per il cross talk,
-% tenere conto dei doppi picchi nei fit.
-% alla fine gli afterpulse non sembrano calare con una scala=trec vicino
-% a delay piccoli
-% peak finding, citare LZ:
-% Conferenza dance machine learning workshop
-% https://indico.physics.lbl.gov/event/1192/contributions/4934/
+We analyzed the additional pulses noise of the LFoundry tile~21. The key
+results are reported in \autoref{tab:ptrate}, \autoref{fig:apresults} and
+\autoref{fig:ctresults}.
 
-% cosa che si può migliorare: usare il filtro lungo quando calcolo l'ampiezza.
-% ma questo sta già nella discussione di LZ.
+For the random pulses rate we are quite confident that there must be an
+additional source of random pulses other than the dark count rate, so our
+estimates are an upper bound on DCR, and are anyway within the DarkSide20k
+requirements.
+
+The afterpulse probability for 1~PE pulses goes from $\approx\SI{2.5}\%$ at
+\SI{5.5}{VoV} to $\approx\SI{6.5}\%$ at \SI{9.5}{VoV}. The temporal
+distribution is well explained by two exponential decay components but not by
+one, where the two decay constants are $\approx\SI{270}{ns}$ and
+$\approx\SI{2}{\micro s}$ at \SI{5.5}{VoV} and \SI{7.5}{VoV}, and
+$\approx\SI{150}{ns}$ and $\approx\SI{1}{\micro s}$ at \SI{9.5}{VoV}. The
+amount relative to the total of the short component is $\approx\SI{65}\%$.
+
+The temporal distribution was fit with delays respectively above \SI{250}{ns},
+\SI{250}{ns}, \SI{150}{ns} for the three overvoltages, to be compared with the
+recharge time $\approx\SI{300}{ns}$. In computing the AP probability, we
+assumed that the distribution would continue with exponentials up to zero
+delay. This is likely not accurate but there is not a consensus in the
+literature on how the distribution is suppressed towards zero. Quite likely our
+assumption gives an upper bound, while a lower bound is obtained by completely
+neglecting the excluded delays. The distribution correction factors in
+\autoref{tab:ap} are less than~2, so the probabilities are at least half of
+those we report. Note that fitting with a suppression term included would
+likely change the resulting decay constants.
+
+We guess that for afterpulses at short delays it would be more useful to know
+the probability weighted with their relative amplitude since it goes to zero at
+zero delay. However we are not confident in our understanding of how the
+amplitude goes to zero. We expected it to follow the recharge factor, which
+would mean that by summing an exponential to the amplitude it should go to 1~PE
+at all delays, because $(1-e^{-t})+e^{-t} = 1$. However, we rectified it by
+summing the unfiltered pulse shape with \emph{peak amplitude} normalized to
+1~PE, which means we are adding a smaller exponential. And looking at
+\autoref{fig:apscatter2} it still seems to be biased upward.
+
+We can not exclude that there could be a problem in our procedure for computing
+the amplitude due to the short filter. In hindsight, we should have followed a
+different procedure. After identifying the peaks and measuring their position
+with the short filter, we should have computed the amplitude with the long
+filter. Or maybe a different combination to determine the position---but the
+point is using the long filter output for the amplitude, because it is less
+noisy and because having determined the position in another way we are not
+taking a peak in the filter output and thus we avoid an upward bias. We noticed
+that this method was already presented in \cite{krikler2020}.
+
+With the DiCT we get consistent results between the three samples: random
+pulses, laser pulses, afterpulses. The probability goes from $\approx\SI{20}\%$
+to $\approx\SI{45}\%$.
+
+The results obtained with the Borel model are not always compatible with the
+ones from the Geometric model, but we can not determine which one is better.
+Looking at \autoref{tab:ct}, the poor quality fits are: all the laser fits
+apart from \SI{5.5}{VoV} Geometric, and the afterpulse Geometric. Even when
+bad, the Geometric model has lower $\chi^2$ on the laser fits. But looking at
+\autoref{fig:ctfitlaser0} and~\ref{fig:ctfitlaser1}, the Geometric model is
+visibly getting wrong a feature of the distribution: the relative heights of
+the 0, 1, 2~PE bins. Another difference between the models is how $\mu_P$
+varies with overvoltage in \autoref{fig:ctpoisson}. ``Fixing'' the 0~PE bin the
+values become at the same time more precise and compatible. If you trust the
+Poisson model, those are the values to look at.
+
+Including or excluding the overflow, and fixing or not the 0~PE bin, do not
+have a substantial effect on the result, apart from the overflow at
+\SI{9.5}{VoV}. Two concurrent explanations come to our mind: that at high DiCT
+probability the discrepancy from the model in the tail of the distribution is
+more visible, and that having defined less PE bins at \SI{9.5}{VoV} due to
+saturation---see \autoref{fig:pe2}---it is just the wider overflow bin that is
+making the difference.
+
+Overall, looking at the summary in \cite[tab.~3.1~p.~62]{savarese2018}, which
+is given at \SI{5}{VoV} for FBK tiles, and comparing it to our values at
+\SI{5.5}{VoV}, the DiCT probability is a bit smaller than ours, while the
+afterpulse probability is always much higher. We are not sure, but we think
+that the values in that table just take into account a truncated afterpulse
+distribution, so they should be compared to roughly half of our estimates.
+Considering the slightly higher overvoltage, the DiCT would probably be
+actually the same. The DeCT is much higher, but we do not trust our estimate.
+So we can say that this LFoundry tile has the same DiCT, 4~to 30~times less AP,
+and probably and possibly much less DeCT, than those FBK tiles.
+
+If this work was to be carried further, we would model and fit also the events
+with two post-trigger pulses, and with more than 1~PE laser pulses, since they
+have the potential to break our simple assumptions on the generation of
+afterpulses, which were actually never tested in this analysis. Moreover, we
+would try to investigate models for the amplitude of afterpulses and
+intermediate alternatives between the Borel and Geometric models. Mind that
+these DiCT models are probably already accurate enough for the necessities of
+DarkSide20k, although we do not know for sure. We are less confident in the
+adequacy of the afterpulse model.
+
+\marginpar{How do these measurements influence the performance of DarkSide20k?
+This is something I should know and I have no clear idea about it.}
+
+Another unexpected feature worth investigating is the nonlinearity of the
+amplitude respect to the overvoltage, which was given for granted in the
+literature; but it could well be that if we went through an electric model of
+the SiPM with attention, for example in \cite[ch.~3]{savarese2018}, we would
+find the answer already laid out somewhere.
+
+But there is another possibility we already discussed in
+\autoref{sec:filtering}. In general the \SI{9.5}{VoV} data feels like an
+outlier. Computing the peak amplitude to overvoltage ratio of the templates
+from \autoref{fig:templates}, in order by overvoltage we get 12.7, 12.7, 14.2.
+With the afterpulse probability from \autoref{tab:ap} it is 0.45, 0.45, 0.69.
+For the DiCT probability, which we take from default options Borel laser fits
+from \autoref{tab:ct}, the ratios are 3.2, 3.5, 4.1. Either the SiPM enters a
+nonlinear regime somewhere between \SI{7.5}{VoV} and \SI{9.5}{VoV}, or the
+\SI{9.5}{VoV} data is mislabeled. The latter case is a concrete possibility
+that should be checked.
+
+An issue we did not flesh out is the quality of the template. We are using
+simple averaging with a selection of 1~PE pulses using charge integration. Our
+sample surely contains short afterpulses which are not big enough to push the
+charge over the upper selection boundary. This changes the shape of the
+template. How large is this effect? Since afterpulses increase with
+overvoltage, we can get an idea from \autoref{fig:shape} where the shapes at
+different overvoltages are compared. If afterpulses are what is driving the
+difference between the templates, they seem small enough to not have a
+substantial influence on the results. It would be interesting to compute the
+template keeping only the lower half of the distribution.
+
+From \cite{savarese2018} and \cite{nagy2014} we guess that the data for this
+kind of analysis is normally collected by reading continuously the SiPM output
+and triggering on dark count pulses, running a peak finder online, instead of
+shooting laser pulses and saving complete waveforms synced with the laser
+trigger. We have encountered no obstacle in using this other kind of dataset,
+and we think that for an in-depth analysis having the full waveforms recorded
+is convenient for studying in detail filtering and peak finding procedures. The
+size of our data is \SI{6}{GB} per overvoltage in uncompressed \SI{16}{bit}
+\texttt{wav} files, so there are no disk space problems for a single analysis.
+
+The other principal approach to correlated noise measurement is fitting the
+amplitude distribution with charge integration, keeping into account DiCT and
+afterpulses all into a single formula. This is done thoroughly in
+\cite{chmill2017}. However to use this approach with confidence one must be
+sure of the underlying model. For example, the referenced article states that
+the afterpulse distribution is unexpected \cite[app.~A]{chmill2017}. They
+derive the expected distribution assuming one exponential component and
+amplitude reduction with the recharge factor, which as we have seen are
+probably inaccurate assumptions.
+
+In DarkSide20k this situation arises with the VETO system, which employs
+simpler electronics than the time projection chamber (TPC). To check these
+detectors after installation it would be necessary to employ a charge
+integration method without recorded waveforms. We think that an analysis of
+this kind should be carried on a tile which was previously analyzed
+pulse-by-pulse, such that the validity of the models can be assessed. For
+example, if our analysis is deemed sufficient, tile~21 could be reanalyzed
+following \cite{chmill2017}.
+
+\marginpar{Make a reference to \autoref{ch:darkside}. And I must look at the
+VETO readout, I may be saying something imprecise.}
+
+Another application of a model-sensitive analysis is for defining the
+correlated noise simulation in the DarkSide20k software. The current version of
+the SiPM simulation is online at
+\url{https://gitlab.in2p3.fr/darkside/pyreco/-/blob/a37a0e40ee2112ece28a28e981b6
+ 7db6cb69085b/elec/sipm.py} (access restricted). By reading all the code, we
+are quite sure that the simulation implemented almost matches the model we
+described in \autoref{sec:analtheory}: Borel distribution for DiCT, resetting
+afterpulses, afterpulse amplitude reshaped with the recharge factor, recursive
+generation of noise with the same distributions applied at each step. The only
+difference is that the temporal delay of afterpulses is drawn in this way:
+first, a variable $t_\text{inv}$ is drawn from an exponential with scale
+$1/\tau$, the delay is then $t = 1/t_\text{inv}$. Transforming the probability
+density, the distribution of $t$ is $e^{-1/t}/t^2$ ($\tau = 1$). This is
+suppressed for $t\to 0$, but it also goes down as $1/t^2$ for $t\to\infty$,
+like the Cauchy. This is an unusual feature. This distribution does not even
+have a mean. Physically it would imply that the distribution of the trapping
+energy levels goes arbitrarily deep.
+
+We do not mean to criticize the authors of the software, whose identities we
+did not look up. As we understand, the current version of \texttt{Pyreco} is to
+be considered temporary and work in progress, so that code is just a quick way
+of sampling a zero-suppressed distribution. Anyway, we take the occasion to
+notice that the model used to fit the data and measure the parameters must be
+the same used by the simulation which is fed those parameters.
