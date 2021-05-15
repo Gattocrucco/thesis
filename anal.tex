@@ -8,7 +8,7 @@ pulses which are produced independently of incident light, and pulses which are
 produced by another pulse. The latter case is called \emph{correlated noise}.
 
 We will give a brief explanation and classification of the SiPM noise and then
-analyze it on a specific tile with LNGS laser data. We will see that we can
+analyze it on a specific Tile with LNGS laser data. We will see that we can
 reliably measure only the correlated noise, hence the chapter title.
 
 There are two goals in characterizing the SiPM noise. First, a quantitative
@@ -365,7 +365,7 @@ second order effects due to DeCT.
 
 \section{Data}
 
-We use LNGS laser data for tile 21, produced by LFoundry. The LNGS data files
+We use LNGS laser data for Tile 21, produced by LFoundry. The LNGS data files
 are:
 %
 \begin{verbatim}
@@ -463,7 +463,7 @@ An unexpected feature is the nonlinearity of the pulse amplitude with
 overvoltage. A possible explanation is mislabeling of the overvoltages. The
 overvoltage is determined from the bias and breakdown voltages reported in the
 file name. The breakdown voltage is always the same because it is a property of
-the tile, so if it was reported incorrectly, the correction to the overvoltage
+the Tile, so if it was reported incorrectly, the correction to the overvoltage
 would be a fixed offset. But in this case even if the ratio amplitude over
 overvoltage would vary, the slope would be preserved, while in
 \autoref{fig:templates} wee see that two equal overvoltage steps correspond to
@@ -1722,7 +1722,7 @@ $\chi^2/\mathrm{dof}$-less.
 \section{Discussion}
 \label{sec:analconcl}
 
-We analyzed the additional pulses noise of the LFoundry tile~21. The key
+We analyzed the additional pulses noise of the LFoundry Tile~21. The key
 results are reported in \autoref{tab:ptrate}, \autoref{fig:apresults} and
 \autoref{fig:ctresults}.
 
@@ -1775,6 +1775,9 @@ With the DiCT we get consistent results between the three samples: random
 pulses, laser pulses, afterpulses. The probability goes from $\approx\SI{20}\%$
 to $\approx\SI{45}\%$.
 
+\marginpar{We should compute the total average afterpulses from a initial 1~PE
+pulse keeping into account DiCT.}
+
 The results obtained with the Borel model are not always compatible with the
 ones from the Geometric model, but we can not determine which one is better.
 Looking at \autoref{tab:ct}, the poor quality fits are: all the laser fits
@@ -1796,15 +1799,15 @@ saturation---see \autoref{fig:pe2}---it is just the wider overflow bin that is
 making the difference.
 
 Overall, looking at the summary in \cite[tab.~3.1~p.~62]{savarese2018}, which
-is given at \SI{5}{VoV} for FBK tiles, and comparing it to our values at
+is given at \SI{5}{VoV} for FBK Tiles, and comparing it to our values at
 \SI{5.5}{VoV}, the DiCT probability is a bit smaller than ours, while the
 afterpulse probability is always much higher. We are not sure, but we think
 that the values in that table just take into account a truncated afterpulse
 distribution, so they should be compared to roughly half of our estimates.
 Considering the slightly higher overvoltage, the DiCT would probably be
 actually the same. The DeCT is much higher, but we do not trust our estimate.
-So we can say that this LFoundry tile has the same DiCT, 4~to 30~times less AP,
-and probably and possibly much less DeCT, than those FBK tiles.
+So we can say that this LFoundry Tile has the same DiCT, 4~to 30~times less AP,
+and probably and possibly much less DeCT, than those FBK Tiles.
 
 If this work was to be carried further, we would model and fit also the events
 with two post-trigger pulses, and with more than 1~PE laser pulses, since they
@@ -1835,6 +1838,11 @@ from \autoref{tab:ct}, the ratios are 3.2, 3.5, 4.1. Either the SiPM enters a
 nonlinear regime somewhere between \SI{7.5}{VoV} and \SI{9.5}{VoV}, or the
 \SI{9.5}{VoV} data is mislabeled. The latter case is a concrete possibility
 that should be checked.
+
+\marginpar{The double peaks issue. It would be a problem if the signal
+amplitude changed so abruptly during the experiment, since the thresholds would
+have to be adapted very quickly (unless there was a good margin on the SNR). Is
+this a problem of this dataset only?}
 
 An issue we did not flesh out is the quality of the template. We are using
 simple averaging with a selection of 1~PE pulses using charge integration. Our
@@ -1871,9 +1879,9 @@ In DarkSide20k this situation arises with the VETO system, which employs
 simpler electronics than the time projection chamber (TPC). To check these
 detectors after installation it would be necessary to employ a charge
 integration method without recorded waveforms. We think that an analysis of
-this kind should be carried on a tile which was previously analyzed
+this kind should be carried on a Tile which was previously analyzed
 pulse-by-pulse, such that the validity of the models can be assessed. For
-example, if our analysis is deemed sufficient, tile~21 could be reanalyzed
+example, if our analysis is deemed sufficient, Tile~21 could be reanalyzed
 following \cite{chmill2017}.
 
 \marginpar{Make a reference to \autoref{ch:darkside}. And I must look at the
@@ -1896,6 +1904,9 @@ suppressed for $t\to 0$, but it also goes down as $1/t^2$ for $t\to\infty$,
 like the Cauchy. This is an unusual feature. This distribution does not even
 have a mean. Physically it would imply that the distribution of the trapping
 energy levels goes arbitrarily deep.
+
+\marginpar{Is there a reference for Pyreco? In the TF2 report they call their
+algorithm ``DSElec''.}
 
 We do not mean to criticize the authors of the software, whose identities we
 did not look up. As we understand, the current version of \texttt{Pyreco} is to

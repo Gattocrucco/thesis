@@ -54,7 +54,7 @@ data.}
 \end{figure}
 
 We used the PDM slot 8 data, which as per \autoref{fig:pdmadcch} corresponds
-to tile 57 which means the data is in the directory
+to Tile 57 which means the data is in the directory
 \url{http://ds50tb.lngs.infn.it:2180/SiPM/Tiles/FBK/NUV/MB2-LF-3x/NUV-LF_3x_57/}. We used the file \nolinkurl{nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav}.
 
 \marginpar{Slot 8 probably is just a Proto0 name, should mention it later. And
@@ -395,6 +395,9 @@ the baseline with just 1000 or 200 samples. The result is in
 \autoref{fig:changebs}. We see that, for example, going from 8000 to 200
 baseline samples the maximum SNR drops from about 20 to about 9.
 
+\marginpar{The effect of a shorter baseline should be described analytically
+with a sum in quadrature, check and explain this.}
+
 \marginpar{Explain why the SNR of the cross correlation filter drops with
 increasing filter length when the baseline is short. The filter behaves like
 a mean, so its peak value drops as it gets longer; the noise rms decreases too
@@ -447,8 +450,13 @@ the signal would still be in the waveform. In \autoref{fig:templsp} we show
 the power spectrum of the signal and its integral. We see that \SI{90}\% of it
 is below XXX~\si{MHz}, which corresponds to an approximately flat region in the
 noise spectra. This means that the cross-correlation filter is close to
-optimal. \marginpar{False: most of the signal spectrum is in the rapidly
-ascending part of the noise spectra.}
+optimal.
+
+\marginpar{False: most of the signal spectrum is in the rapidly ascending part
+of the noise spectra.}
+
+\marginpar{I should explain why you must not use windowing for the Fourier
+transform of the pulse. It is not stationary.}
 
 \begin{figure}
     

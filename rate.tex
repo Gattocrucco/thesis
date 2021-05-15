@@ -1,4 +1,4 @@
-\chapter{Fake rate of photon detection}
+\chapter{Fake rate of pulse detection}
 \label{ch:rate}
 
 In \autoref{ch:snr} we measured the signal to noise ratio after filtering.
@@ -7,9 +7,6 @@ width of the noise distribution, because the threshold required to reject noise
 with a fixed probability is proportional to that scale. So it is convenient to
 express the threshold relative to the same scale, and check it is less than the
 SNR so that signals are not selected away.
-
-\marginpar{The title is misleading, since ``fake rate of \emph{photon}
-detection'' would imply that DCR is included.}
 
 Even assuming that the noise is gaussian, the probability that a random
 fluctuation gets over the threshold is not given simply by computing the
@@ -270,11 +267,11 @@ LFOUNDRY/pre-production-test/TILE_15/LF_TILE15_77K_73V_9VoV_1.wav
 
 The Proto0 data is without signals so we use it as it is. For the LNGS data
 we take the pre-trigger part of the events, and ignore events where any
-pre-trigger sample is less than~750 (860 for tile~15).
+pre-trigger sample is less than~750 (860 for Tile~15).
 
-We plot the time-value histogram of the data for tile 53 in Proto0 and LNGS
-(\autoref{fig:hist2dtile53}), for tile 15 at maximum overvoltage, and for
-tiles 57 and 59 (\autoref{fig:hist2dtile155759}).
+We plot the time-value histogram of the data for Tile 53 in Proto0 and LNGS
+(\autoref{fig:hist2dtile53}), for Tile 15 at maximum overvoltage, and for
+Tiles 57 and 59 (\autoref{fig:hist2dtile155759}).
 
 \marginpar{No need for more explanations of the time-value histograms since
 there will be some of them in chapter 3.}
@@ -289,7 +286,7 @@ there will be some of them in chapter 3.}
 
     \widecenter{\includempl{fighist2dtile53-2}}
     
-    \figcaption{hist2dtile53}{Time-value histograms of tile 53 noise in Proto0
+    \figcaption{hist2dtile53}{Time-value histograms of Tile 53 noise in Proto0
     with a baseline acquisition, and in LNGS pre-trigger at overvoltage \SI6V
     and \SI7V.}
     
@@ -303,7 +300,7 @@ there will be some of them in chapter 3.}
 
     \widecenter{\includempl{fighist2dtile155759-2}}
 
-    \figcaption{hist2dtile155759}{Time-value histograms of tiles 15, 57 and 59
+    \figcaption{hist2dtile155759}{Time-value histograms of Tiles 15, 57 and 59
     noise in LNGS data.}
     
 \end{figure}
@@ -370,9 +367,10 @@ arithmetically, so the complexity is just $O(N)$, it does not depend on the
 number of thresholds.
 
 \subsection{Results}
+\label{sec:rateconcl}
 
 In \autoref{fig:fakerate1} we compare the measured threshold crossings with
-the continuous-derived formula~\eqref{eq:rcont} for a single tile over the
+the continuous-derived formula~\eqref{eq:rcont} for a single Tile over the
 entire threshold range. The coefficients $\sigma$ and $k_2$ for the formula are
 computed on each filtered event and then averaged. Finally, the dead time is
 accounted for with~\eqref{eq:deadrate}. For the data, the conversion from count
@@ -390,7 +388,7 @@ approx.~\SI3\% since the count is~1000.
     
     \widecenter{\includempl{figfakerate1}}
 
-    \figcaption{fakerate1}{Measured and predicted fake rate for tile~31 in
+    \figcaption{fakerate1}{Measured and predicted fake rate for Tile~31 in
     Proto0 with a noise-only acquisition. The right scale shows the actual
     count of threshold crossings for the data, with a gray band marking one
     crossing.}
@@ -401,7 +399,7 @@ approx.~\SI3\% since the count is~1000.
 
 In \autoref{fig:fakerate} we show the same comparison together for all
 datasets, divided in three groups (tile~15 LNGS data, Proto0 data, LNGS other
-tiles). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
+Tiles). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
 are listed in \autoref{tab:fakerate}.
 
 In the second group above some threshold the measured rate stops decreasing and
@@ -409,23 +407,23 @@ remains constant at approximately 10 counts. This is probably due to pulses
 which our very simple veto can not filter away, we guess 1 pe dark/random
 pulses.
 
-In \autoref{fig:fakerate} we highlight the measured rates for tile~53
+In \autoref{fig:fakerate} we highlight the measured rates for Tile~53
 because they are evident outliers. The rate remains higher than the theory
-predicts and than the other tiles as the threshold increases. This is visibile
+predicts and than the other Tiles as the threshold increases. This is visibile
 in Proto0, and in LNGS at \SI6{VoV}, but not at \SI7{VoV}.
 
 Analogously, from \autoref{tab:fakerate} we see that the quantity $f_s
 \sqrt{-k_2}/(2\pi\sigma)$ that multiplies the exponential in~\eqref{eq:rcont}
-is different from the others for tile~53, in the same cases as the data, but
+is different from the others for Tile~53, in the same cases as the data, but
 with the opposite trend. This variation seems to depend only on an increase in
 $\sigma$ and not on $k_2$.
 
 Even though it's weird that this problem disappears at \SI7{VoV}, it can't be a
-coincidence that it arises for the same tile in different setups, showing up
+coincidence that it arises for the same Tile in different setups, showing up
 both as an increased noise RMS and an higher threshold crossing rate, so it
-must be some property of the tile itself.
+must be some property of the Tile itself.
 
-Comparing the 2D histograms for tile~53 (\autoref{fig:hist2dtile53}) to the
+Comparing the 2D histograms for Tile~53 (\autoref{fig:hist2dtile53}) to the
 others (\autoref{fig:hist2dtile155759}) there is no apparent difference.
 Three possible explanations come to mind: 1) a violation of Gaussianity, 2)
 stray pulses, 3) electrical noise.
@@ -438,7 +436,7 @@ s}) = \SI{500}{kHz}$, since our filter would be very good at picking that up.
 
 \marginpar{Looking at the spectrum it is evident that there's a very low
 frequency component ($<\SI{10}{kHZ} = 1/(\SI{100}{\micro s})$) absent in other
-tiles. Maybe they are sudden changes of baseline? I should look at events where
+Tiles. Maybe they are sudden changes of baseline? I should look at events where
 crossings with high threshold happen. Try to do the spectrum with windowing to
 see if it's a boundary problem.}
 
@@ -548,8 +546,8 @@ Proto0 & 66 & <0 & 499 &  8.2 &   -0.91 &   7.5 & 2.3 & 0.77 & 0.61 \\
     
 \end{figure}
 
-We didn't investigate further the discrepancy for tile~53. Anyway, for all
-other tiles we looked at it works well enough.
+We didn't investigate further the discrepancy for Tile~53. Anyway, for all
+other Tiles we looked at it works well enough.
 
 We now want to estimate the minimum amount of data required for the procedure.
 From \autoref{tab:fakerate} we see that the relative error on $k_2$ times the
