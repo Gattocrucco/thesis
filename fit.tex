@@ -1,7 +1,177 @@
 \chapter{Fit of histograms}
 \label{ch:fit}
 
-% fit ai minimi quadrati bayesiano
+This chapter illustrates how the fits were done in \autoref{ch:anal}. They will
+turn out to be almost exactly a standard least squares fit of a histogram, but
+we will give a Bayesian interpretation to all the procedures. If you do not
+favor Bayesian methods, just do not think about it. To actually do the fits, we
+used the Python package \texttt{lsqfit} \cite{lepage2021}, which we warmly
+recommend.
+
+\section{Bayesian least squares}
+
+Bayesian inference is based on applying Bayes' theorem to get the probability
+distribution of the parameters conditional on the observed data. Call $\theta$
+the parameters and $y$ the data, then it reads
+
+\begin{equation}
+    p(\theta|y) = \frac {p(y|\theta) p(\theta)} {p(y)}.
+\end{equation}
+
+The term $p(y|\theta)$ is the likelihood, how the data depends on the
+parameters. $p(y)$ is the unconditional probability of the data; whatever that
+means, we can compute it with $\int\mathrm d\theta\,p(y|\theta)p(\theta)$.
+$p(\theta)$ is the unconditional probability distribution of the parameters. It
+is called \emph{prior} because it encodes what one knows about the parameters
+before having the data. By the same logic, $p(\theta|y)$ is called
+\emph{posterior}.
+
+Least squares is a general procedure to produce an estimator, but a standard
+interpretation is also as a maximum likelihood fit when the likelihood is
+Gaussian. We can do the same in the Bayesian case if the prior is Gaussian too.
+We switch to logarithms and drop addends which do not depend on the parameters:
+
+\begin{align}
+    \log p(\mathbf y|\boldsymbol\theta) &=
+    -\sum_{i=1}^n \log\sigma_i
+    -\frac 12 \sum_{i=1}^n
+    \left( \frac {y_i - \mu_i(\boldsymbol\theta)} {\sigma_i} \right)^2, \\
+    %
+    \log p(\boldsymbol\theta) &=
+    -\sum_{j=1}^k \log\sigma^\theta_j
+    -\frac 12 \sum_{j=1}^k
+    \left( \frac {\mu^\theta_j - \theta_j} {\sigma^\theta_j} \right)^2.
+\end{align}
+
+Now these two terms have to be summed to obtain the log posterior. If we extend
+the $\mathbf y$, $\boldsymbol\mu$ and~$\boldsymbol\sigma$ vectors, we can see
+the two sums together as a single sum of squares:
+
+\begin{align}
+    y_{n+j} &\equiv \mu^\theta_j, \\
+    %
+    \mu_{n+j}(\boldsymbol\theta) &\equiv \theta_j, \\
+    %
+    \sigma_{n+j} &\equiv \sigma^\theta_j, \qquad j = 1, \ldots, k, \\
+    %
+    \log p(\boldsymbol\theta|\mathbf y) &=
+    -\sum_{i=1}^{n+k} \log\sigma_i
+    - \frac 12 \sum_{i=1}^{n+k}
+    \left( \frac {y_i - \mu_i(\boldsymbol\theta)} {\sigma_i} \right)^2 \equiv \\
+    %
+    &\equiv -\sum_{i=1}^{n+k} \log\sigma_i - \frac12 \chi^2.
+\end{align}
+
+So formally the prior is equivalent to additional datapoints, one for each
+parameter. We have not dropped the sum with the $\log\sigma$ although it does
+not depend on $\boldsymbol\theta$; it will be needed later. Note that the
+degrees of freedom of the $\chi^2$ now are $(n+k)-k = n$, instead of the usual
+$n-k$ without prior.
+
+In the analysis we said we put uniform priors over the parameters defined in
+the interval $(0,1)$. This is implemented by fitting a transformed parameter
+with a standard Gaussian prior with zero mean and unitary variance, and
+applying as inverse transformation the Gaussian cumulative density function
+(cdf). Say, if we want to put a uniform prior on $\theta_j$, we fit the
+transformed parameter $\theta_j'$, with
+
+\begin{align}
+    \mu^{\theta'}_j &= 0, \\
+    %
+    \sigma^{\theta'}_j &= 1, \\
+    %
+    \theta_j(\theta'_j) &= \Phi(\theta'_j)
+    \equiv \int_{-\infty}^{\theta'_j} \mathrm du\,
+    \frac {e^{-u^2/2}} {\sqrt{2\pi}}.
+\end{align}
+
+Bayesianly, this is equivalent to omitting the squared term for the prior and
+putting bounds on the parameter value, without transforming. However it is
+convenient for the fitting routine. By the same logic, when we use the
+logarithm to map a positive parameter to the real line, the prior on the
+untransformed parameter is a log-Gaussian distribution.
+
+Now the least squares estimator would be obtained by minimizing the $\chi^2$,
+while a Bayesian cares about the posterior as a distribution. If we approximate
+the posterior as a Gaussian, we can do formally the same calculations. To
+compute the Gaussian approximation we expand the logarithm of the distribution
+to second order around the maximum:
+
+\begin{align}
+    \log p(\boldsymbol\theta|\mathbf y) &\approx
+    -\frac 12 (\boldsymbol\theta-\boldsymbol\theta_0)^\top
+    V^{-1} (\boldsymbol\theta-\boldsymbol\theta_0), \\
+    %
+    \boldsymbol\theta_0 &= \argmin_{\boldsymbol\theta} \chi^2, \\
+    %
+    V^{-1}_{jk} &= \frac12 \left.
+    \frac {\partial^2 \chi^2} {\partial\theta_j \partial\theta_k}
+    \right|_{\boldsymbol\theta_0}.
+\end{align}
+
+Now let us carry further the calculation of the precision matrix, to discuss
+an additional issue:
+
+\begin{align}
+    \frac{\partial\chi^2}{\partial\theta_j} &=
+    2 \sum_i \frac {y_i - \mu_i(\boldsymbol\theta)} {\sigma_i^2}
+    \frac {\partial\mu_i} {\partial\theta_j}, \\
+    %
+    \frac {\partial^2 \chi^2} {\partial\theta_j \partial\theta_k} &=
+    2 \sum_i \frac1{\sigma_i^2} \left(
+    -\frac {\partial\mu_i} {\partial\theta_j}
+    \frac {\partial\mu_i} {\partial\theta_k}
+    + (y_i - \mu_i(\boldsymbol\theta))
+    \frac {\partial^2 \mu_i} {\partial\theta_j \partial\theta_k}
+    \right).
+\end{align}
+
+In standard least squares, the precision matrix of the estimator is estimated
+with the above expression, but with the term with the second derivative
+dropped. The reason is for convenience, but also because the expectation of
+$y_i - \mu_i(\boldsymbol\theta_0(\mathbf y))$ is approximately zero.
+
+This expression that we got by expanding the $\chi^2$ happens to be the
+precision matrix of $\boldsymbol\theta_0(\mathbf y)$ obtained by first order
+propagation w.r.t.~$\mathbf y$, fact that the reader can check with the
+implicit function theorem. A frequentist would like to compute this with the
+true value of the parameters, but has to content herself with the least squares
+estimate, getting something which on average is the true precision matrix. So
+any term which is zero on average can be removed.
+
+For a Bayesian, instead, there is not some ideal error corresponding to an
+ideal parameter value; there is only the covariance of the posterior obtained
+with the particular values at hand. Different data, different posterior.
+However in our fits the residuals term is missing, as we said just because this
+is convenient for the implementation. In practice, the difference should be
+small.
+
+\section{Least squares fit of a histogram}
+
+The standard model of a histogram is Poisson distributions for the bin counts.
+Let $c_i$ be the count in bin~$i$, $f_i(\boldsymbol\theta)$ the model
+normalized distribution of the bins, and $M$ a parameter for the mean of the
+total (Poisson) number of samples. Then the likelihood is
+
+\begin{equation}
+    P(\mathbf c|M,\boldsymbol\theta) =
+    \prod_i P(c_i|M,\boldsymbol\theta) =
+    \prod_i \operatorname{poisson}(c_i;Mf_i(\boldsymbol\theta)),
+\end{equation}
+%
+where $\operatorname{poisson}(\cdot;\mu)$ is a Poisson probability mass
+function (pmf) with mean~$\mu$.
+
+We do not care about $M$, only about $\boldsymbol\theta$, so we marginalize
+the posterior over $M$:
+
+\begin{align}
+    p(\boldsymbol\theta|\mathbf c)
+    &= \int \mathrm dM\, p(M,\boldsymbol\theta|\mathbf c) = \\
+    %
+    &= 
+\end{align}
+
 % fit di istogrammi
 % correzione chi2/dof, sia con massima likelihood che marginalizzando
 % citare lsqfit
