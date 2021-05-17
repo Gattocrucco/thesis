@@ -59,7 +59,7 @@ the two sums together as a single sum of squares:
     - \frac 12 \sum_{i=1}^{n+k}
     \left( \frac {y_i - \mu_i(\boldsymbol\theta)} {\sigma_i} \right)^2 \equiv \\
     %
-    &\equiv -\sum_{i=1}^{n+k} \log\sigma_i - \frac12 \chi^2.
+    &\equiv -\sum_{i=1}^{n+k} \log\sigma_i - \frac12 \chi^2. \label{eq:chi2}
 \end{align}
 
 So formally the prior is equivalent to additional datapoints, one for each
@@ -123,7 +123,7 @@ an additional issue:
     \frac {\partial\mu_i} {\partial\theta_k}
     + (y_i - \mu_i(\boldsymbol\theta))
     \frac {\partial^2 \mu_i} {\partial\theta_j \partial\theta_k}
-    \right).
+    \right). \label{eq:lsqhess}
 \end{align}
 
 In standard least squares, the precision matrix of the estimator is estimated
@@ -138,6 +138,11 @@ implicit function theorem. A frequentist would like to compute this with the
 true value of the parameters, but has to content herself with the least squares
 estimate, getting something which on average is the true precision matrix. So
 any term which is zero on average can be removed.
+
+\marginpar{I'm not \SI{100}\% sure that you obtain that with first order
+propagation, I should double check. But the point would still hold, the part
+with first derivatives is the one used normally, no doubts on that, and the
+rest has zero expectation.}
 
 For a Bayesian, instead, there is not some ideal error corresponding to an
 ideal parameter value; there is only the covariance of the posterior obtained
@@ -169,9 +174,180 @@ the posterior over $M$:
     p(\boldsymbol\theta|\mathbf c)
     &= \int \mathrm dM\, p(M,\boldsymbol\theta|\mathbf c) = \\
     %
-    &= 
+    &= \int \mathrm dM\,
+    \frac {P(\mathbf c|M,\boldsymbol\theta) p(M,\boldsymbol\theta)}
+    {P(\mathbf c)}.
 \end{align}
 
-% fit di istogrammi
-% correzione chi2/dof, sia con massima likelihood che marginalizzando
-% citare lsqfit
+Now we assume that a priori $M$ is independent from $\boldsymbol\theta$, i.e.\ 
+$p(M,\boldsymbol\theta) = p(M)p(\boldsymbol\theta)$. Then, continuing the
+calculation:
+
+\begin{align}
+    p(\boldsymbol\theta|\mathbf c)
+    &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
+    \int \mathrm dM\, p(M)
+    \prod_i \operatorname{poisson}(c_i;Mf_i(\boldsymbol\theta)) = \\
+    %
+    &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
+    \int \mathrm dM\, p(M)
+    \prod_i
+    e^{-Mf_i(\boldsymbol\theta)}
+    \frac {(Mf_i(\boldsymbol\theta))^c_i} {c_i!} = \\
+    %
+    &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
+    \int \mathrm dM\, p(M)
+    e^{-M \sum_i f_i(\boldsymbol\theta)}
+    M^{\sum_i c_i}
+    \prod_i
+    \frac {f_i(\boldsymbol\theta)^c_i} {c_i!}
+\end{align}
+%
+Since $f_i$ is normalized the sum over it yields~1, while we call $N$ the total
+count, so
+
+\begin{align}
+    &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
+    \prod_i
+    \frac {f_i(\boldsymbol\theta)^c_i} {c_i!}
+    \int \mathrm dM\, p(M) e^{-M} M^N
+\end{align}
+%
+The integral does not depend on $\boldsymbol\theta$, so we call it $I(N)$ and
+do not care about its value. Now we take the logarithm:
+
+\begin{align}
+    \log p(\boldsymbol\theta|\mathbf c) &=
+    -\log P(\mathbf c) + \log I(N) - \sum_i \log c_i!
+    + \log p(\boldsymbol\theta) + \sum_i c_i \log f_i(\boldsymbol\theta).
+\end{align}
+
+This is the exact expression for the posterior, which we want to compare to
+least squares, which yields
+
+\begin{align}
+    Q(\boldsymbol\theta) &=
+    \log p(\boldsymbol\theta)
+    -\frac 12
+    \sum_i \frac {(c_i - N f_i(\boldsymbol\theta))^2} {c_i}.
+\end{align}
+
+Note the particular flavor of chisquare we have picked: there is no parameter
+for the normalization, which is fixed to the actual count $N$, and the
+denominator is the observed number of counts $c_i$.
+
+To do the comparison, we expand both expressions to second order, ignoring the
+shared prior term which is already matching:
+
+\begin{align}
+    L(\boldsymbol\theta) &\equiv \log p(\boldsymbol\theta|\mathbf c), \\
+    %
+    \frac {\partial L} {\partial\theta_j} &=
+    \sum_i \frac {c_i} {f_i(\boldsymbol\theta)}
+    \frac {\partial f_i} {\partial \theta_j}, \\
+    %
+    \frac {\partial^2 L} {\partial\theta_j \partial\theta_k} &=
+    \sum_i c_i \left[
+    -\frac 1 {f_i(\boldsymbol\theta)^2}
+    \frac {\partial f_i} {\partial \theta_j}
+    \frac {\partial f_i} {\partial \theta_k}
+    + \frac 1 {f_i(\boldsymbol\theta)}
+    \frac {\partial^2 f_i} {\partial\theta_j \partial\theta_k}
+    \right].
+\end{align}
+
+For $Q$ we start from \eqref{eq:lsqhess}, obtaining
+
+\begin{align}
+    \frac {\partial^2 Q} {\partial\theta_j \partial\theta_k} &=
+    -N^2 \sum_i
+    \frac 1 {c_i} \left[
+    \frac {\partial f_i} {\partial \theta_j}
+    \frac {\partial f_i} {\partial \theta_k}
+    - \left( \frac{c_i} N - f_i(\boldsymbol\theta) \right)
+    \frac {\partial^2 f_i} {\partial\theta_j \partial\theta_k}
+    \right]. \label{eq:Qjk}
+\end{align}
+
+We do not discuss the different results for the maximum because it is well
+known that when there at least five counts per bin the least squares
+approximation is good enough. The covariance instead needs a discussion. Now we
+manipulate $\partial_{jk} L$ to show it is similar to $\partial_{jk} Q$. First,
+we approximate the observed counts with the model, $c_i \approx N
+f_i(\boldsymbol\theta)$:
+
+\begin{align}
+    \frac {\partial^2 L} {\partial\theta_j \partial\theta_k} &=
+    -N^2 \sum_i \frac {c_i} {N^2 f_i(\boldsymbol\theta)^2} \left[
+    \frac {\partial f_i} {\partial \theta_j}
+    \frac {\partial f_i} {\partial \theta_k}
+    - f_i(\boldsymbol\theta)
+    \frac {\partial^2 f_i} {\partial\theta_j \partial\theta_k}
+    \right] \approx \\
+    %
+    &\approx
+    -N^2 \sum_i \frac 1 {c_i} \left[
+    \frac {\partial f_i} {\partial \theta_j}
+    \frac {\partial f_i} {\partial \theta_k}
+    - f_i(\boldsymbol\theta)
+    \frac {\partial^2 f_i} {\partial\theta_j \partial\theta_k}
+    \right].
+\end{align}
+
+Next, we observe that since $f$ is normalized, $\sum_i \partial_{jk} f_i = 0$,
+so we can add the missing term to obtain the residuals:
+
+\begin{align}
+    \frac {\partial^2 L} {\partial\theta_j \partial\theta_k} &\approx
+    -N^2 \sum_i \frac 1 {c_i} \left[
+    \frac {\partial f_i} {\partial \theta_j}
+    \frac {\partial f_i} {\partial \theta_k}
+    + \left( \frac {c_i} N - f_i(\boldsymbol\theta) \right)
+    \frac {\partial^2 f_i} {\partial\theta_j \partial\theta_k}
+    \right]. \label{eq:Ljk}
+\end{align}
+
+Comparing \eqref{eq:Qjk} with \eqref{eq:Ljk}, we see that the difference is the
+sign of the residuals term. As we explained above, in the least squares fit
+that term is dropped altogether, so notwithstanding the Poisson model, we end
+up doing the same kind of approximation we did starting from Gaussians.
+
+\section{The $\chi^2/\mathrm{dof}$ correction}
+
+Starting from the Gaussian model posterior \eqref{eq:chi2}, we add a parameter
+$s$ that rescales uniformly all the errors:
+
+\begin{align}
+    \log p(\boldsymbol\theta|\mathbf y)
+    &= -\sum_{i=1}^{n+k} \log\sigma_i - \frac12 \chi^2 \mapsto \\
+    %
+    \mapsto \log p(\boldsymbol\theta,s|\mathbf y)
+    &= \log p(s) -\sum_{i=1}^{n+k} \log(s \sigma_i)
+    - \frac 12 \sum_{i=1}^{n+k}
+    \left( \frac {y_i - \mu_i(\boldsymbol\theta)} {s \sigma_i} \right)^2 = \\
+    %
+    &= \log p(s) - (n+k) \log s - \sum_{i=1}^{n+k} \log\sigma_i
+    - \frac 12 \frac{\chi^2}{s^2}.
+\end{align}
+
+Since $s$ is a scale parameter, it makes sense to use a uniform prior over
+$\log s$, i.e.\ $p(s) = 1/s$, because it is scale-invariant. Now that we have
+let errors vary, we marginalize away $s$, freely dropping normalizations as
+usual:
+
+\begin{align}
+    p(\boldsymbol\theta|\mathbf y)
+    &= \int \mathrm ds\,
+    p(\boldsymbol\theta,s|\mathbf y) = \\
+    %
+    &= \int \frac {\mathrm ds} {s^{n+k+1}}
+    \exp\left(-\frac12 \frac {\chi^2} {s^2}) =
+    %
+    &= \frac 1 {(\chi^2)^{(n+k)/2}}.
+\end{align}
+
+Now again we take the logarithm and expand to second order:
+
+\begin{align}
+    
+\end{align}
