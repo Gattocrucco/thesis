@@ -102,11 +102,12 @@ to second order around the maximum:
     -\frac 12 (\boldsymbol\theta-\boldsymbol\theta_0)^\top
     V^{-1} (\boldsymbol\theta-\boldsymbol\theta_0), \\
     %
-    \boldsymbol\theta_0 &= \argmin_{\boldsymbol\theta} \chi^2, \\
+    \boldsymbol\theta_0
+    &= \operatorname*{arg\,min}_{\boldsymbol\theta} \chi^2, \\
     %
     V^{-1}_{jk} &= \frac12 \left.
     \frac {\partial^2 \chi^2} {\partial\theta_j \partial\theta_k}
-    \right|_{\boldsymbol\theta_0}.
+    \right|_{\boldsymbol\theta_0}. \label{eq:lsqpm}
 \end{align}
 
 Now let us carry further the calculation of the precision matrix, to discuss
@@ -193,24 +194,25 @@ calculation:
     \int \mathrm dM\, p(M)
     \prod_i
     e^{-Mf_i(\boldsymbol\theta)}
-    \frac {(Mf_i(\boldsymbol\theta))^c_i} {c_i!} = \\
+    \frac {(Mf_i(\boldsymbol\theta))^{c_i}} {c_i!} = \\
     %
     &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
     \int \mathrm dM\, p(M)
     e^{-M \sum_i f_i(\boldsymbol\theta)}
     M^{\sum_i c_i}
     \prod_i
-    \frac {f_i(\boldsymbol\theta)^c_i} {c_i!}
+    \frac {f_i(\boldsymbol\theta)^{c_i}} {c_i!}
 \end{align}
 %
 Since $f_i$ is normalized the sum over it yields~1, while we call $N$ the total
 count, so
 
 \begin{align}
+    p(\boldsymbol\theta|\mathbf c)
     &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
     \prod_i
     \frac {f_i(\boldsymbol\theta)^c_i} {c_i!}
-    \int \mathrm dM\, p(M) e^{-M} M^N
+    \int \mathrm dM\, p(M) e^{-M} M^N.
 \end{align}
 %
 The integral does not depend on $\boldsymbol\theta$, so we call it $I(N)$ and
@@ -233,11 +235,11 @@ least squares, which yields
 \end{align}
 
 Note the particular flavor of chisquare we have picked: there is no parameter
-for the normalization, which is fixed to the actual count $N$, and the
-denominator is the observed number of counts $c_i$.
+for the normalization, which is fixed to the actual total count $N$, and the
+denominator is the observed count $c_i$.
 
 To do the comparison, we expand both expressions to second order, ignoring the
-shared prior term which is already matching:
+shared prior term which is already matched:
 
 \begin{align}
     L(\boldsymbol\theta) &\equiv \log p(\boldsymbol\theta|\mathbf c), \\
@@ -341,7 +343,7 @@ usual:
     p(\boldsymbol\theta,s|\mathbf y) = \\
     %
     &= \int \frac {\mathrm ds} {s^{n+k+1}}
-    \exp\left(-\frac12 \frac {\chi^2} {s^2}) =
+    \exp\left(-\frac12 \frac {\chi^2} {s^2}\right) = \\
     %
     &= \frac 1 {(\chi^2)^{(n+k)/2}}.
 \end{align}
@@ -349,5 +351,41 @@ usual:
 Now again we take the logarithm and expand to second order:
 
 \begin{align}
-    
+    P(\boldsymbol\theta) &\equiv
+    \log p(\boldsymbol\theta|\mathbf y)
+    = -\frac{n+k}2 \log \chi^2, \\
+    %
+    \frac {\partial P} {\partial \theta_j}
+    &= -\frac{n+k}2 \frac 1{\chi^2}
+    \frac {\partial \chi^2} {\partial \theta_j}, \\
+    %
+    \frac {\partial^2 P} {\partial\theta_j \partial\theta_k}
+    &= -\frac{n+k}2 \left[
+    -\frac 1 {(\chi^2)^2}
+    \frac {\partial \chi^2} {\partial \theta_j}
+    \frac {\partial \chi^2} {\partial \theta_k}
+    + \frac 1{\chi^2}
+    \frac {\partial^2 \chi^2} {\partial\theta_j \partial\theta_k}
+    \right]. \label{eq:Pjk}
 \end{align}
+
+In the maximum $\partial_j P = 0$, so the first term in \eqref{eq:Pjk}
+vanishes, leaving
+
+\begin{align}
+    \frac {\partial^2 P} {\partial\theta_j \partial\theta_k}
+    &= -\frac12 \frac 1 {\chi^2/(n+k)}
+    \frac {\partial^2 \chi^2} {\partial\theta_j \partial\theta_k}.
+    \label{eq:chi2dof}
+\end{align}
+%
+This is to be compared with the precision matrix in \eqref{eq:lsqpm}. The
+only difference is that the matrix has been divided by $\chi^2/(n+k)$. Note
+that $\mathrm{dof} = n$, so we obtained a different prescription than the
+conventional one. Nevertheless, in the analysis we used $\chi^2/\mathrm{dof}$
+just because it is what people expect; compared to \eqref{eq:chi2dof}, this
+gives errors up to \SI{25}\% larger on our fits, see \autoref{tab:ct}.
+
+Similarly, we used the pvalue; since we always obtained a stark contrast
+between good and bad fits, we did not bother giving a precise Bayesian
+equivalent.
