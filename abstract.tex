@@ -1,0 +1,153 @@
+\documentclass[11pt]{article}
+
+\usepackage{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{siunitx}
+\usepackage{lineno} % \linenumbers
+\usepackage{fancyhdr}
+
+\newlength\bindingoffset
+\setlength\bindingoffset{1cm}
+\geometry{%
+    a4paper,
+    asymmetric, % twoside, but marginpar are always to the right
+    centering,
+    textwidth=360pt, % default LaTeX textwidth with 11pt (345pt for 10pt)
+    top=1.8cm,
+    bottom=1.8cm,
+    marginparwidth=3.4cm,
+    headsep=10pt,
+    footskip=17pt,
+    bindingoffset=\bindingoffset,
+    % showframe,
+}
+\addtolength\marginparwidth{-0.5\bindingoffset}
+
+\linenumbers % print line numbers (for the draft)
+
+% small sans font for marginpar
+\let\oldmarginpar\marginpar
+\renewcommand\marginpar[1]{\oldmarginpar{\sffamily\scriptsize #1}}
+
+\newlength\pagenumbermargin
+\setlength\pagenumbermargin{2.9cm}
+\addtolength\pagenumbermargin{-0.5\bindingoffset}
+
+\newcommand\hdrside{RO,LE}
+\newcommand\sharedstyle{%
+    \renewcommand\headrulewidth{0pt}
+    \fancyhf{}
+    \fancyhfoffset\pagenumbermargin
+    \fancyfoot[\hdrside]\thepage
+}
+
+\fancypagestyle{plain}\sharedstyle
+\pagestyle{fancy}
+\sharedstyle
+
+\author{Giacomo Petrillo\\
+Supervisors: Eugenio Paoloni, Simone Stracka\\
+University of Pisa}
+
+\title{Thesis abstract: Online processing of the large area SiPM detector
+signals for the DarkSide20k experiment}
+
+\begin{document}
+    
+    \maketitle
+
+    The thesis consists in some studies on the silicon photomultipliers (SiPMs)
+    photodetector modules (PDMs) that will be used in the DarkSide20k dark
+    matter detection experiment, needed in order to decide some details of the
+    data acquisition system (DAQ) and of the layout of the readout electronics.
+    
+    DarkSide20k is a planned dual-phase liquid argon (LAr) time projection
+    chamber (TPC), the successor to DarkSide-50. It will be the largest
+    detector of its kind, with 20~metric tons of argon in the fiducial volume.
+    The predicted resulting upper bound on the spin-independent WIMP-nucleon
+    scattering cross-section, in case of no discovery, is
+    $\approx\SI{1e-47}{cm^2}$ at \SI{1}{TeV/c^2} WIMP mass, to be compared
+    with the current best limit $\approx\SI{1e-45}{cm^2}$ by XENON1T.
+    
+    The photodetectors of the TPC will employ SiPMs instead of the usual
+    photomultiplier tubes (PMTs). The SiPM has Geiger-mode single photon
+    response, i.e.\ each detected photon produces one fixed amplitude pulse.
+    The photodetection efficiency is higher than PMTs, reaching \SI{50}\%, with
+    also a better geometric occupancy, which should reach \SI{80}\% in
+    DarkSide20k.
+    
+    SiPMs have three kinds of noise: stationary electric noise, which scales
+    with the square root of the area; a dark count rate (DCR) of pulses
+    independent of incident light that scales with the area; and correlated
+    noise produced by primary pulses, which contributes a factor proportional
+    to the DCR and photon pulses.
+    
+    The pulse shape is a sharp peak followed by a long exponential tail. By
+    applying linear filters to digitized waveforms acquired from the PDMs
+    illuminated by a pulsed laser, both in a testing setup at Laboratori
+    Nazionali del Gran Sasso (LNGS) and in the small prototype TPC Proto0, we
+    study the noise parameters of single pulse detection: signal to noise ratio
+    (SNR), temporal resolution, and fake rate. These are all related to the
+    electrical noise.
+    
+    Then using a custom peak finder algorithm we measure the DCR and study the
+    correlated noise, which consists in additional pulses produced recursively
+    by each pulse, divided in two main categories: afterpulses (AP), which
+    arrive with some delay from the parent pulse, and have smaller amplitude as
+    the delay goes to zero, and direct cross talk (DiCT), which manifests as a
+    integer multiplication of the amplitude of pulses because the children
+    pulses are overlapped with the parent.
+    
+    The results are the following. The resources on the digitizers may limit
+    the SNR after filtering to~13, compared to~20 which would be obtained with
+    an almost optimal filter. After identifying a candidate pulse, the
+    digitizers will send a slice of waveform to the front end processing (FEP).
+    
+    The temporal resolution matters on the FEP where the final identification
+    of pulses is decided. For what concerns temporal resolution: 1)~upsampling
+    is not necessary; 2)~at low SNR the resolution diverges and how fast
+    heavily depends on the noise spectrum, with the Proto0 noise the maximum
+    allowed by specs, \SI{10}{ns}, is reached at pre-filter SNR~2.6; 3)~it is
+    sufficient to have \SI{1}{\micro s} of waveform per pulse; 4)~it is
+    possible to lower the sampling frequency from \SI{125}{MSa/s} to
+    \SI{62.5}{MSa/s}.
+    
+    Using a simple filter which surely fits into the digitizers, the fake rate
+    is \SI{10}{cps} when the threshold is set to 5~standard deviations of the
+    filtered noise, where the filter includes the subtraction of the baseline.
+    Since the filter procedure is not actually decided yet, we give
+    instructions on how to compute the fake rate without actually counting the
+    threshold crossings with \SI{1}{ms} of recorded data. Of the 25~PDMs we
+    looked at, one has an anomalously high fake rate which we did not
+    investigate properly.
+    
+    We give upper bounds for the DCR of a $6\times4$ SiPMs Tile at three
+    overvoltages, \SI{5.5}{V}, \SI{7.5}{V}, \SI{9.5}{V} (the overvoltage is the
+    difference between the bias put on the SiPM and the breakdown voltage of
+    the junction), which are respectively \SI{50}{cps}, \SI{170}{cps},
+    and~\SI{120}{cps}, to be compared with the DarkSide20k requirement of
+    \SI{250}{cps}. \SI{5.5}{V} is a somewhat usual operating overvoltage while
+    \SI{9.5}{V} is considered high. Increasing the overvoltage increases both
+    the SNR, the DCR and the correlated noise.
+    
+    The analysis of correlated noise, done on the same data, gives upper bounds
+    for AP probabilities of \SI{2.5}\%, \SI{3.5}\% and \SI{6.5}\%, and DiCT
+    probabilities \SI{20}\%, \SI{30}\% and~\SI{50}\%. These are the
+    probabilities of said noises being generated by any given single pulse,
+    i.e.\ the stacked pulses produced by DiCT count separately. The maximum
+    DiCT probability tolerable during operation is reported to be \SI{50}\%.
+    The DarkSide20k specifications require less than \SI{60}\% DiCT+AP to
+    maintain a good dynamic range on ionization signals, where there is a lot
+    of pile-up.
+    
+    Measuring AP and DiCT requires models. We try the models we find in the
+    literature and in the DarkSide20k simulation and bring them into question,
+    but we do not search for better alternatives. They are probably good enough
+    for the necessities of the experiment. We find that the AP temporal
+    distribution is well described by two exponential decays with constants
+    \SI{200}{ns} and \SI{1}{\micro s}, but not by a single one.
+    
+    Finally as an appendix we give a Bayesian interpretation of the common
+    procedures used to fit histograms with least squares.
+    
+\end{document}

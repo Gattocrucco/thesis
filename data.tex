@@ -123,28 +123,20 @@ laser trigger. Of the two-channels files we used, the channel layout is 0:PDM,
 1:trigger for FBK, swapped for LFoundry.
 
 The layout of the \texttt{wav} files is the following. The files are arrays of
-16 bit signed integers, divided into events. Each event starts with 20 values
+16~bit signed integers, divided into events. Each event starts with 20 values
 of metadata, followed by \num{15001} values for each channel. The values in the
-metadata are: 0: the constant -1, 1: the length of the metadata, i.e.\ 20, 6:
-the length of the event, i.e.\ \num{15001}, 10: the number of channels, i.e.\
-1, 2 or~3. We inferred this layout from the files we looked at, some details
-may be different for other files. The ADC has depth 10~bit, so the values are
-always in the range 0 to~1023. The sampling frequency is \SI{1}{GSa/s}.
+metadata are: 0:~the constant $-1$, 1:~the length of the metadata, i.e.\ 20,
+6:~the length of the event, i.e.\ \num{15001}, 10:~the number of channels,
+i.e.\ 1, 2 or~3. We inferred this layout from the files we looked at, some
+details may be different for other files. The ADC has depth 10~bit, so the
+values are always in the range 0 to~1023. The sampling frequency is
+\SI{1}{GSa/s}.
 
 In \autoref{fig:hist2dtile64} we show the persistence plot for the particularly
 noisy Tile~52, synchronized with the laser trigger. The discretized height of
 pulses is well visible, and there also some random pulses arriving before the
 trigger. The response of the SiPM will be described briefly in \autoref{ch:snr}
 and more in detail in \autoref{ch:anal}.
-
-\begin{figure}
-    
-    \widecenter{\includempl{fighist2dtile64}}
-    
-    \figcaption{hist2dtile64}{Time-value histogram of the waveforms for Tile~64
-    in the Proto0 data.}
-    
-\end{figure}
 
 \begin{table}
     
@@ -172,9 +164,20 @@ and more in detail in \autoref{ch:anal}.
 
 \begin{figure}
     
+    \widecenter{\includempl{fighist2dtile64}}
+    
+    \figcaption{hist2dtile64}{Time-value histogram of the waveforms for Tile~64
+    in the Proto0 data.}
+    
+\end{figure}
+
+\begin{figure}
+    
     \widecenter{\includempl{fighist2dtile52}}
     
     \figcaption{hist2dtile52}{Time-value histogram of the waveforms for Tile~52
     in the LNGS data.}
     
 \end{figure}
+
+\marginpar{Add a raw zoomed plot of the Proto0 noise waveform.}

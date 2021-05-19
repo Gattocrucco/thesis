@@ -1,20 +1,6 @@
 \chapter{Conclusions}
 \label{ch:end}
 
-\marginpar{The ARMA filter. It is still not clear to me what they mean with it.
-I would think a template for the peak and an AR for the tail, run on the
-temporally reversed waveform because otherwise the exponential grows in the
-wrong direction. This should reproduce the cross correlation filter since the
-tail shape is well described by an exponential, as shown in \cite{luzzi2020}.
-However, in \nolinkurl{results_on_MB2_tiles.pdf}, the performance is
-substantially worse, and from the explanation they seem to not be reversing the
-waveform. I asked Alessandro in a meeting is the filter was <<reversed\dots>>,
-but he may have missed what I meant. Simone coherently said that it would
-require buffering, so maybe Simone thinks it uses reversing? Maybe they changed
-idea since 2018, realizing afterwards the possibility of reversal? Anyway, the
-relevance here is saying that it may require too many resources due to the
-reversal, otherwise one would think that it solves the problem completely.}
-
 The main takeaway from \autoref{ch:snr} is in \autoref{fig:changebs}. The
 maximum signal to noise ratio (SNR) that can be reached with filtering on that
 data is~20, shown on the left panel with the cross correlation filter and
@@ -22,6 +8,9 @@ precise baseline calculation. However the constraints of the available
 resources on the digitizers may turn out to impose a moving average filter with
 imprecise baseline, lowering the SNR to~13, as shown in the central panel. So
 the SNR at the digitizer stage can be as low as \SI{65}\% of the optimal one.
+
+\marginpar{Say that the ARMA filter may not fit into the digitizers, or would
+complicate the design.}
 
 In \autoref{ch:timeres} there are various things to learn:
 
@@ -31,8 +20,8 @@ In \autoref{ch:timeres} there are various things to learn:
     
     \item The temporal resolution diverges below a certain SNR, giving a
     somewhat rigid bound on the working point, and the behavior at low SNR
-    heavily depends on the noise spectrum, \autoref{fig:rescomp}.
-    \texttt{Pyreco} currently simulates only white noise.
+    heavily depends on the noise spectrum, \autoref{fig:rescomp}. The
+    DarkSide20k simulation currently implements only white noise.
     
     \item For what concerns temporal resolution, it is sufficient to extract
     \SI{1}{\micro s} of waveform per pulse from the digitizers,
@@ -42,20 +31,28 @@ In \autoref{ch:timeres} there are various things to learn:
     \item Downsampling from \SI{125}{MSa/s} to \SI{62.5}{MSa/s} does not
     deteriorate the temporal resolution, \autoref{fig:tempresdowns} and
     \autoref{tab:filtsnrdowns}. If a compromise with the data rate is
-    necessary, \SI{31.2}{MSa/s} may be still good enough.
+    necessary, \SI{31.2}{MSa/s} may be still good enough, and we have not
+    investigated whether in the latter case upsampling would recover some
+    performance.
     
 \end{itemize}
 
-\marginpar{Please, good sir, a reference for Pyreco!!}
+\marginpar{Add that the temporal resolution needed is \SI{10}{ns} from the
+Yellow Book and say at which SNR we get there with Proto0 noise. Say that
+Proto0 is considered a noisy environment, so it may be considered an upper
+bound.}
 
 Chapter~\ref{ch:rate} has its own summary in \autoref{sec:rateconcl}. In
 general the formula for the fake rate is sufficiently precise, but there is an
 exception with higher rate than expected that should be investigated better,
 see \autoref{fig:fakerate}. With the tested filter, which matches the one
 mentioned above for the $\mathrm{SNR} = 13$ figure, the fake rate is
-\SI{10}{cps} at approximately 5 filtered noise standard deviations.
+\SI{10}{cps} with the threshold set at 5 filtered noise standard deviations
+(including baseline subtraction).
 
-\marginpar{What is the maximum fake rate we can allow? Why? References?}
+\marginpar{Take the maximum fake rate from the Yellow Book. The important is
+total fake rate + dcr, but at this level it can be more since that figure is
+after the FEP.}
 
 The chapter on correlated noise contains more material, so it includes a rather
 long discussion of the results in \autoref{sec:analconcl}. To summarize
@@ -80,7 +77,4 @@ further:
     
 \end{itemize}
 
-\marginpar{Here I would like to talk about the channel summing discussed in
-the TF2 report, however I am not able to reproduce Simone's calculations which
-give the $\SI{4.5}{VoV}\sqrt N$ formula. I have to have him explain the steps
-to me. Link to the report: \url{https://www.overleaf.com/read/bcvnxwvvtnnf}.}
+\marginpar{Explain the stuff from Simone in the TF2 report.}
