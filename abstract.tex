@@ -56,39 +56,59 @@ signals for the DarkSide20k experiment}
     
     \maketitle
 
-    The thesis consists in some studies on the silicon photomultipliers (SiPMs)
-    photodetector modules (PDMs) that will be used in the DarkSide20k dark
-    matter detection experiment, needed in order to decide some details of the
-    data acquisition system (DAQ) and of the layout of the readout electronics.
-    
     DarkSide20k is a planned dual-phase liquid argon (LAr) time projection
-    chamber (TPC), the successor to DarkSide-50. It will be the largest
-    detector of its kind, with 20~metric tons of argon in the fiducial volume.
-    The predicted resulting upper bound on the spin-independent WIMP-nucleon
-    scattering cross-section, in case of no discovery, is
-    $\approx\SI{1e-47}{cm^2}$ at \SI{1}{TeV/c^2} WIMP mass, to be compared
-    with the current best limit $\approx\SI{1e-45}{cm^2}$ by XENON1T.
+    chamber (TPC) designed to detect dark matter, the successor to DarkSide-50.
+    It will be the largest detector of its kind, with 20~metric tons of argon
+    in the fiducial volume. The predicted resulting upper bound on the
+    spin-independent WIMP-nucleon scattering cross-section, in case of no
+    discovery, is $\approx\SI{1e-47}{cm^2}$ at \SI{1}{TeV/c^2} WIMP mass, to be
+    compared with the current best limit $\approx\SI{1e-45}{cm^2}$ by XENON1T.
     
-    The photodetectors of the TPC will employ SiPMs instead of the usual
-    photomultiplier tubes (PMTs). The SiPM has Geiger-mode single photon
-    response, i.e.\ each detected photon produces one fixed amplitude pulse.
-    The photodetection efficiency is higher than PMTs, reaching \SI{50}\%, with
-    also a better geometric occupancy, which should reach \SI{80}\% in
-    DarkSide20k.
+    The thesis consists in reconstruction and characterization studies on the
+    photodetector modules (PDMs) that will be used in the TPC. These studies
+    are primarily meant as a support to the definition of the first stages of
+    the online processing chain.
     
-    SiPMs have three kinds of noise: stationary electric noise, which scales
-    with the square root of the area; a dark count rate (DCR) of pulses
-    independent of incident light that scales with the area; and correlated
-    noise produced by primary pulses, which contributes a factor proportional
+    The PDMs consist of matrices of silicon photomultipliers (SiPMs), instead
+    of the usual photomultiplier tubes (PMTs). The SiPM has Geiger-mode single
+    photon response, i.e.\ each detected photon produces one fixed amplitude
+    pulse. Compared to a PMT, the photodetection efficiency is higher, reaching
+    \SI{50}\%, with also a better geometric occupancy, which should be greater
+    than \SI{85}\% in DarkSide20k, compared to \SI{80}\% in DarkSide-50, and a
+    much better single photon resolution. The pulse shape is a sharp peak
+    followed by a long exponential tail.
+    
+    %%%%%%%%
+    
+    SiPMs have three kinds of noise: 1) stationary electric noise, which scales
+    with the square root of the area; 2) a ``dark count rate'' (DCR) of pulses
+    independent of incident light that scales with the area; 3) ``correlated
+    noise'' produced by primary pulses, which contributes a factor proportional
     to the DCR and photon pulses.
     
-    The pulse shape is a sharp peak followed by a long exponential tail. By
-    applying linear filters to digitized waveforms acquired from the PDMs
+    The first two steps in the readout chain will be the digitizers and the
+    front end processors (FEP). The digitizers find candidate pulses, and for
+    each one send a slice of waveform to the FEP, where the final
+    identification of pulses is decided. The performance of these stages is
+    mainly determined by the electric noise, characterized with the signal to
+    noise ratio (SNR), which is the ratio of the amplitude of pulses over the
+    noise standard deviation. It influences the fake rate, i.e.\ the rate of
+    random oscillations high enough to be mistakenly identified as pulses, and
+    the temporal resolution of pulse detection.
+    
+    By applying linear filters to digitized waveforms acquired from the PDMs
     illuminated by a pulsed laser, both in a testing setup at Laboratori
-    Nazionali del Gran Sasso (LNGS) and in the small prototype TPC Proto0, we
-    study the noise parameters of single pulse detection: signal to noise ratio
-    (SNR), temporal resolution, and fake rate. These are all related to the
-    electrical noise.
+    Nazionali del Gran Sasso (LNGS) and in the small prototype TPC ``Proto0'',
+    we study the noise parameters of single pulse detection: SNR, temporal
+    resolution, fake rate.
+    
+    We consider 1)~an autoregressive filter, which uses the least possible
+    computational resources, 2)~a matched filter without spectrum correction,
+    which gives almost optimal performance, 3)~a moving average, which is a
+    compromise between simplicity and performance. Simple filters are needed on
+    the digitizers, which must process all the incoming data, while the FEP
+    will probably use the optimal filter. We also study the baseline
+    computation and the filter length.
     
     Then using a custom peak finder algorithm we measure the DCR and study the
     correlated noise, which consists in additional pulses produced recursively
@@ -98,28 +118,32 @@ signals for the DarkSide20k experiment}
     integer multiplication of the amplitude of pulses because the children
     pulses are overlapped with the parent.
     
-    The results are the following. The resources on the digitizers may limit
-    the SNR after filtering to~13, compared to~20 which would be obtained with
-    an almost optimal filter. After identifying a candidate pulse, the
-    digitizers will send a slice of waveform to the front end processing (FEP).
+    The results follow.
     
-    The temporal resolution matters on the FEP where the final identification
-    of pulses is decided. For what concerns temporal resolution: 1)~upsampling
-    is not necessary; 2)~at low SNR the resolution diverges and how fast
-    heavily depends on the noise spectrum, with the Proto0 noise the maximum
-    allowed by specs, \SI{10}{ns}, is reached at pre-filter SNR~2.6; 3)~it is
-    sufficient to have \SI{1}{\micro s} of waveform per pulse; 4)~it is
-    possible to lower the sampling frequency from \SI{125}{MSa/s} to
-    \SI{62.5}{MSa/s}.
+    While with an ideal filtering procedure the post-filter SNR reaches~20, it
+    may realistically be~13 with the resources of the digitizers, i.e.\ using a
+    moving average \SI{1}{\micro s} long for both the pulse and the baseline.
     
-    Using a simple filter which surely fits into the digitizers, the fake rate
-    is \SI{10}{cps} when the threshold is set to 5~standard deviations of the
-    filtered noise, where the filter includes the subtraction of the baseline.
-    Since the filter procedure is not actually decided yet, we give
-    instructions on how to compute the fake rate without actually counting the
-    threshold crossings with \SI{1}{ms} of recorded data. Of the 25~PDMs we
-    looked at, one has an anomalously high fake rate which we did not
+    With the moving average as just described, the fake rate is \SI{10}{cps}
+    when the threshold is set to 5~standard deviations of the filtered noise,
+    where the filter includes the subtraction of the baseline. Since the
+    filtering procedure is not actually decided yet, we give general
+    instructions on how to measure low fake rates without actually counting the
+    threshold crossings with only \SI{1}{ms} of recorded data. Of the 25~PDMs
+    we looked at, one has an anomalously high fake rate which we did not
     investigate properly.
+
+    The temporal resolution mostly matters on the FEP, so we summarize the
+    results with the matched filter: 1)~upsampling is not necessary; 2)~at low
+    SNR the resolution diverges and how fast heavily depends on the noise
+    spectrum, with the Proto0 noise the maximum allowed by specs, \SI{10}{ns},
+    is reached at pre-filter SNR~2.6; 3)~it is sufficient to have \SI{1}{\micro
+    s} of waveform per pulse sent to the FEP; 4)~it is possible to lower the
+    sampling frequency from \SI{125}{MSa/s} to \SI{62.5}{MSa/s}. In the thesis
+    we show detailed curves for all the filter, filter length, SNR and sampling
+    frequency choices.
+    
+    %%%%%%%%
     
     We give upper bounds for the DCR of a $6\times4$ SiPMs Tile at three
     overvoltages, \SI{5.5}{V}, \SI{7.5}{V}, \SI{9.5}{V} (the overvoltage is the
@@ -146,6 +170,15 @@ signals for the DarkSide20k experiment}
     for the necessities of the experiment. We find that the AP temporal
     distribution is well described by two exponential decays with constants
     \SI{200}{ns} and \SI{1}{\micro s}, but not by a single one.
+    
+    Based on the peak finding algorithm we used in the correlated noise
+    analysis, we suggest but do not test the following procedure to better
+    resolve multiple pulses: do a first pass with a short filter, pick
+    candidate peaks, do a second pass with a long filter, eventually pick
+    additional candidates, compute the amplitude of pulses solving the linear
+    system for the superposition of pulses using only the long filter peak
+    amplitudes, curb peaks with low amplitude and compute it again. We give a
+    proof related to the optimality of this procedure.
     
     Finally as an appendix we give a Bayesian interpretation of the common
     procedures used to fit histograms with least squares.
