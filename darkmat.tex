@@ -91,15 +91,6 @@ directions. The sphere shrinks until the gravitational energy is balanced with
 the kinetic energy, then lingers in the state of spherical cloud. Thus, by
 Landau's arrow, dark matter must be frictionless.>>
 
-Where the ``Landau's arrow'' is Bayes' theorem. If the reader knows a bit about
-astronomy, she may have noticed that my explanation was, to put it charitably,
-qualitative. Elliptical galaxies do exist, are found in sizes smaller to larger
-than the Milky Way, and possibly with low eccentricity. Furthermore,
-simulations of the formation of the dark matter halo show that it actually ends
-up more spherical if it \emph{does} interact, see \autoref{fig:halo}, and that
-it has a rich substructure. Dark matter is expected to form aggregations of all
-sizes down to the mass of the Earth \cite[1]{vogelsberger2012}.
-
 \begin{figure}
     
     \widecenter{\includegraphics[width=\textwidth]{halo}}
@@ -108,10 +99,19 @@ sizes down to the mass of the Earth \cite[1]{vogelsberger2012}.
     simulation of a Milky Way-like non-relativistic dark matter halo (``cold''
     dark matter, CDM). Left panel: non-interacting dark matter. Right panel:
     self-interacting dark matter (SIDM) with cross section/particle mass ratio
-    \SI{10}{cm^2/g}. From \cite[21]{tulin2017}, originally from
+    \SI{10}{cm^2/g}. From \cite[21]{tulin2018}, originally from
     \cite[6]{vogelsberger2012}.}
     
 \end{figure}
+
+Where the ``Landau's arrow'' is Bayes' theorem. If the reader knows a bit about
+astronomy, she may have noticed that my explanation was, to put it charitably,
+qualitative. Elliptical galaxies do exist, are found in sizes smaller to larger
+than the Milky Way, and possibly with low eccentricity. Furthermore,
+simulations of the formation of the dark matter halo show that it actually ends
+up more spherical if it \emph{does} interact, see \autoref{fig:halo}, and that
+it has a rich substructure. Dark matter is expected to form aggregations of all
+sizes down to the mass of the Earth \cite[1]{vogelsberger2012}.
 
 To rule out the possibility of dark matter solar systems and planets etc.,
 I~have to invoke actual measurements. In~2006 an analysis of a pair of
@@ -129,26 +129,26 @@ $\SI{0.47}{cm^2/g} = \SI{0.84}{barn/GeV}$. The limit is on the ratio, instead
 of just the cross section, because the total mass is fixed by the lensing
 measurement, and the mass of individual dark matter particles is unknown, and
 could vary by many orders of magnitude \cite[474]{zyla2020}. This is about the
-same ratio of a nucleon: cross section $\tilde\SI1{barn}$, mass \SI1{GeV}. An
-atom has the same mass, but cross section $10^{10}$ times higher, so definitely
-dark matter is not forming anything similar to us unless we seek very
-far-fetched speculations.
+same ratio of a nucleon: cross section $\sim\SI{1}{barn}$, mass \SI{1}{GeV}.
+An atom has the same mass, but cross section $10^{10}$ times higher, so
+definitely dark matter is not forming anything similar to us unless we seek
+very far-fetched speculations.
 
 \begin{figure}
     
-    \widecenter{\includegraphics[width=\textwidth]{bullet}}
+    \widecenter{\includegraphics[width=1.3\textwidth]{bullet}}
     
     \caption{\label{fig:bullet} Left panel: photo of the Bullet cluster and its
     companion in the visible band. Right panel: the same patch of sky in
     X-rays. The contours represent the mass density obtained from gravitational
-    lensing. From \cite[29]{tulin2017}, originally from \cite[3]{clowe2006}.}
+    lensing. From \cite[29]{tulin2018}, originally from \cite[3]{clowe2006}.}
     
 \end{figure}
 
 The density of dark matter in the neighborhood of the solar system can be
 inferred from its effect on the motion of nearby stars, which is measured
 precisely. The most recent estimate, done with the Gaia satellite data, gives
-$\sim\SI1{GeV}{cm^3}$ \cite{buch2019}. For comparison, the solar wind density
+$\sim\SI1{GeV/cm^3}$ \cite{buch2019}. For comparison, the solar wind density
 at the Earth orbit is some particles per~\si{cm^3}. So to have a concrete
 picture in our mind we can imagine dark matter as a cloud of stable neutrons
 which does not interact with ordinary matter, and with density similar to the
@@ -192,7 +192,7 @@ As in the case of the Bullet cluster, mass excesses are also observed with
 gravitational lensing. Another clear effect is the orbital speed of stars in
 the galaxies. Applying Gauss' theorem, since most of the light-emitting mass
 of a galaxy is concentrated in the bulge, the orbital speed should fall off
-like $1/\sqrt r$. Instead, $v(r)$ rises in the bulge and the stabilizes to an
+like $1/\sqrt r$. Instead, $v(r)$ rises in the bulge and then stabilizes to an
 almost constant value, indicating the presence of a halo.
 
 The other line of evidence is cosmological. The density of matter is clearly
@@ -278,8 +278,8 @@ The upper limit is softer and comes from the fact that in this problem the mass
 density of dark matter is fixed by gravitational measurements. Assuming an
 higher particle mass means a proportionally lower number density, which is what
 determines the rate together with the cross section, so the limits go up
-linearly with the mass. In other words, the limit is the size of target times
-the exposure time.
+linearly with the mass. In other words, the limit is the size of the target
+times the exposure time.
 
 \marginpar{There are various experiments with a clearly lower mass upper bound.
 What is the cause? An upper energy threshold? Backgrounds?}
@@ -294,18 +294,22 @@ What is the cause? An upper energy threshold? Backgrounds?}
     
 \end{figure}
 
+The two most popular choices for the target material are liquid argon and
+xenon. Being fluid, they can be purified from radioactivity to an high degree,
+more than a solid scintillator. Being noble elements, ionized electrons can
+drift without producing a shower or recombining, allowing to use a time
+projection chamber (TPC) to reconstruct the position, which is needed to
+exclude signals near the surface, where there is additional background from the
+surrounding components of the detector. Of the stable noble elements, they have
+the best scintillation yield, about \num{40000} photons per~\si{MeV}.
 
-
-% LHC: massa mancante, o prodotto intermedio reale (eccesso nella distribuzione)
-
-% ragionamento: gli elettroni hanno molto rumore, perché i fotoni
-% interagiscono con gli elettroni -> usare i nuclei, i neutroni
-% bisogna avere una massa grande per aumentare la sezione d'urto
-% bisogna escludere il background -> mi serve la posizione -> devo vedere
-%   i fotoni emessi -> mi serve un liquido trasparente
-% xenon e argon sono gli scintillatori migliori
-% xenon ha A maggiore, mentre argon permette di distinguere ER da NR, e costa
-% meno
-% tutto sommato si arriva alle stesse prestazioni
-
-% per maggior informazioni si veda pdg o sav18 ch1
+There are other dark matter models and other kinds of experimental techniques.
+At the large hadron collider (LHC), dark matter is searched through missing
+energy or looking for new resonances. An interesting method is discriminating
+the dark matter signal from the background using the motion of the Earth
+relative to the halo, which is expected to induce a seasonal variation in the
+rate and directionality of the recoils. A curious proposal of this kind
+considered using RNA strands to achieve high spatial and directional resolution
+\cite{drukier2015}. For a complete overview on the matter, see the particle
+data group \cite[sec.~27]{zyla2020}. \cite[ch.~1]{savarese2018} gives a more
+detailed introduction to some topics.
