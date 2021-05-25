@@ -107,7 +107,7 @@ sizes down to the mass of the Earth \cite[1]{vogelsberger2012}.
     \caption{\label{fig:halo} Projected density on a \SI{270}{kpc} cube of the
     simulation of a Milky Way-like non-relativistic dark matter halo (``cold''
     dark matter, CDM). Left panel: non-interacting dark matter. Right panel:
-    self-interacting dark matter (SIDM) with cross-section/particle mass ratio
+    self-interacting dark matter (SIDM) with cross section/particle mass ratio
     \SI{10}{cm^2/g}. From \cite[21]{tulin2017}, originally from
     \cite[6]{vogelsberger2012}.}
     
@@ -124,12 +124,12 @@ is a strong evidence of the presence of heavy, invisible and collisionless
 haloes associated to the clusters. See \autoref{fig:bullet}.
 
 Looking at thirty such collisions, \cite{harvey2015} obtains a \SI{95}\%
-confidence level upper bound on the cross-section/particle mass ratio of
+confidence level upper bound on the cross section/particle mass ratio of
 $\SI{0.47}{cm^2/g} = \SI{0.84}{barn/GeV}$. The limit is on the ratio, instead
 of just the cross section, because the total mass is fixed by the lensing
 measurement, and the mass of individual dark matter particles is unknown, and
 could vary by many orders of magnitude \cite[474]{zyla2020}. This is about the
-same ratio of a nucleon: cross-section $\tilde\SI1{barn}$, mass \SI1{GeV}. An
+same ratio of a nucleon: cross section $\tilde\SI1{barn}$, mass \SI1{GeV}. An
 atom has the same mass, but cross section $10^{10}$ times higher, so definitely
 dark matter is not forming anything similar to us unless we seek very
 far-fetched speculations.
@@ -221,33 +221,82 @@ observations.
     
 \end{figure}
 
-\section{Direct observation}
+\section{Direct detection}
 
 All models of dark matter, apart from modified gravitational theories and
 primordial black holes, postulate that dark matter is constituted by
 unclassified particles. Neutrinos do behave like dark matter and account in
 some part for it, but they are estimated to contribute only~\SI1\%. The limit
-comes from the fact that, being relativistic, they would not aggregate and
-solve the problem of the density variations. I have never heard of models where
-dark matter is a continuous fluid.
+comes from the fact that, being relativistic (``hot'' dark matter), they would
+not aggregate and solve the problem of the density variations. I have never
+heard of models where dark matter is a continuous fluid.
 
-The 
+Most of the experimental efforts are directed towards the detection of WIMPs,
+``weakly interacting massive particles''. WIMP stand for a generic additional
+particle in the Standard Model, which to predict the correct relic density of
+dark matter after the cool down, would need to have a self-annihilation cross
+section with an order of magnitude similar to the one expected for a particle
+which interacts through the weak force, and a mass with an order of magnitude
+around \SI{100}{GeV}.
 
-% Candidati della materia oscura:
-% direi che salto tutto a parte i WIMP perché ho poco tempo
-% che cespita è il WIMP miracle? che se è relativisticamente fredda, cioè
-% T < m, allora la sezione d'urto WIMP-WIMP è circa quella che ci si
-% aspetta per le interazioni deboli.
+Anyway, the point is hoping that dark matter scatters on electrons and nucleons
+in the same way of a neutrino. Then, to leading order, the angular distribution
+can be calculated independently of the details of the interaction. Assuming a
+thermal distribution for the velocity of dark matter particles in the halo,
+using the measured local mass density, and assuming a specific particle mass,
+then the rate of scatterings in a target can be predicted, proportional to the
+cross section. The lack of signals in a given time frame then puts an upper
+limit on the cross section given the assumed mass.
 
-% come si cerca di rilevare la materia oscura:
+\autoref{fig:sigmalimits} shows the limits obtained in this way by recent
+experiments. Currently the most stringent constraints are set by experiments
+hosted at Laboratori Nazionali del Gran Sasso (LNGS), DarkSide50 and Xenon1T.
+Those limits are for spin-independent (SI) scattering. There are also
+measurements that consider an interaction term with the spin (spin-dependent,
+SD), but they are less sensible because the whole nucleus of the target atoms
+counts for its overall spin, while with SI each nucleon contributes coherently.
+The limits on the cross section are given per nucleon.
+
+\marginpar{Do the limits include the uncertainties from the velocity and mass
+distributions of dark matter? Are they all \SI{90}\% CL? I should read the
+recent paper on statistical conventions in dark matter searches.}
+
+From the curves it is evident that there is only a finite range of masses
+probed by these searches.
+
+The lower limit comes from the mass of the target particle. The scattering
+would be detected by the recoil of the nucleus, which produces ionization and
+scintillation light. If the recoil energy is too small it can not be detected,
+with different thresholds depending on the detection technique, and of course
+the recoil momentum goes to zero as the incoming particle mass decreases.
+Considering electrons instead of nuclei, lower masses can be probed, but the
+measurements are less sensitive because the radiation background of neutrons,
+impacting nuclei, is kept better under control than gamma and beta rays which
+impact electrons.
+
+The upper limit is softer and comes from the fact that in this problem the mass
+density of dark matter is fixed by gravitational measurements. Assuming an
+higher particle mass means a proportionally lower number density, which is what
+determines the rate together with the cross section, so the limits go up
+linearly with the mass. In other words, the limit is the size of target times
+the exposure time.
+
+\marginpar{There are various experiments with a clearly lower mass upper bound.
+What is the cause? An upper energy threshold? Backgrounds?}
+
+\begin{figure}
+    
+    \widecenter{\includegraphics[width=\textwidth]{sigmalimits}}
+    
+    \caption{\label{fig:sigmalimits} Upper limits on the WIMP-nucleon SI
+    scattering cross section, conditional on the WIMP mass. From
+    \cite[fig.~27.1 p.~481]{zyla2020}.}
+    
+\end{figure}
+
+
+
 % LHC: massa mancante, o prodotto intermedio reale (eccesso nella distribuzione)
-% rilevazione diretta: mettere qualcosa lì, escludere tutto, quello che
-% rimane è materia oscura.
-% scattering nuclei o elettroni: la massa del target limita dal basso la
-%   massa della materia oscura
-% il limite dall'alto è l'andamento dato dal fatto che bisogna assumere la
-%   densità di massa e quindi la densità numerica è 1/(massa particella)
-% figura pdg zyla2020 p. 481 fig. 27.1, sigmalimits.pdf
 
 % ragionamento: gli elettroni hanno molto rumore, perché i fotoni
 % interagiscono con gli elettroni -> usare i nuclei, i neutroni
