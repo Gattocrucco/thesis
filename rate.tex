@@ -8,9 +8,9 @@ with a fixed probability is proportional to that scale. So it is convenient to
 express the threshold relative to the same scale, and check it is less than the
 SNR so that signals are not selected away.
 
-Even assuming that the noise is gaussian, the probability that a random
+Even assuming that the noise is Gaussian, the probability that a random
 fluctuation gets over the threshold is not given simply by computing the
-survival function (i.e.\ the integral to $+\infty$) of the gaussian
+survival function (i.e.\ the integral to $+\infty$) of the Gaussian
 distribution at the threshold.
 
 More precisely, the probability that any given sample is above the threshold is
@@ -32,10 +32,10 @@ and to have a quick recipe.}
 
 \section{Theory}
 
-We expect the noise to be gaussian. Even if it wasn't, when filtering many
+We expect the noise to be Gaussian. Even if it wasn't, when filtering many
 samples are linearly combined, and the sum of random variables tends to have a
-gaussian distribution independently of the initial one, so we assume
-gaussianity.
+Gaussian distribution independently of the initial one, so we assume
+Gaussianity.
 
 \subsection{From the continuous case}
 
@@ -129,7 +129,7 @@ correlations. Thus the crossing rate is $r = f_s P$.
 \marginpar{Correction: we are interested in fake rates \emph{less} than 10,
 to be compared with the filter length \SI2{\micro s}.}
 
-The integrand in \autoref{eq:crossingprob} is a bivariate gaussian
+The integrand in \autoref{eq:crossingprob} is a bivariate Gaussian
 distribution, which explicitly is
 %
 \begin{equation}

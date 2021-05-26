@@ -33,7 +33,6 @@ results. Finally we'll compute and comment the noise spectrum. The code for
 this work is online at \url{https://bitbucket.org/Gattocrucco/sipmfilter}.
 
 \section{Data}
-\label{sec:lngsdata}
 
 For this study we used test data taken at liquid nitrogen temperature from a
 setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
@@ -308,7 +307,7 @@ by putting boundaries midway between peaks, so that we assign each datapoint to
 a peak. For the second peak, we take the median instead of the average. For the
 first peak, we take the half symmetrized \SI{68}\% interquantile range instead
 of the standard deviation, i.e.\ half the difference between the 0.84 and 0.16
-quantiles. On a gaussian distribution these are equivalent to the mean and
+quantiles. On a Gaussian distribution these are equivalent to the mean and
 standard deviation, however they are less sensible to messing up the tails of
 the distribution, which happens since the boundaries cuts away the tails and
 there is contamination from the tails of the neighbouring peaks.

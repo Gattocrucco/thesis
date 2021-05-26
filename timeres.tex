@@ -2,22 +2,19 @@
 \label{ch:timeres}
 
 In the previous chapter we studied the performance of filters, but we did not
-define an algorithm to search for signals. Neither we will do it here, we'll
-skip it and measure the temporal localization precision once we know there's a
+define an algorithm to search for signals. Neither we will do it here, we will
+skip it and measure the temporal localization precision once we know there is a
 signal.
 
 To this end, we make a simulation where each ``event'' contains only one signal
 at a known position. In principle we could use the LNGS data
-(\autoref{sec:lngsdata}), but we don't know the jitter of the trigger pulse
+(\autoref{sec:lngsdata}), but we do not know the jitter of the trigger pulse
 and we may reach a temporal resolution below the sampling period, while in the
 simulation we have the exact actual temporal location of signals.
 
-The code is in the same repository of the previous chapter,
-\url{https://github.com/Gattocrucco/sipmfilter}.
-
 \section{Event generation}
 
-Each event is the sum of a signal and a noise waveform. We don't add a
+Each event is the sum of a signal and a noise waveform. We do not add a
 baseline, so the noise has mean zero and the signals taper down to zero. The
 signals are negative. We use the same scale of the LNGS data; it actually does
 not matter because we are not simulating digitalization.
@@ -76,7 +73,7 @@ it from the simulation altogether.}
 
 \subsection{Noise}
 
-We used three different kinds of noise: gaussian white noise; noise sampled
+We used three different kinds of noise: Gaussian white noise; noise sampled
 from the LNGS data; noise sampled from Proto0 data.
 
 The white noise is generated in the simulation. The LNGS noise is copied from
@@ -102,17 +99,18 @@ See \autoref{fig:noise}. The Proto0 noise data is already at \SI{125}{MSa/s}
 and so did not require downsampling for most of the simulations.
 
 \begin{figure}
+    
     \widecenter{\includempl{fignoise}}
     
-    \figcaption{noise}{The LNGS noise at the original sampling frequency
-    (normalized to unit variance) and downsampled.}
+    \figcaption{noise}{The LNGS and Proto0 noise at the original sampling
+    frequency (normalized to unit variance) and downsampled.}
 
 \end{figure}
 
 \subsection{Event layout}
 
 Each event is the sum of a noise waveform and a shorter signal waveform. Before
-the beginning of the signal there's a noise-only region long enough for the
+the beginning of the signal there is a noise-only region long enough for the
 filters to be in a stationary state when they reach the signal; in particular
 its length is the highest filter length parameter used in the simulation
 (\SI{2048}{ns}) plus \SI{256}{ns}.
@@ -121,16 +119,23 @@ The simulation is repeated for various signal to noise ratios (SNR). We define
 the SNR as follows: the peak height relative to the baseline of the original
 \SI1{GSa/s} signal template over the noise standard deviation.
 
+The reason we consider the signal amplitude at \SI1{GSa/s} instead of at the
+actual sampling frequency of the simulation is that downsampling reduces the
+peak height. For convenience, we want to keep the definition of signal height
+comparable at different sampling frequencies. This will be clearer later when
+we do the comparison.
+
 \marginpar{I should use the peak height, averaged over continuous positioning,
 at the simulation sampling frequency, instead of at \SI{1}{GSa/s}. Then the
 comparisons at different sampling frequencies would need to adjust both for the
-reduction of the noise variance and of the peak height.}
+reduction of the noise variance and of the peak height, but the definition of
+SNR would be the standard one.}
 
 Simulations with different SNR differ only in the multiplicative constant of
 the noise, so we used exactly the same noise and signal arrays for each SNR to
-speed up the code. This means that there's no random variation between results
+speed up the code. This means that there is no random variation between results
 obtained at different SNR (or with different filters), keep this in mind when
-the smoothness of some plots would seem to suggest that the Monte Carlo error
+the smoothness of some curves would seem to suggest that the Monte Carlo error
 is negligible.
 
 \autoref{fig:toyevent} shows a complete example event.
@@ -175,7 +180,7 @@ averaging nearby samples. See \autoref{fig:toyfilttempl}.
 \end{figure}
 
 To allow for a localization eventually more precise than the sampling timebase,
-we interpolate the minimum sample and its first neighbours with a parabola. We
+we interpolate the minimum sample and its first neighbors with a parabola. We
 also try upsampling the waveform to \SI{1}{GSa/s} (with sample repetition)
 prior to filtering to check if it improves performance.
 
@@ -200,29 +205,28 @@ all filters for a choice of SNR and filter length.
 
 \end{figure}
 
-We see that the distribution of localizations can be non-gaussian, so to
+We see that the distribution of localizations can be non-Gaussian, so to
 quantify the resolution we use, instead of the standard deviation, half the
 distance between the \SI{16}\% and \SI{84}\% quantiles, which is equivalent to
-a standard deviation for a gaussian, but gives a meaningful measure for the
+a standard deviation for a Gaussian, but gives a meaningful measure for the
 width of the distribution even when it's highly skewed or with heavy tails.
 
 \autoref{fig:rescurve} shows the temporal resolution thus defined for each
 filter, filter length, and SNR. The exponential moving average has a
 consistently poor performance compared to the other filters. The
 cross-correlation filter is the best one, with performance improving with
-length, and at a length of 96 samples (\SI{512}{ns}) is already practically
+length, and at a length of 96 samples (\SI{768}{ns}) is already practically
 optimal. The moving average can get close to the cross-correlation filter by
 choosing appropriately the number of samples.
 
-\marginpar{For \autoref{fig:rescurve} and similar, use a more legible color
-spectrum. Probably \nolinkurl{colormap.py} is already sufficient.}
-
 \begin{figure}
+    
     \widecenter{\includempl{figrescurve}}
     
     \figcaption{rescurve}{Photodetection temporal resolution for a range of SNR
-    and filter lengths. The shaded region marks the sampling step (\SI{8}{ns}).
-    The right endpoint of the cross correlation filter curves is at \SI{3}{ns}.}
+    and filter lengths. The shaded region marks the sampling step~\SI{8}{ns}.
+    The right endpoint of the cross correlation filter curves is
+    at~\SI{2.6}{ns}.}
 
 \end{figure}
 
@@ -241,7 +245,7 @@ since a similar computation was implemented in another study.
 The FEPs can and should probably use the best filter, so they would run a long
 cross-correlation filter. The temporal resolution matters in the FEPs but
 probably not in the digitizers, in the latter case it is just a generic measure
-of perfomance.
+of performance.
 
 Thus out of all the temporal resolution curves the ones that matter are:
 %
@@ -261,16 +265,14 @@ curves done with the LNGS and white noises. Note that a different noise
 spectrum makes a large difference at low SNR. We also plot a curve computed
 with upsampling; it does not improve significantly the performance.
 
-\marginpar{If at the end the comparison plot still uses up one page, make it
-higher so it's more legible at lower temporal resolutions.}
-
 \begin{figure}
+    
     \widecenter{\includempl{figrescomp}}
     
-    \figcaption{rescomp}{Photodetection temporal resolution vs. SNR for various
-    filters. The shaded region marks the sampling step (\SI{8}{ns}). The
+    \figcaption{rescomp}{Photodetection temporal resolution vs.\ SNR for
+    various filters. The shaded region marks the sampling step~\SI{8}{ns}. The
     hatched band is the interval of SNR observed in Proto0; the vertical line
-    is the SNR in the LNGS data (after downsampling to \SI{125}{MSa/s}). Where
+    is the SNR in the LNGS data, after downsampling to~\SI{125}{MSa/s}. Where
     not specified, the noise is from Proto0.}
 
 \end{figure}
@@ -367,10 +369,6 @@ ratio in the filter output. In \autoref{tab:filtsnrdowns} we report the
 ratio between SNR after and before filtering. It does not change significantly
 with downsampling.
 
-\marginpar{I'm measuring the post-filter SNR with the peak detection. This
-biases upward the result. I should compute the peak height on the filtered
-signal before adding the noise.}
-
 \marginpar{Add digitalization to the simulation and make a plot like the one
 for the sampling frequency but varying the number of bits at \SI{125}{MSa/s}.
 Don't use the number of bits, use the ratio signal peak over digit which is
@@ -385,18 +383,17 @@ well defined.}
         \cmidrule(l){2-5}
          Noise & {\SI{1}{GSa/s}} & {\SI{125}{MSa/s}} & {\SI{62.5}{MSa/s}} & {\SI{31.2}{MSa/s}} \\
         \midrule
-        Proto0 &               &             3.6 &              3.6 &              3.6 \\
-          LNGS &           6.3 &             6.3 &              6.5 &              6.6 \\
-         White &           4.7 &             4.7 &              4.7 &              4.7 \\
+        Proto0 &               &             3.3 &              3.3 &              3.3 \\
+          LNGS &           5.6 &             5.5 &              5.7 &              6.0 \\
+         White &           4.3 &             4.3 &              4.2 &              4.2 \\
         \bottomrule
     \end{tabular}
     
-    \caption{Ratio of SNR after over before filtering with a cross correlation
-    filter with template length \SI{2048}{ns}. The \SI{125}{MSa/s} column
-    contains the actual SNR ratios of the simulations, while the values for the
-    other sampling frequencies are divided by the noise standard deviation
-    reduction with downsampling relative to \SI{125}{MSa/s} to make them
-    comparable.}
+    \caption{\label{tab:filtsnrdowns} Ratio of SNR after over before filtering
+    with a cross correlation filter with template length \SI{2048}{ns}. The
+    \SI{125}{MSa/s} column contains the actual SNR ratios of the simulations,
+    while the values for the other sampling frequencies are divided by the
+    noise standard deviation reduction with downsampling relative to
+    \SI{125}{MSa/s} to make them comparable.}
     
-    \label{tab:filtsnrdowns}
 \end{table}
