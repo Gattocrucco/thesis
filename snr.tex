@@ -34,6 +34,18 @@ this work is online at \url{https://bitbucket.org/Gattocrucco/sipmfilter}.
 
 \section{Data}
 
+\begin{figure}
+    
+    \widecenter{\includempl{fighist2dtile57-0}}
+    
+    \widecenter{\includempl{fighist2dtile57-1}}
+    
+    \figcaption{hist2dtile57}{Time-value histogram of Tile~57 in LNGS data.
+    Top panel: whole events. Bottom panel: zoomed on the laser pulses and
+    synchronized with the trigger.}
+    
+\end{figure}
+
 For this study we used test data taken at liquid nitrogen temperature from a
 setup in the Gran Sasso National Laboratories (LNGS). A laser pulse is shot at
 regular time intervals on the PDM. Both the laser trigger and the detector
@@ -43,14 +55,6 @@ data in ``events'' where each event correspond to a single laser pulse. See
 
 \marginpar{Bibliography for the LNGS data. Maybe add a 2D histogram of the
 data.}
-
-\begin{figure}
-    \hspace{-0.26\textwidth}\includegraphics[width=1.52\textwidth]{figlngs}
-    
-    \figcaption{lngs}{A pair of events from the LNGS test data
-    (\autoref{sec:lngsdata}).}
-
-\end{figure}
 
 We used the PDM slot 8 data, which as per \autoref{fig:pdmadcch} corresponds
 to Tile 57 which means the data is in the directory
@@ -86,14 +90,6 @@ See \autoref{fig:spurious} for some examples of spurious/saturated signals.
 
 \marginpar{The afterpulse stuff I had not understood properly may change all
 this.}
-
-\begin{figure}
-    \hspace{-0.26\textwidth}\includegraphics[width=1.53\textwidth]{figspurious}
-    
-    \figcaption{spurious}{Examples of spurious signals in the LNGS test data
-    (\autoref{sec:lngsdata}).}
-
-\end{figure}
 
 \section{Filters}
 \label{sec:filters}

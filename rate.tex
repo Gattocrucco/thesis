@@ -273,38 +273,6 @@ We plot the time-value histogram of the data for Tile 53 in Proto0 and LNGS
 (\autoref{fig:hist2dtile53}), for Tile 15 at maximum overvoltage, and for
 Tiles 57 and 59 (\autoref{fig:hist2dtile155759}).
 
-\marginpar{No need for more explanations of the time-value histograms since
-there will be some of them in chapter 3.}
-
-\marginpar{Move the histograms to the end of the chapter.}
-
-\begin{figure}
-    
-    \widecenter{\includempl{fighist2dtile53-0}}
-
-    \widecenter{\includempl{fighist2dtile53-1}}
-
-    \widecenter{\includempl{fighist2dtile53-2}}
-    
-    \figcaption{hist2dtile53}{Time-value histograms of Tile 53 noise in Proto0
-    with a baseline acquisition, and in LNGS pre-trigger at overvoltage \SI6V
-    and \SI7V.}
-    
-\end{figure}
-
-\begin{figure}
-    
-    \widecenter{\includempl{fighist2dtile155759-0}}
-
-    \widecenter{\includempl{fighist2dtile155759-1}}
-
-    \widecenter{\includempl{fighist2dtile155759-2}}
-
-    \figcaption{hist2dtile155759}{Time-value histograms of Tiles 15, 57 and 59
-    noise in LNGS data.}
-    
-\end{figure}
-
 \subsection{Filter}
 
 We filter using a \SI1{\micro s} moving average with \SI1{\micro s} of baseline
@@ -586,3 +554,30 @@ $\sigma^2$ in 0. Then $k_2$ is obtained by the covariance at lag 1 $c$ with
 \eqref{eq:c2k2}. (If the spectrum was obtained from the discrete Fourier
 transform of a noise waveform, $c$ is the first coefficient after the central
 one in the autocovariance.)
+
+\begin{figure}
+    
+    \widecenter{\includempl{fighist2dtile53-0}}
+
+    \widecenter{\includempl{fighist2dtile53-1}}
+
+    \widecenter{\includempl{fighist2dtile53-2}}
+    
+    \figcaption{hist2dtile53}{Time-value histograms of Tile 53 noise in Proto0
+    with a baseline acquisition, and in LNGS pre-trigger at overvoltage \SI6V
+    and \SI7V.}
+    
+\end{figure}
+
+\begin{figure}
+    
+    \widecenter{\includempl{fighist2dtile155759-0}}
+
+    \widecenter{\includempl{fighist2dtile155759-1}}
+
+    \widecenter{\includempl{fighist2dtile155759-2}}
+
+    \figcaption{hist2dtile155759}{Time-value histograms of Tiles 15, 57 and 59
+    noise in LNGS data.}
+    
+\end{figure}
