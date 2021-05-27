@@ -7,8 +7,8 @@ We did not collect new data for this thesis.
 
 Both datasets contain digital traces of photodetector modules (PDMs) output,
 divided in continuous chunks of fixed length that we call ``events''.
-Optionally, a pulsed laser is shone at the detector and the temporal window
-of the event waveform is synchronized with the laser.
+Optionally, a pulsed laser is shone at the detector and the temporal window of
+the event waveform is synchronized with the laser.
 
 \section{Proto0}
 
@@ -31,19 +31,18 @@ some photos of the apparatus.
 
 The PDM outputs are each sent to an analog to digital converter (ADC) channel.
 The ADC has depth \SI{16}{bit} and sampling frequency \SI{125}{MSa/s}, the same
-specifics which will be adopted in DarkSide20k.
+specifics which will be adopted in DarkSide20k. The response of the SiPMs will
+be described briefly in \autoref{ch:snr} and more in detail in
+\autoref{ch:anal}.
 
 Of the Proto0 data, we used only a ``baseline'' acquisition, i.e.\ with the
 PDMs biased below breakdown voltage and thus insensitive to light. So the
 waveforms contain only electrical noise. This data file is not publicly
 available. There are 1000~events, each \SI{0.5}{ms} long.
 
-In \autoref{fig:hist2dtile64} we show a two-dimensional histogram of the events
-for Tile~64 as an example. The variables are the sample number in the event and
-the ADC value. It is like stacking on each other all the waveforms. This kind
-of visualization is also called ``persistence plot''. In
-\autoref{tab:proto0meta} we list for reference the metadata of the
-acquisition, linked on the CERN wiki.
+In \autoref{tab:proto0meta} we list for reference the metadata of the
+acquisition, linked on the CERN wiki. A persistence plot of the data for
+Tile~53 is shown in \autoref{fig:hist2dtile53}.
 
 \begin{figure}
     
@@ -133,11 +132,9 @@ details may be different for other files. The ADC has depth 10~bit, so the
 values are always in the range 0 to~1023. The sampling frequency is
 \SI{1}{GSa/s}.
 
-In \autoref{fig:hist2dtile64} we show the persistence plot for the particularly
-noisy Tile~52, synchronized with the laser trigger. The discretized height of
-pulses is well visible, and there also some random pulses arriving before the
-trigger. The response of the SiPM will be described briefly in \autoref{ch:snr}
-and more in detail in \autoref{ch:anal}.
+Persistence plots of the data for tiles 15, 53, 57 and~59 are shown in
+\autoref{fig:hist2dtile57}, \ref{fig:hist2dtile53},
+and~\ref{fig:hist2dtile155759}.
 
 \begin{table}
     
@@ -162,23 +159,3 @@ and more in detail in \autoref{ch:anal}.
     \caption{\label{tab:proto0meta} Metadata for the Proto0 baseline run~886.}
     
 \end{table}
-
-\begin{figure}
-    
-    \widecenter{\includempl{fighist2dtile64}}
-    
-    \figcaption{hist2dtile64}{Time-value histogram of the waveforms for Tile~64
-    in the Proto0 data.}
-    
-\end{figure}
-
-\begin{figure}
-    
-    \widecenter{\includempl{fighist2dtile52}}
-    
-    \figcaption{hist2dtile52}{Time-value histogram of the waveforms for Tile~52
-    in the LNGS data.}
-    
-\end{figure}
-
-\marginpar{Add a raw zoomed plot of the Proto0 noise waveform.}
