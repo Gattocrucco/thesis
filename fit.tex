@@ -13,7 +13,7 @@ recommend.
 Bayesian inference is based on applying Bayes' theorem to get the probability
 distribution of the parameters conditional on the observed data. Call $\theta$
 the parameters and $y$ the data, then it reads
-
+%
 \begin{equation}
     p(\theta|y) = \frac {p(y|\theta) p(\theta)} {p(y)}.
 \end{equation}
@@ -30,7 +30,7 @@ Least squares is a general procedure to produce an estimator, but a standard
 interpretation is also as a maximum likelihood fit when the likelihood is
 Gaussian. We can do the same in the Bayesian case if the prior is Gaussian too.
 We switch to logarithms and drop addends which do not depend on the parameters:
-
+%
 \begin{align}
     \log p(\mathbf y|\boldsymbol\theta) &=
     -\sum_{i=1}^n \log\sigma_i
@@ -46,7 +46,7 @@ We switch to logarithms and drop addends which do not depend on the parameters:
 Now these two terms have to be summed to obtain the log posterior. If we extend
 the $\mathbf y$, $\boldsymbol\mu$ and~$\boldsymbol\sigma$ vectors, we can see
 the two sums together as a single sum of squares:
-
+%
 \begin{align}
     y_{n+j} &\equiv \mu^\theta_j, \\
     %
@@ -74,7 +74,7 @@ with a standard Gaussian prior with zero mean and unitary variance, and
 applying as inverse transformation the Gaussian cumulative density function
 (cdf). Say, if we want to put a uniform prior on $\theta_j$, we fit the
 transformed parameter $\theta_j'$, with
-
+%
 \begin{align}
     \mu^{\theta'}_j &= 0, \\
     %
@@ -96,7 +96,7 @@ while a Bayesian cares about the posterior as a distribution. If we approximate
 the posterior as a Gaussian, we can do formally the same calculations. To
 compute the Gaussian approximation we expand the logarithm of the distribution
 to second order around the maximum:
-
+%
 \begin{align}
     \log p(\boldsymbol\theta|\mathbf y) &\approx
     -\frac 12 (\boldsymbol\theta-\boldsymbol\theta_0)^\top
@@ -112,7 +112,7 @@ to second order around the maximum:
 
 Now let us carry further the calculation of the precision matrix, to discuss
 an additional issue:
-
+%
 \begin{align}
     \frac{\partial\chi^2}{\partial\theta_j} &=
     2 \sum_i \frac {y_i - \mu_i(\boldsymbol\theta)} {\sigma_i^2}
@@ -158,7 +158,7 @@ The standard model of a histogram is Poisson distributions for the bin counts.
 Let $c_i$ be the count in bin~$i$, $f_i(\boldsymbol\theta)$ the model
 normalized distribution of the bins, and $M$ a parameter for the mean of the
 total (Poisson) number of samples. Then the likelihood is
-
+%
 \begin{equation}
     P(\mathbf c|M,\boldsymbol\theta) =
     \prod_i P(c_i|M,\boldsymbol\theta) =
@@ -170,7 +170,7 @@ function (pmf) with mean~$\mu$.
 
 We do not care about $M$, only about $\boldsymbol\theta$, so we marginalize
 the posterior over $M$:
-
+%
 \begin{align}
     p(\boldsymbol\theta|\mathbf c)
     &= \int \mathrm dM\, p(M,\boldsymbol\theta|\mathbf c) = \\
@@ -183,7 +183,7 @@ the posterior over $M$:
 Now we assume that a priori $M$ is independent from $\boldsymbol\theta$, i.e.\ 
 $p(M,\boldsymbol\theta) = p(M)p(\boldsymbol\theta)$. Then, continuing the
 calculation:
-
+%
 \begin{align}
     p(\boldsymbol\theta|\mathbf c)
     &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
@@ -206,7 +206,7 @@ calculation:
 %
 Since $f_i$ is normalized the sum over it yields~1, while we call $N$ the total
 count, so
-
+%
 \begin{align}
     p(\boldsymbol\theta|\mathbf c)
     &= \frac {p(\boldsymbol\theta)} {P(\mathbf c)}
@@ -217,7 +217,7 @@ count, so
 %
 The integral does not depend on $\boldsymbol\theta$, so we call it $I(N)$ and
 do not care about its value. Now we take the logarithm:
-
+%
 \begin{align}
     \log p(\boldsymbol\theta|\mathbf c) &=
     -\log P(\mathbf c) + \log I(N) - \sum_i \log c_i!
@@ -226,7 +226,7 @@ do not care about its value. Now we take the logarithm:
 
 This is the exact expression for the posterior, which we want to compare to
 least squares, which yields
-
+%
 \begin{align}
     Q(\boldsymbol\theta) &=
     \log p(\boldsymbol\theta)
@@ -240,7 +240,7 @@ denominator is the observed count $c_i$.
 
 To do the comparison, we expand both expressions to second order, ignoring the
 shared prior term which is already matched:
-
+%
 \begin{align}
     L(\boldsymbol\theta) &\equiv \log p(\boldsymbol\theta|\mathbf c), \\
     %
@@ -259,7 +259,7 @@ shared prior term which is already matched:
 \end{align}
 
 For $Q$ we start from \eqref{eq:lsqhess}, obtaining
-
+%
 \begin{align}
     \frac {\partial^2 Q} {\partial\theta_j \partial\theta_k} &=
     -N^2 \sum_i
@@ -277,7 +277,7 @@ approximation is good enough. The covariance instead needs a discussion. Now we
 manipulate $\partial_{jk} L$ to show it is similar to $\partial_{jk} Q$. First,
 we approximate the observed counts with the model, $c_i \approx N
 f_i(\boldsymbol\theta)$:
-
+%
 \begin{align}
     \frac {\partial^2 L} {\partial\theta_j \partial\theta_k} &=
     -N^2 \sum_i \frac {c_i} {N^2 f_i(\boldsymbol\theta)^2} \left[
@@ -298,7 +298,7 @@ f_i(\boldsymbol\theta)$:
 
 Next, we observe that since $f$ is normalized, $\sum_i \partial_{jk} f_i = 0$,
 so we can add the missing term to obtain the residuals:
-
+%
 \begin{align}
     \frac {\partial^2 L} {\partial\theta_j \partial\theta_k} &\approx
     -N^2 \sum_i \frac 1 {c_i} \left[
@@ -318,7 +318,7 @@ up doing the same kind of approximation we did starting from Gaussians.
 
 Starting from the Gaussian model posterior \eqref{eq:chi2}, we add a parameter
 $s$ that rescales uniformly all the errors:
-
+%
 \begin{align}
     \log p(\boldsymbol\theta|\mathbf y)
     &= -\sum_{i=1}^{n+k} \log\sigma_i - \frac12 \chi^2 \mapsto \\
@@ -336,7 +336,7 @@ Since $s$ is a scale parameter, it makes sense to use a uniform prior over
 $\log s$, i.e.\ $p(s) = 1/s$, because it is scale-invariant. Now that we have
 let errors vary, we marginalize away $s$, freely dropping normalizations as
 usual:
-
+%
 \begin{align}
     p(\boldsymbol\theta|\mathbf y)
     &= \int \mathrm ds\,
@@ -349,7 +349,7 @@ usual:
 \end{align}
 
 Now again we take the logarithm and expand to second order:
-
+%
 \begin{align}
     P(\boldsymbol\theta) &\equiv
     \log p(\boldsymbol\theta|\mathbf y)
@@ -371,7 +371,7 @@ Now again we take the logarithm and expand to second order:
 
 In the maximum $\partial_j P = 0$, so the first term in \eqref{eq:Pjk}
 vanishes, leaving
-
+%
 \begin{align}
     \frac {\partial^2 P} {\partial\theta_j \partial\theta_k}
     &= -\frac12 \frac 1 {\chi^2/(n+k)}
