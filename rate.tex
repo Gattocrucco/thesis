@@ -1,15 +1,20 @@
 \chapter{Fake rate of pulse detection}
 \label{ch:rate}
 
-In \autoref{ch:snr} we measured the signal to noise ratio after filtering.
-The point of using the SNR is expressing the signal height relative to the
-width of the noise distribution, because the threshold required to reject noise
-with a fixed probability is proportional to that scale. So it is convenient to
-express the threshold relative to the same scale, and check it is less than the
-SNR so that signals are not selected away.
+In \autoref{ch:snr} we measured the signal to noise ratio after filtering. The
+point of using the SNR is expressing the signal height relative to the width of
+the noise distribution, because the threshold required to reject noise with a
+given probability is proportional to that scale. So it is convenient to express
+the threshold relative to the same scale. When setting a threshold on the
+filtered amplitude, as done in data acquisition to reduce the noise rate, an
+SNR well above such a rescaled threshold will ensure that a good efficiency for
+signal is retained.
 
-Even assuming that the noise is Gaussian, the probability that a random
-fluctuation gets over the threshold is not given simply by computing the
+This chapter deals with the calculation of the noise rate resulting from random
+fluctuations of the noise above the threshold.
+
+Even assuming the noise to be Gaussian, the probability that a random
+fluctuation gets above the threshold is not given simply by computing the
 survival function (i.e.\ the integral to $+\infty$) of the Gaussian
 distribution at the threshold.
 
@@ -21,21 +26,23 @@ the waveform is autocorrelated at least up to the length of the filter.
 Intuitively, if a smooth function crosses a threshold, it takes some time to go
 down before it can cross the threshold again.
 
-Since the first stage filtering procedure that will be used in DarkSide20k is
-not decided at this point, for brevity we will just see how to compute the
-threshold crossing rate of the noise, called fake rate, for a specific example
-filter, and check that it works. The method can then be applied to any filter
-of choice.
+We will present the method used to compute the threshold crossing rate of the
+noise, or fake rate, for a running average filter, and check that the
+calculated rates are consistent with the results obtained in data.
 
-\marginpar{Add that the model may be useful to extrapolate to very low rates
-and to have a quick recipe.}
+The choice of the running average filter is due to the fact that this was the
+filter implemented as part of the first prototype firmware for the FPGA of the
+digitizer board. This constitutes the first processing stage in the DarkSide
+DAQ chain, and the reduction of the noise is a key goal of that processing.
+However, the method we present can be applied to any linear filter of choice,
+and allows to extrapolate efficiently to very low rates.
 
-\section{Theory}
+\section{Model}
 
-We expect the noise to be Gaussian. Even if it wasn't, when filtering many
-samples are linearly combined, and the sum of random variables tends to have a
-Gaussian distribution independently of the initial one, so we assume
-Gaussianity.
+We expect the noise to be Gaussian. Even if it were not prior to any
+processing, when filtering many samples are linearly combined, and the sum of
+random variables tends to have a Gaussian distribution independently of the
+initial one. So Gaussianity is a reasonable assumption in our study.
 
 \subsection{From the continuous case}
 
@@ -96,7 +103,7 @@ $y_i = f(t_0 + i\Delta t)$ the samples, we have:
     \label{eq:rcont}
 \end{align}
 %
-The reader can check that discretizing directly $k''(0)$ yields the same result.
+Discretizing directly $k''(0)$ yields the same result.
 
 The covariance in \autoref{eq:k2} can be estimated with the sample
 covariance on a filtered waveform array~$\mathbf y$.
@@ -121,13 +128,10 @@ point then is
 
 In general we can not obtain the crossing rate just by multiplying $P$ by the
 sampling frequency because of correlations. However in practice we are
-interested in low crossing rates, on the order of~\SI{10}{cps}, to be compared
-to the sampling frequency~\SI{125}{MSa/s}. If the typical time between
-crossings is much longer than the autocorrelation time, then we can ignore
-correlations. Thus the crossing rate is $r = f_s P$.
-
-\marginpar{Correction: we are interested in fake rates \emph{less} than 10,
-to be compared with the filter length \SI2{\micro s}.}
+interested in low crossing rates, less than~\SI{10}{cps}, to be compared to the
+filter length $\SI{2}{\micro s} = 1/(\SI{500}{kHz})$. If the typical time
+between crossings is much longer than the autocorrelation time, then we can
+ignore correlations. Thus the crossing rate is $r = f_s P$.
 
 The integrand in \autoref{eq:crossingprob} is a bivariate Gaussian
 distribution, which explicitly is
@@ -152,7 +156,7 @@ distribution, which explicitly is
 %
 where $c = \operatorname{Cov}[y_0, y_1]$.
 
-We don't know how to the integral analytically, so we break down the joint
+We do not know how to the integral analytically, so we break down the joint
 distribution as $p(y_0,y_1) = p(y_1|y_0) p(y_0)$ and discretize the integral
 over~$y_0$:
 %
@@ -190,10 +194,6 @@ for Gaussian processes agree very well, while differing visibly from the
 survival function. We will henceforth use the continuous formula for its
 simplicity.
 
-\marginpar{Use the formula for white noise with \SI{40}{MHz} low-pass from the
-Yellow book or Savarese and put it in \autoref{fig:crossingprob}. The
-\SI{40}{MHz} is from Savarese pag.~98 right after formula~5.4.}
-
 \begin{figure}
     
     \widecenter{\includempl{figcrossingprob}}
@@ -209,16 +209,19 @@ Yellow book or Savarese and put it in \autoref{fig:crossingprob}. The
 
 \subsection{Dead time}
 
-The part of the data acquisition system (DAQ) that will look for threshold
-crossings are the digitizers. A digitizer can not do complicated processing, so
-when the threshold is crossed, a fixed slice of waveform is sent to the front
-end processing (FEP) for further analysis (identify multiple signals, locate
-them precisely, use a better filter, etc.). So we are not interested in
-threshold crossings that happen close to a previous crossing.
+One part of the data acquisition system (DAQ) for which the study of threshold
+crossings is particularly relevant are the digitizers. Due to limited logic
+resources in the installed FPGAs, a digitizer can not do complicated
+processing. Instead, a simple filter is applied, and the filtered waveform is
+compared to the threshold. Whenever the threshold is crossed, a fixed slice of
+waveform is sent to the front end processing (FEP) for further analysis
+(identify multiple signals, locate them precisely, use a better filter, etc.).
+A threshold crossing that happens too close in time to a previous crossing will
+be ignored.
 
-This means that we have a dead time $T$. We arbitrarily decide to use a
-non-restartable dead time, i.e.\ a crossing that happens within $T$ of a
-previous one is ignored only if the latter has not been ignored itself.
+This means that we have a dead time $T$. We model it as a non-restartable dead
+time, i.e.\ a crossing that happens within $T$ of a previous one is ignored
+only if the latter has not been ignored itself.
 
 Assuming that the crossings are a Poisson process, the formula to correct a
 rate $R$ for the effect of the dead time is \cite[120]{knoll2010}:
@@ -227,28 +230,29 @@ rate $R$ for the effect of the dead time is \cite[120]{knoll2010}:
     R \mapsto \frac R {1 + RT}. \label{eq:deadrate}
 \end{equation}
 
-The crossings of a Gaussian process are not in general a Poisson process. We
-just need one counterexample to show this. Consider the process with
-autocovariance function $k(x)=\cos(x)$. This is positive definite because it is
-a linear combination of external products: $\cos(x-y) = \cos x \cos y + \sin x
-\sin y$. Since $\cos$ is orthogonal to $\sin$, they are the eigenfunctions, so
-a realization of the process is a random linear combination of harmonic
-functions, which means that it is a shifted cosine, so the crossings are
-exactly periodic.
+We note that the crossings of a Gaussian process are not in general a Poisson
+process. We just need one counterexample to show this. Consider the process
+with autocovariance function $k(x)=\cos(x)$. This is positive definite because
+it is a linear combination of external products: $\cos(x-y) = \cos x \cos y +
+\sin x \sin y$. Since $\cos$ is orthogonal to $\sin$, they are the
+eigenfunctions, so a realization of the process is a random linear combination
+of harmonic functions, which means that it is a shifted cosine, so the
+crossings are exactly periodic.
 
 However, in practice we expect that there will just be a ``repulsion'' or
 ``attraction'' of crossings within the scale of the autocorrelation time, so
 for low crossing rate the formula should work.
 
-\section{Test}
+\section{Application to real electrical noise data}
 
 We want to test formula~\eqref{eq:rcont} on actual electrical noise.
 
 \subsection{Data}
 
-We will use the Proto0 run 886, a baseline acquisition. Tiles 53, 57 and 59
-(used in Proto0) will be also studied with LNGS data. Tile~15 just with LNGS.
-The LNGS data files are:
+We will use the Proto0 run 886, collected when operating the SiPMs below their
+breakdown voltage, see \autoref{sec:dataproto0}. Tiles 53, 57 and 59 (used in
+Proto0) will be also studied with LNGS data, while for Tile~15 just LNGS data
+are available. The LNGS data files are:
 %
 \begin{verbatim}
 FBK/NUV/MB2-LF-3x/NUV-LF_3x_53/nuvhd_lf_3x_tile53_77K_64V_6VoV_1.wav
@@ -263,11 +267,9 @@ LFOUNDRY/pre-production-test/TILE_15/LF_TILE15_77K_71V_8VoV_1.wav
 LFOUNDRY/pre-production-test/TILE_15/LF_TILE15_77K_73V_9VoV_1.wav
 \end{verbatim}
 
-\marginpar{Expand and adapt this paragraph after chapter 3 is done.}
-
-The Proto0 data is without signals so we use it as it is. For the LNGS data
-we take the pre-trigger part of the events, and ignore events where any
-pre-trigger sample is less than~750 (860 for Tile~15).
+The Proto0 data consists purely of noise, so no preprocessing is required. For
+the LNGS data we take the pre-trigger part of the events, and ignore events
+where any pre-trigger sample is less than~750 (860 for Tile~15).
 
 We plot the time-value histogram of the data for Tile 53 in Proto0 and LNGS
 (\autoref{fig:hist2dtile53}), for Tile 15 at maximum overvoltage, and for
@@ -292,12 +294,12 @@ waveform and the filter shape.
 
 \end{figure}
 
-From Chapters~\ref{ch:snr} and~\ref{ch:timeres} we know this is not the optimal
-filter by SNR neither by temporal resolution. However since we don't know which
-filter will be used it is appropriate to make a conservative choice.
+Although we know from \autoref{ch:snr} and~\ref{ch:timeres} that this is
+not the optimal filter by SNR neither by temporal resolution, this is a simple
+filter that would be suitable for implementation in the digitizer's FPGA.
 
 Since on LNGS data the events are short compared to the filter length
-(\SI9{\micro s} vs. \SI2{\micro s}), we need to take into account boundary
+(\SI9{\micro s} vs.\ \SI2{\micro s}), we need to take into account boundary
 effects. The output length of the filtered waveform is $(\text{initial length})
 - \SI2{\micro s} + \SI1{sample}$; to compute the rate we have to divide by this
 quantity instead of the initial waveform length.
@@ -314,8 +316,8 @@ detected and do project a dead time on the following ones), and in the
 remaining region further select a subregion which is \SI1{\micro s} shorter but
 has a uniformly random starting position.
 
-However we care only about low rates, and at low rate the dead time boundary
-effects are negligible, so we will keep the whole filtered region.
+However we are mostly interested in the low-rate regime, in which the dead time
+boundary effects are negligible, so we keep the whole filtered region.
 
 \subsection{Algorithm}
 
@@ -331,8 +333,8 @@ subrange of thresholds that falls between the samples, and increment their
 counts. To apply the dead time, we keep a per-threshold last occurence time.
 
 Since the range of thresholds is evenly spaced, the subrange can be found
-arithmetically, so the complexity is just $O(N)$, it does not depend on the
-number of thresholds.
+arithmetically, so the complexity is just $O(N)$, i.e.\ it does not depend on
+the number of thresholds.
 
 \subsection{Results}
 \label{sec:rateconcl}
@@ -345,68 +347,127 @@ accounted for with~\eqref{eq:deadrate}. For the data, the conversion from count
 to rate is done dividing by the length of the filtered waveform (so \SI2{\micro
 s} less than the initial length per event).
 
-The agreement is decent at low and high rates, less so in an intermediate
-region. The agreement at high rate is probably a sort of saturation due to dead
-time, since the maximum rate allowed by dead time is $1/(\SI1{\micro s}) =
-\SI1{Mcps}$. Keep into account that the scale is logarithmic, so even where the
-lines are closer they still differ by a factor~1.3, while the Poisson error is
-approx.~\SI3\% since the count is~1000.
+A discrete agreement can be observed at low and high rates, less so in the
+intermediate region. The agreement at high rate is probably improved by
+saturation due to dead time, since the maximum rate allowed by dead time is
+$1/(\SI1{\micro s}) = \SI1{Mcps}$. Although it cannot be fully appreciated from
+\autoref{fig:fakerate1} due to the logarithmic scale, even where the theory and
+data lines are closer they still differ by a factor~1.3, while the Poisson
+error is approx.~\SI3\% since the count is~1000.
 
 \begin{figure}
     
     \widecenter{\includempl{figfakerate1}}
 
-    \figcaption{fakerate1}{Measured and predicted fake rate for Tile~31 in
-    Proto0 with a noise-only acquisition. The right scale shows the actual
-    count of threshold crossings for the data, with a gray band marking one
-    crossing.}
+    \figcaption{fakerate1}{Measured and predicted (with \autoref{eq:rcont})
+    fake rate for Tile~31 in Proto0 with a noise-only acquisition. The right
+    scale shows the actual count of threshold crossings for the data, with a
+    gray band marking one crossing.}
     
 \end{figure}
 
-\marginpar{Add reference to the formula in \autoref{fig:fakerate1}.}
-
 In \autoref{fig:fakerate} we show the same comparison together for all
-datasets, divided in three groups (tile~15 LNGS data, Proto0 data, LNGS other
-Tiles). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
+datasets, divided in three groups (Tile~15 LNGS data, LNGS other Tiles, Proto0
+data). The parameters for the formula, and the rates at threshold~$4\,\sigma$,
 are listed in \autoref{tab:fakerate}.
 
+For comparison, in \autoref{fig:fakerate} we also show the rate predicted by
+\cite[98]{savarese2018}, which provides the following formula:
+%
+\begin{align}
+    r &= \frac{R_0}2 \exp\left(-\frac12 (u/\sigma)^2\right), \\
+    R_0 &= \frac 2{\sqrt 3} f_u, \quad f_u = \SI{40}{MHz}.
+\end{align}
+%
+We see that it overestimates the true rate about by a factor of~5-10. Note,
+however, that the formula was derived without taking into account filtering, so
+the overestimation is expected.
+
 In the second group above some threshold the measured rate stops decreasing and
-remains constant at approximately 10 counts. This is probably due to pulses
-which our very simple veto can not filter away, we guess 1 pe dark/random
-pulses.
+remains constant at approximately 10 counts. This is probably due to real
+pulses which our very simple preprocessing can not filter away, most likely
+\SI1{PE} dark noise or random pulses from light leaks.
 
-In \autoref{fig:fakerate} we highlight the measured rates for Tile~53
-because they are evident outliers. The rate remains higher than the theory
-predicts and than the other Tiles as the threshold increases. This is visibile
-in Proto0, and in LNGS at \SI6{VoV}, but not at \SI7{VoV}.
-
-Analogously, from \autoref{tab:fakerate} we see that the quantity $f_s
-\sqrt{-k_2}/(2\pi\sigma)$ that multiplies the exponential in~\eqref{eq:rcont}
-is different from the others for Tile~53, in the same cases as the data, but
-with the opposite trend. This variation seems to depend only on an increase in
-$\sigma$ and not on $k_2$.
-
-Even though it's weird that this problem disappears at \SI7{VoV}, it can't be a
-coincidence that it arises for the same Tile in different setups, showing up
-both as an increased noise RMS and an higher threshold crossing rate, so it
-must be some property of the Tile itself.
+In \autoref{fig:fakerate} we highlight the measured rates for Tile~53 because
+they are evident outliers. The rate remains higher than the theory predicts and
+than the other Tiles as the threshold increases. This is visible in Proto0, and
+in LNGS at \SI6{VoV}, but not at \SI7{VoV}. Analogously, from
+\autoref{tab:fakerate} we see that the quantity $f_s \sqrt{-k_2}/(2\pi\sigma)$
+that multiplies the exponential in~\eqref{eq:rcont} is different from the
+others for Tile~53, in the same cases as the data, but with the opposite trend.
+This variation seems to depend only on an increase in $\sigma$ and not on $k_2$.
 
 Comparing the 2D histograms for Tile~53 (\autoref{fig:hist2dtile53}) to the
-others (\autoref{fig:hist2dtile155759}) there is no apparent difference.
-Three possible explanations come to mind: 1) a violation of Gaussianity, 2)
-stray pulses, 3) electrical noise.
-
-Regarding Gaussianity, we checked the distribution of the samples before
-filtering and it agrees very well with a Gaussian. If they are stray pulses,
-they do not have the same height, otherwise they would show up as a flat rate
-curve. It could be electrical noise with a frequency of approx.~$1/(\SI2{\micro
-s}) = \SI{500}{kHz}$, since our filter would be very good at picking that up.
+others (\autoref{fig:hist2dtile155759}) there is no apparent difference. Three
+possible explanations come to mind: 1)~a violation of Gaussianity, 2)~stray
+pulses, 3)~low frequency electrical noise.
 
 \marginpar{Looking at the spectrum it is evident that there's a very low
 frequency component ($<\SI{10}{kHZ} = 1/(\SI{100}{\micro s})$) absent in other
 Tiles. Maybe they are sudden changes of baseline? I should look at events where
 crossings with high threshold happen. Try to do the spectrum with windowing to
 see if it's a boundary problem.}
+
+Regarding Gaussianity, we checked the distribution of the samples before
+filtering and it agrees very well with a Gaussian. If they are stray pulses,
+they do not have the same height, otherwise they would show up as a flat rate
+curve. It could be oscillating noise with a frequency of
+approx.~$1/(\SI2{\micro s}) = \SI{500}{kHz}$, since our filter would be very
+good at picking that up, or sudden variations of the baseline.
+
+\marginpar{I thought that the Proto0 data was from 2019, and the LNGS from
+2020.}
+
+We note that this behavior arises for the same Tile in different setups,
+showing up both as an increased noise RMS and an higher threshold crossing
+rate. We also note that the Proto0 data were collected after the LNGS data. As
+for the absence of this behavior in the LNGS data collected at \SI{7}{VoV}, we
+cannot formulate hypotheses as we do not know in what order the LNGS data at
+\SI{6}{VoV} and \SI{7}{VoV} were collected, i.e., whether the tile was damaged
+during the testing procedure.
+
+We did not investigate further the discrepancy for Tile~53, since for all
+the other Tiles the agreement between our model and data is consistent and
+satisfactory.
+
+We now want to estimate the minimum amount of data required for the procedure.
+From \autoref{tab:fakerate} we see that the relative error on $k_2$ times the
+square root of the time, $C \equiv
+\operatorname{Std}[\bar{k_2}]\sqrt{T}/|k_2|$, is approximately \SI8{ns^{1/2}}
+in all cases. The error should be proportional to $T^{-1/2}$, so to have an
+\SI1\% error we need $T_{\SI1\%} = (100 C)^2 = \SI{0.7}{ms}$.
+
+We conclude this chapter by summarizing all the steps we took to compute the
+fake rate:
+%
+\begin{enumerate}
+    
+    \item Acquire at least \SI1{ms} of noise data.
+    
+    \item Filter the data (including baseline subtraction) producing a
+    filtered waveform $\mathbf y$.
+    
+    \item Compute the standard deviation $\sigma$ and $k_2 =
+    \operatorname{Cov}[y_i, y_{i+1} + y_{i-1} - 2y_i]$.
+    
+    \item Compute the fake rate for threshold $u$ using $r =
+    f_s\sqrt{-k_2/(2\pi)}\operatorname{gauss}(u;0,\sigma)$ where $f_s$ is the
+    sampling frequency.
+    
+\end{enumerate}
+%
+Alternatively, if one has a noise spectrum available but not the noise
+waveform, it is possible to obtain the autocovariance by computing the discrete
+Fourier transform of the power spectrum \cite[84]{ferrante2015} and then
+normalizing it to be $\sigma^2$ in 0. Then $k_2$ is obtained by the covariance
+at lag 1 $c$ with \eqref{eq:c2k2}. If the spectrum was obtained from the
+discrete Fourier transform of a noise waveform, $c$ is the first coefficient
+after the central one in the autocovariance.
+
+The model was satisfactory in 24 of the 25 Tiles we considered. The uncertainty
+in the low rate regime is \SI{\pm50}\% and the result is an overestimate with
+probability \SI{90}\%. These statements are educated guesses based on
+\autoref{tab:fakerate}.
 
 \begin{table}
     
@@ -510,50 +571,10 @@ Proto0 & 66 & <0 & 499 &  8.2 &   -0.91 &   7.5 & 2.3 & 0.77 & 0.61 \\
     \figcaption{fakerate}{The threshold upcrossing rate both counting directly
     the crossings on data and computing it with formula~\eqref{eq:rcont}. The
     gray band marks the rate corresponding to a single crossing counted in the
-    data.}
+    data. The thick gray curve is the rate predicted by
+    \cite[98]{savarese2018}.}
     
 \end{figure}
-
-We didn't investigate further the discrepancy for Tile~53. Anyway, for all
-other Tiles we looked at it works well enough.
-
-We now want to estimate the minimum amount of data required for the procedure.
-From \autoref{tab:fakerate} we see that the relative error on $k_2$ times the
-square root of the time, $C \equiv
-\operatorname{Std}[\bar{k_2}]\sqrt{T}/|k_2|$, is approximately \SI8{ns^{1/2}}
-in all cases. The error should be proportional to $T^{-1/2}$, so to have an
-\SI1\% error we need $T_{\SI1\%} = (100 C)^2 = \SI{0.7}{ms}$.
-
-For convenience we summarize all the steps to compute the fake rate:
-%
-\begin{enumerate}
-    
-    \item Acquire \SI1{ms} of noise data.
-    
-    \item Filter the data (including baseline subtraction) producing a
-    filtered waveform $\mathbf y$.
-    
-    \item Compute the standard deviation $\sigma$ and $k_2 =
-    \operatorname{Cov}[y_i, y_{i+1} + y_{i-1} - 2y_i]$.
-    
-    \item Compute the fake rate for threshold $u$ using $r =
-    f_s\sqrt{-k_2/(2\pi)}\operatorname{gauss}(u;0,\sigma)$ where $f_s$ is the
-    sampling frequency.
-    
-\end{enumerate}
-%
-The probability of the formula not working due to mysterious reasons is \SI4\%.
-If it works, the uncertainty for low rate is \SI{\pm50}\% and the result is an
-overestimate with probability \SI{90}\%. (These assessments are based on
-\autoref{tab:fakerate} but are somewhat subjective.)
-
-Alternatively, if one has a noise spectrum available but not the noise
-waveform, obtain the autocovariance by doing the discrete Fourier transform of
-the power spectrum \cite[84]{ferrante2015} and then normalizing it to be
-$\sigma^2$ in 0. Then $k_2$ is obtained by the covariance at lag 1 $c$ with
-\eqref{eq:c2k2}. (If the spectrum was obtained from the discrete Fourier
-transform of a noise waveform, $c$ is the first coefficient after the central
-one in the autocovariance.)
 
 \begin{figure}
     
