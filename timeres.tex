@@ -86,15 +86,15 @@ data, to avoid correlations between the simulated events.
 
 We downsample the noise in the same way as the signal, by averaging nearby
 samples. The noise spectra from both sources (LNGS and Proto0) decrease with
-frequency, so an antialiasing with an average should suffice.
+frequency, so an antialiasing with an average should suffice. The Proto0 data,
+as is available to us, is pre-downsampled without antialiasing from
+\SI{250}{MSa/s} to \SI{125}{MSa/s}.
 
-\marginpar{Bisogna dire com'è fatto il pre-downsampling di Proto0 da
-\SI{250}{MSa/s} a \SI{125}{MSa/s}.}
-
-After downsampling, the noise obtained from data is normalized to the desired
-variance. We normalize the variance separately for each \emph{data} event. The
-order matters because downsampling with averaging reduces the variance of the
-noise. See \autoref{fig:noise}.
+\emph{After} downsampling, the noise obtained from data is normalized to the
+desired variance. The order matters because downsampling with averaging reduces
+the variance of the noise, see \autoref{fig:noise}. We normalize the variance
+separately for each \emph{data} event, also fixing the mean to zero, such that
+in the simulated events the variance has a realistic variation.
 
 \stracka{Eliminare ``we normalize... data event''}
 
@@ -103,7 +103,7 @@ noise. See \autoref{fig:noise}.
     \widecenter{\includempl{fignoise}}
     
     \figcaption{noise}{The LNGS and Proto0 noise at the original sampling
-    frequency (normalized to unit variance) and downsampled.}
+    frequency (normalized to zero mean and unit variance) and downsampled.}
 
 \end{figure}
 

@@ -1,14 +1,11 @@
 \chapter{Data}
 \label{ch:data}
 
-\marginpar{Perché non devo dire che non ho preso nuovi dati? Mi sembra una
-cosa da specificare.}
-
 We drew on two types of datasets: 1)~ data collected with the Proto0 DarkSide
 prototype at CERN, and 2)~data collected with a cryogenic test stand at
 Laboratori Nazionali del Gran Sasso (LNGS).
 
-\marginpar{Cosa sono le biscioline?}
+\stracka{Suona male, rifrasare ``both datasets... laser''}
 
 Both datasets contain digital traces of photodetector modules (PDMs) output,
 divided in continuous chunks of fixed length that we call ``events''.
@@ -26,8 +23,12 @@ wiki page \cite{proto0}. Note that the descriptions in
 contain outdated information relative to the status of the setup when the data
 we are considering was recorded.
 
-\marginpar{La correzione dice di cancellare la reference, e poi di aggiungerla,
-quindi non ho capito.}
+\stracka{Se la referenza ha una descrizione obsoleta e pertanto non
+appropriata, rimuovi la referenza. \upshape Risposta: no! è proprio una
+disambiguazione che serve, io quando leggo le tesi degli altri mi perdo e non
+capisco cosa si riferisce a cosa. Cioè assumo che come me eventuali tesisti
+futuri si debbano leggere un tot di tesi precedenti. In particolare Proto0 non
+è documentato chiaramente dall'inizio alla fine da nessuna parte.}
 
 The TPC size is $\SI{30}{cm} \times \SI{30}{cm} \times \SI{20}{cm}$. On top of
 the TPC sits a photodetector unit (PDU), i.e., data transmission electronics
@@ -37,15 +38,13 @@ Tiles mounted in the PDMs were fabricated by Fondazione Bruno Kessler (FBK) in
 2019. The tiling scheme of the motherboard is shown in \autoref{fig:pdmadcch},
 while in \autoref{fig:proto0} there are some photos of the apparatus.
 
-\marginpar{A Stracka: il downsampling l'hai fatto tu, giusto? Che downsampling
-è, decimazione, media, o più complicato?}
-
 The PDM outputs are each sent to a channel of a CAEN V1725 analog to digital
 converter (ADC) board. The ADC has \SI{16}{bit} and sampling frequency
 \SI{250}{MSa/s}, downsampled in software to \SI{125}{MSa/s} to match the
-specifics which will be adopted in DarkSide20k. The response of the SiPMs will
-be described briefly in \autoref{ch:snr} and more in detail in
-\autoref{ch:anal}.
+specifics which will be adopted in DarkSide20k. The downsampling is simple
+decimation without antialiasing, i.e., every two samples, one is discarded. The
+response of the SiPMs will be described briefly in \autoref{ch:snr} and more in
+detail in \autoref{ch:anal}.
 
 Of the Proto0 data, we used only a run collected with the PDMs biased below
 breakdown voltage and thus almost insensitive to light. So the waveforms
@@ -109,11 +108,8 @@ characterize individual SiPMs or Tiles, briefly described in the Yellow Book
 \cite[34]{aalseth2018}, and presented in greater detail in \cite{acerbi2017}
 and \cite[ch.~3]{savarese2018}. It achieves a temperature stability of
 \SI{0.1}K and accuracy \SI{3}{K} in the operative range \SI{40}{K} to
-\SI{300}{K}. The digitizer is a CAEN V1751.
-
-\marginpar{Perché non devo dire che non sappiamo davvero tutte le specifiche?}
-
-\marginpar{Devo dire che la luce laser viene diffusa.}
+\SI{300}{K}. The digitizer is a CAEN V1751. The laser light is diffused prior
+to reaching the SiPM.
 
 These datasets were collected between 2018 and 2021 by Lucia Consiglio. They
 contain all the FBK Tiles used in Proto0 apart from Tile~55 (data from
@@ -123,9 +119,6 @@ directories \nolinkurl{SiPM/Tiles/FBK/NUV/MB2-LF-3x/} and
 \nolinkurl{SiPM/Tiles/LFOUNDRY/pre-production-test/}. The directory name
 \nolinkurl{MB2-LF-3x} stands for ``Motherboard 2, low field, triple doping''.
 The data for all Tiles are collected using the same reference FEB.
-
-\marginpar{A Stracka: mi hai fatto togliere gli url dei dati, però sul README
-del codice ci sono ancora, li devo cancellare?}
 
 The events are laser-triggered and recorded in \texttt{wav} files. Each file
 contains the Tile output, and in most runs there is also the recorded laser
@@ -143,15 +136,9 @@ of metadata, followed by \num{15001} values for each channel. The ADC
 resolution is 10~bit, so the values are always in the range 0 to~1023. The
 sampling frequency is \SI{1}{GSa/s}.
 
-\marginpar{Perché non devo scrivere il formato dei metadati, visto che mi
-sarebbe stato utile saperlo quando ho cominciato la tesi?}
-
 Persistence plots of the data for tiles 15, 21, 53, 57 and~59 are shown in
 \autoref{fig:hist2dtile155759}, \ref{fig:hist2dtile21}, \ref{fig:hist2dtile53},
 and~\ref{fig:hist2dtile57}.
-
-\marginpar{Ho corretto gli errori ortografici nella tabella di Proto0, ma
-non erano miei, stanno nell'excel di Proto0}
 
 \begin{table}
     \widecenter{
