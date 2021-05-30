@@ -1,23 +1,39 @@
 \chapter{Conclusions}
 \label{ch:end}
 
+We studied the effect of electrical noise on the identification and
+reconstruction of output pulses in DarkSide20k silicon photomultipliers (SiPM)
+Tiles in \autoref{ch:snr}, \ref{ch:timeres} and~\ref{ch:rate}, and measured the
+correlated noise of a Tile in \autoref{ch:anal}. In the following paragraphs we
+summarize and comment the results from all chapters.
+
 The main takeaway from \autoref{ch:snr} is in \autoref{fig:changebs}. The
 maximum signal to noise ratio (SNR) that can be reached with filtering on that
-data is~20, shown on the left panel with the cross correlation filter and
+data is~19, shown on the left panel with the cross correlation filter and
 precise baseline calculation. However the constraints of the available
 resources on the digitizers may turn out to impose a moving average filter with
 imprecise baseline, lowering the SNR to~13, as shown in the central panel. So
 the SNR at the digitizer stage can be as low as \SI{65}\% of the optimal one.
 
-\marginpar{Say that the ARMA filter may not fit into the digitizers, or would
-complicate the design. Also, that the moving average is not so bad compared to
-the cross correlation filter.}
+In the DarkSide collaboration it was proposed to use an ``autoregressive moving
+average'' (ARMA) filter to implement a long cross correlation filter in the
+digitizers. The ARMA combines linearly two filters: 1)~a cross correlation with
+a template only for the peak of the pulse, and 2)~an autoregressive filter, run
+on the \emph{temporally reversed} waveform. This reproduces a cross correlation
+with the peak template plus an exponentially decaying tail. Although the
+asymptotical complexity of the algorithm is excellent on paper, the actual
+amount of logic resources necessary for the implementation on FPGA may exceed
+the available ones, mainly due to the necessity of keeping a buffer for the
+temporal reversal, and to glue appropriately the reversed temporal slices with
+dynamical boundary conditions or partially overlapping slices. From
+\autoref{fig:changebs} it is clear that a simple moving average can achieve
+performances comparable to a cross correlation filter, thus it may not be
+necessary to devise a way to implement the cross correlation filter on the
+digitizers.
 
 In \autoref{ch:timeres} there are various things to learn:
 
 \begin{itemize}
-    
-    \item Upsampling is not necessary, \autoref{fig:rescomp}.
     
     \item The temporal resolution diverges below a certain SNR, giving a
     somewhat rigid bound on the working point, and the behavior at low SNR
@@ -26,22 +42,23 @@ In \autoref{ch:timeres} there are various things to learn:
     
     \item For what concerns temporal resolution, it is sufficient to extract
     \SI{1}{\micro s} of waveform per pulse from the digitizers,
-    \autoref{fig:windowtempres}. This is already shorter than what would be
-    required for other reasons.
+    \autoref{fig:windowtempres}.
     
     \item Downsampling from \SI{125}{MSa/s} to \SI{62.5}{MSa/s} does not
     deteriorate the temporal resolution, \autoref{fig:tempresdowns} and
     \autoref{tab:filtsnrdowns}. If a compromise with the data rate is
-    necessary, \SI{31.2}{MSa/s} may be still good enough, and we have not
-    investigated whether in the latter case upsampling would recover some
-    performance.
+    necessary, \SI{31.2}{MSa/s} might still be good enough.
+    
+    \item Upsampling is not necessary, \autoref{fig:rescomp}.
     
 \end{itemize}
 
-\marginpar{Add that the temporal resolution needed is \SI{10}{ns} from the
-Yellow Book and say at which SNR we get there with Proto0 noise (2.6). Say that
-Proto0 is considered a noisy environment, so it may be considered an upper
-bound. Point to our definitions of SNR and temporal resolution.}
+The temporal resolution required by the specifications of DarkSide20k is
+\SI{10}{ns} \cite[30]{aalseth2018}. A worse resolution would decrease the
+selective power of pulse shape discrimination (PSD). With the noise spectrum of
+the Proto0 prototype, we find that the temporal resolution reaches \SI{10}{ns}
+at pre-filter SNR 2.6, to be compared with the SNR observed in the Proto0 data
+of at least 3.3, see \autoref{fig:rescomp}.
 
 Chapter~\ref{ch:rate} has its own summary in \autoref{sec:rateconcl}. In
 general the formula for the fake rate is sufficiently precise, but there is an
@@ -49,11 +66,8 @@ exception with higher rate than expected that should be investigated better,
 see \autoref{fig:fakerate}. With the tested filter, which matches the one
 mentioned above for the $\mathrm{SNR} = 13$ figure, the fake rate is
 \SI{10}{cps} with the threshold set at 5 filtered noise standard deviations
-(including baseline subtraction).
-
-\marginpar{Take the maximum fake rate from the Yellow Book. The important is
-total fake rate + dcr, but at this level it can be more since that figure is
-after the FEP.}
+(including baseline subtraction), to be compared to the maximum total primary
+noise rate required, \SI{250}{cps/PDM} \cite[30]{aalseth2018}.
 
 The chapter on correlated noise contains more material, so it includes a rather
 long discussion of the results in \autoref{sec:analconcl}. To summarize
@@ -61,8 +75,9 @@ further:
 
 \begin{itemize}
     
-    \item Compared to the Fondazione Bruno Kessler (FBK) Tiles, the LFoundry
-    Tiles have similar direct cross talk (DiCT) and much less afterpulsing (AP).
+    \item Compared to the Fondazione Bruno Kessler (FBK) Tiles, the analyzed
+    LFoundry Tile has similar direct cross talk (DiCT) and much less
+    afterpulsing (AP).
     
     \item The afterpulse models should be studied and validated better.
     
@@ -77,5 +92,22 @@ further:
     analysis of real data.
     
 \end{itemize}
+
+We put upper bounds on the dark count rate (DCR), respectively \SI{50}{cps},
+\SI{170}{cps}, and~\SI{120}{cps} at overvoltages \SI{5.5}V, \SI{7.5}V,
+and~\SI{9.5}V, to be compared with the required upper limit \SI{250}{cps}. We
+give upper bounds for AP probabilities of \SI{2.5}\%, \SI{3.5}\% and
+\SI{6.5}\%, and estimate DiCT probabilities \SI{20}\%, \SI{30}\% and~\SI{50}\%.
+These are the probabilities of said noises being generated by a \SI1{PE} pulse.
+The DarkSide20k specifications require the sum of correlated noise
+probabilities to be less than \SI{60}\% \cite[30]{aalseth2018} in order to
+avoid performance degradation, mainly dynamic range reduction on ionization
+signals, where there is a lot of pile-up. Furthermore, some safety margin
+should be considered for the aging of the SiPMs, which is not well studied, in
+case the correlated noise probability turned out to increase with time. Recall
+that, for a correlated noise probability $p$, the ratio of total pulses to
+primary pulses is $1/(1-p)$, which diverges quite fast as $p$ goes to~1.
+\cite[8]{gola2019} mention that in practice the maximum manageable probability
+is \SI{50}\%.
 
 \marginpar{Explain the stuff from Simone in the TF2 report.}
