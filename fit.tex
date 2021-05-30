@@ -129,9 +129,9 @@ an additional issue:
 
 In standard least squares, the precision matrix of the estimator is estimated
 with the above expression, but with the term with the second derivative
-dropped. The reason is for convenience, but also because the expectation of
-$y_i - \mu_i(\boldsymbol\theta_0(\mathbf y))$ is approximately zero. A
-frequentist would like to compute this with the true value of the parameters,
+dropped. The reason is for convenience, but also because the expectation of the
+residuals $y_i - \mu_i(\boldsymbol\theta_0(\mathbf y))$ is approximately zero.
+A frequentist would like to compute this with the true value of the parameters,
 but has to content herself with the least squares estimate, getting something
 which on average is the true precision matrix. So any term which is zero on
 average can be removed.

@@ -1,79 +1,96 @@
 \chapter*{Introduction}
 
-\stracka{Per l'introduzione: questa parte introduce l'argomento della tesi e ne
-descrive la struttura. E' una cosa simile al riassunto. estendi fino a farlo
-diventare di 1 pagina. Segui la traccia del riassunto, anzi direi di prendere
-proprio il riassunto (da l.6 a l.58), e di aggiungere a quello i rimandi ai
-capitoli.}
+DarkSide20k is a planned dual-phase liquid argon (LAr) time projection chamber
+(TPC) designed to detect dark matter, the successor to DarkSide-50. It will be
+the largest detector of its kind, with 20~metric tons of argon in the fiducial
+volume. The predicted resulting upper bound on the spin-independent
+WIMP-nucleon scattering cross-section, in case of no discovery, is
+$\approx\SI{1e-47}{cm^2}$ at \SI{1}{TeV/c^2} WIMP mass, to be compared with the
+current best limit $\approx\SI{1e-45}{cm^2}$ by XENON1T.
 
-\paoloni{Mi sembra che manchi l’introduzione… L’introduzione dovrebbe dire
-sinteticamente: - perché è importante continuare a cercare la materia oscura -
-perché farlo con Darkside 20k - perché Darkside 20k usa i SiPM - i problemi che
-hai affrontato - perché i problemi sono rilevanti poi parti con la divisione in
-capitoli etc. Scrivi pensando di dover spiegare le cose ad un tuo collega di
-studi brillante.}
+DarkSide20k is part of a larger effort to improve the sensitivity to elastic
+nuclear recoils down to the ultimate goalpost of coherent neutrino scattering.
+The expected number of neutrino recoils in the \SI{100}{t yr} exposure of
+DarkSide20k is approximately~1. It is thus worthwhile to pursue this effort
+since we are indeed close to the conclusion. If a WIMP-like signal was not
+found before then, new detection techniques would be needed to continue the
+WIMP search, in particular, sensitivity to the recoil direction would permit to
+push down further the limits.
 
-The goal of this thesis is to study some characteristics of the silicon
-photomultipliers (SiPMs) photodetector modules (PDMs) that will be used in the
-DarkSide20k dark matter detection experiment. These studies are needed to
-finalize the design of the data acquisition system (DAQ) and of the layout of
-the readout electronics. Similar work in the DarkSide collaboration has been
-reported in \cite[ch.~3, 5]{savarese2018} and \cite[ch.~5, 6]{luzzi2020}.
+In the predecessor DarkSide-50, \SI{90}\% of the neutron background was traced
+to originate in the photomultiplier tubes (PMTs). To scale from the \SI{50}{kg}
+of argon in DarkSide-50 to the 20~tons of DarkSide20k, it is then necessary to
+replace the PMT with a more radio-pure photodetector. A key enabling technology
+is thus the silicon photomultiplier (SiPM), which has better radio-purity. Of
+the various advantages over the PMT, another important one is single-photon
+resolution, needed because the isotropic scintillation signals will be very
+dispersed in the large TPC of DarkSide20k, with often only one photon hitting a
+photodetector.
 
-\stracka{Togli i riferimenti bibliografici dall'introduzione: è come l'abstract
-di un papero. They do not contain... completeness: leva.}
+The readout of SiPMs, however, requires more complicated processing than PMTs.
+First, to equip its uniquely large photodetection area, DarkSide20k will employ
+large \SI{25}{cm^2} photodetectors. A SiPM of this size produces an high amount
+of floor electrical noise. Furthermore, the SiPM suffers from correlated noise,
+i.e., secondary output pulses induced by other pulses instead of by incident
+light or dark count. The generation of secondaries is recursive, causing loss
+of dynamic range through pile-up and leading eventually to saturation if not
+kept under control.
 
-\paoloni{dove descrivi il funzionamento dei SiPM?}
+In this thesis we present reconstruction and characterization studies on the
+photodetector modules (PDMs) that will be used in the TPC. These studies
+quantify the effects and the amount of noise in the SiPMs and are primarily
+meant as a support to the definition of the first stages of the online
+processing chain.
+
+Each PDM consists of a \SI{25}{cm^2} $6\times 4$ matrix of individual SiPMs,
+and a front end board (FEB) that pre-amplifies and sums analogically the output
+of the SiPMs. Thus qualitatively its behavior is akin to a single large SiPM.
+The SiPM has Geiger-mode single photon response, i.e., each detected photon
+produces one fixed amplitude pulse. The pulse looks like a sharp peak,
+$\approx\SI{20}{ns}$, followed by a rather long exponential tail,
+$\approx\SI{1}{\micro s}$. SiPMs have three kinds of noise: 1)~stationary
+electric noise, which scales with the square root of the area; 2)~a dark count
+rate (DCR) of pulses independent of incident light that scales with the area;
+3)~the correlated noise produced by primary pulses, which contributes a factor
+proportional to the DCR and photon pulses.
+
+The first two stages in the readout chain will be the digitizers and the front
+end processors (FEP). The digitizers find candidate pulses, and for each one
+send a slice of waveform to the FEP, where the final identification of pulses
+is decided. The performance of these stages is mainly determined by the
+electric noise, characterized with the signal to noise ratio (SNR), which is
+the ratio of the amplitude of pulses over the noise standard deviation. It
+influences the fake rate, i.e., the rate of random oscillations high enough to
+be mistakenly identified as pulses, and the temporal resolution of pulse
+detection.
+
+By applying linear filters to digitized waveforms acquired from the PDMs
+illuminated by a pulsed laser, both in a testing setup at Laboratori Nazionali
+del Gran Sasso (LNGS) and in the small prototype TPC ``Proto0'', we study the
+noise parameters of single pulse detection: SNR, temporal resolution, fake rate.
+
+We consider 1)~an autoregressive filter, which uses the least possible
+computational resources, 2)~a matched filter without spectrum correction, which
+gives almost optimal performance, 3)~a moving average, which is a compromise
+between simplicity and performance. Simple filters are needed on the
+digitizers, which must process all the incoming data, while the FEP will
+probably use the optimal filter. We also study the baseline computation and the
+filter length.
+
+Then using a custom peak finder algorithm we measure the DCR and study the
+correlated noise, which consists of additional pulses produced recursively by
+each pulse, divided in two main categories: afterpulses (AP), which arrive with
+some delay from the parent pulse, and have smaller amplitude as the delay goes
+to zero, and direct cross talk (DiCT), which manifests as an integer
+multiplication of the amplitude of pulses because the children pulses are
+overlapped with the parent.
 
 The thesis is divided in eight chapters. The first two chapters provide a short
-pedagogical to dark matter and to the DarkSide experiment. They do not contain
-new material and are included only for the sake of completeness.
+pedagogical introduction to dark matter and to the DarkSide experiment.
 Chapter~\ref{ch:data} is a reference for the sources of the datasets used in
 the analyses. Chapters~\ref{ch:snr}, \ref{ch:timeres} and~\ref{ch:rate} deal
 with the performance of single pulse detection in the PDM output: signal to
 noise ratio, temporal resolution, and fake rate. Chapter~\ref{ch:anal} analyzes
-additional pulses noise (cross talk and afterpulsing). Chapter~\ref{ch:end}
-summarizes the key results from each chapter.
-
-\paoloni{Elimina ``this layout... etc''}
-
-This layout has more chapters than is currently conventional for this kind of
-document. This is done to keep each somewhat self-contained topic well
-separated, such that it should be quicker to pull out specific information.
-
-\stracka{i link ai repository li puoi mettere, ma devono occupare 2 righe. Se
-vuoi descrivere più estesamente il contenuto dei repository, trasferisci
-l.86-97 in un'appendice, e metti qui semplicemente un rimando.}
-
-\paoloni{Qeusto può andare in ``forewords'' o in un'``appendix'' ma non ci sta
-tanto in un'introduzione}
-
-To the same end, for each figure and table we provide a Python script that
-reproduces the content. Each script is referenced at the end of the caption
-like this: \scriptlink{fignoise.py}. In the PDF it links is to a preview of the
-file in an online repository, \url{https://github.com/Gattocrucco/sipmfilter}.
-To run these scripts, clone or download the repository. The scripts are located
-in the directory \nolinkurl{figthesis}. The file \nolinkurl{README.md} provides
-detailed instructions on how to set up the working environment.
-
-Some scripts require no input. Others require large data files which are not
-included in the repository. Of the latter, some have a cache of the data they
-need, others just can not be executed without the original data. For people
-outside of the DarkSide collaboration it may not be possible to obtain the data
-files; in any case, they can check what the code is doing exactly.
-
-\stracka{leva. la tesi è un prodotto che viene registrato dall'università, e il
-copyright è determinato da quello: non serve specificare nulla qui. Per quanto
-riguarda i repository: le indicazioni sulla licenza vanno in un file nel
-repository, non vanno nella tesi.}
-
-The \LaTeX{} code for this thesis is itself available at
-\url{https://github.com/Gattocrucco/thesis}. Moreover, the
-\nolinkurl{sipmfilter} repository contains slides on this work which we
-presented at DarkSide meetings, although they shall be considered outdated
-respect to this document. The Python code is covered by the MIT license, while
-the thesis and the slides are covered by the CC-BY~4.0. These licenses grant
-anyone the right to reuse this material, even without releasing themselves the
-modifications as open source, provided they cite the original author and keep
-the copyright and license notices. The licenses do not cover figures which we
-copied from other sources nor the DarkSide data.
+correlated noise. Finally, \autoref{ch:end} summarizes the key results from
+each chapter. The computer code implemented for this thesis is released as
+open-source, see \autoref{ch:code}.
