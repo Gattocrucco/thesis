@@ -130,20 +130,11 @@ an additional issue:
 In standard least squares, the precision matrix of the estimator is estimated
 with the above expression, but with the term with the second derivative
 dropped. The reason is for convenience, but also because the expectation of
-$y_i - \mu_i(\boldsymbol\theta_0(\mathbf y))$ is approximately zero.
-
-This expression that we got by expanding the $\chi^2$ happens to be the
-precision matrix of $\boldsymbol\theta_0(\mathbf y)$ obtained by first order
-propagation w.r.t.~$\mathbf y$, fact that the reader can check with the
-implicit function theorem. A frequentist would like to compute this with the
-true value of the parameters, but has to content herself with the least squares
-estimate, getting something which on average is the true precision matrix. So
-any term which is zero on average can be removed.
-
-\marginpar{I'm not \SI{100}\% sure that you obtain that with first order
-propagation, I should double check. But the point would still hold, the part
-with first derivatives is the one used normally, no doubts on that, and the
-rest has zero expectation.}
+$y_i - \mu_i(\boldsymbol\theta_0(\mathbf y))$ is approximately zero. A
+frequentist would like to compute this with the true value of the parameters,
+but has to content herself with the least squares estimate, getting something
+which on average is the true precision matrix. So any term which is zero on
+average can be removed.
 
 For a Bayesian, instead, there is not some ideal error corresponding to an
 ideal parameter value; there is only the covariance of the posterior obtained
