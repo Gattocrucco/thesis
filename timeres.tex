@@ -65,7 +65,7 @@ from the LNGS data; noise sampled from the Proto0 data.
 
 The white noise is generated in the simulation. The LNGS noise is copied from
 the pre-trigger region, with the same selections explained in
-\autoref{sec:snrdata}, i.e.\ ignoring any event with a sample less than 700.
+\autoref{sec:snrdata}, i.e., ignoring any event with a sample less than 700.
 The Proto0 noise is copied from the whole events without selection. The
 detector is always Tile~57, as for the signal template. A persistence plot of
 the Proto0 data is shown in \autoref{fig:hist2dtile155759}. The spectra are
@@ -209,9 +209,9 @@ width of the distribution even when it is highly skewed or with heavy tails.
 \autoref{fig:rescurve} shows the temporal resolution thus defined for each
 filter, filter length, and SNR. The exponential moving average has a
 consistently poor performance compared to the other filters. The
-cross-correlation filter is the best one, with performance improving with
+cross correlation filter is the best one, with performance improving with
 length, and at a length of 96 samples (\SI{768}{ns}) is already practically
-optimal. The moving average can get close to the cross-correlation filter by
+optimal. The moving average can get close to the cross correlation filter by
 choosing appropriately the number of samples.
 
 \begin{figure}
@@ -231,11 +231,11 @@ processors (FEPs) for further analysis. The computational resources of the
 digitizers are limited compared to the FEPs.
 
 The exponential moving average can be surely implemented on the digitizers. The
-cross-correlation with 64 samples could probably be done on the digitizers
+cross correlation with 64 samples could probably be done on the digitizers
 since a similar computation was implemented in another study.
 
 The FEPs can and should probably use the best filter, so they would run a long
-cross-correlation filter. The temporal resolution matters in the FEPs but
+cross correlation filter. The temporal resolution matters in the FEPs but
 probably not in the digitizers, in the latter case it is just a generic measure
 of performance.
 
@@ -246,9 +246,9 @@ Thus out of all the temporal resolution curves the ones that matter are:
     \item the best we can do with the exponential moving average and moving
     average;
     %
-    \item the long cross-correlation filters;
+    \item the long cross correlation filters;
     %
-    \item the 64 samples cross-correlation filter.
+    \item the 64 samples cross correlation filter.
     %
 \end{itemize}
 %
@@ -282,7 +282,7 @@ have an effect on the temporal resolution, which we assess here.
 
 We repeat the simulation, but this time we use only a fixed smaller number of
 samples in each event to compute the filter output. We call this selection of
-samples ``window''. On the window we run only a long cross-correlation filter
+samples ``window''. On the window we run only a long cross correlation filter
 since that is what would be done on the FEPs. As past and future boundary
 condition we use zero. We evaluate the filter even after the sample window end
 because the window can be shorter than the filter.

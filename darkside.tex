@@ -91,7 +91,7 @@ is put into a cylinder, about \SI{2.5}{m} tall and \SI{3}{m} wide, where an
 uniform \SI{200}{V/cm} electric field pointing downward is maintained. The free
 electrons produced by ionization drift upward, taking at most \SI{4}{\micro s}
 from the bottom to the top of the cylinder, while the photons reach immediately
-the photodetectors, placed on the the top and bottom faces.
+the photodetectors, placed on the top and bottom faces.
 
 On the top of the cylinder, just below the photodetectors, a ``pocket'' facing
 downward is kept filled with gaseous argon, like a diving bell. An additional
@@ -138,6 +138,37 @@ is used for the rest of the system.
     
 \end{figure}
 
+\stracka{Descrizione fotoelettronica: puoi trarre cospicua ispirazione dalla
+tesi del Marasciulli
+%
+https://etd.adm.unipi.it/t/etd-09252019-101839/ 
+%
+E' in italiano e comunque dovrai sintetizzare per fare diventare quello che lui
+mette come capitolo a parte (il 4) in una sezione del tuo cap. 2. Per esempio,
+a te sicuramente non interessano le descrizioni dei coperchi delle custodie
+delle Tile (mentre a lui sì: per lui il focus era la PE).
+%
+Nel Cap.5 poi lui parla di diversi test e della prima MB. Tu invece usi MB2, e
+sta sopra in Proto0 (non sotto come nel caso di Andrea). Giusto per non fare
+confusione nel caso volessi prendere qualche figura da qui: c'è da fare
+attenzione.
+%
+Qui raccogli anche le varie cose che al momento sono spesso scritte dopo il
+punto in cui ti servono per la prima volta.}
+
+\marginpar{controllare che quando richiamo le cose sulla DAQ le cose che dico
+sono anche nel capitolo 2, e linkare\\
+separare descrizione tile e pdm\\
+aggiungere figura tile da marasciulli\\
+ftoto della feb con le scrtiitne 4.14, speiegare meglio i collegamenti\\
+pdu ha il transmission module + steering module (quello che alimenta e
+disabilita le singole tile)\\
+chiarire che i pdm della pdu sono gestiti insieme\\
+verificare che la descrizione dello SPAD nel capitolo 7 sia giusta, c'è scritto
+nel marasciulli\\
+spiegare chiaramente che i WIMP sono supposti fare urto elastico o sui nuclei o
+sugli elettroni}
+
 DarkSide50 uses photomultiplier tubes (PMTs) for photodetection. DarkSide20k
 instead will be equipped with silicon photomultipliers (SiPMs). The SiPMs are
 large matrices of photodiodes connected in parallel and operated in Geiger
@@ -147,7 +178,7 @@ mode. The advantages of SiPMs compared to PMTs are:
     
     \item single photon resolution;
     
-    \item higher filling factor, i.e.\ they tile more densely the surface;
+    \item higher filling factor, i.e., they tile more densely the surface;
     
     \item low voltage bias;
     
@@ -158,17 +189,24 @@ mode. The advantages of SiPMs compared to PMTs are:
 \end{itemize}
 
 The basic unit of the photodetection system is the photodetector module (PDM),
-consisting in a Tile, i.e.\ a $6\times 4$ matrix of SiPMs totaling
+consisting in a Tile, i.e., a $6\times 4$ matrix of SiPMs totaling
 \SI{25}{cm^2}, connected to a front end board (FEB) hosting the biasing circuit
 and the preamplifier. Matrices of $5\times 5$ PDMs are bound together to form a
 motherboard (MB). Each motherboard is paired with transmission electronics
 forming a photodetector unit (PDU). \autoref{fig:sipm} shows a PDM and a MB.
+
+\marginpar{Da qualche parte devo definire l'overvoltage}
 
 In the PDM the SiPMs are connected in parallel branches of two SiPMs in series
 each. This increases the noise compared to having a preamplifier for each SiPM,
 but is necessary because the electronic components are a source of radioactive
 contamination, and because the power dissipated by the amplifiers increases the
 temperature.
+
+\stracka{ocio: prima dici che sono connessi in parallelo, ma quando si passa
+dal SiPM alla Tile, hai configurazioni più complicate: somme di 4 settori,
+ognuno dei quali combina in parallelo 3 serie di 2 SiPM (come dici da qualche
+parte dopo). Questo chiariscilo in Cap.2}
 
 The signals are carried out of the cryostat to digitizer boards equipped with
 14~bit \SI{125}{MSa/s} ADCs connected to an FPGA and a controller CPU. The
@@ -177,3 +215,6 @@ identification and send selected data through an ethernet link to a front end
 processor (FEP), a normal CPU station, that refines the analysis. Finally, an
 event builder farm takes the information from all the FEPs, divides the sets of
 photon hits into events, and decides what to record to permanent storage.
+
+\marginpar{nel capitolo 2 spiegare che i sipm hanno i rumori, così introduco la
+mia tesi}

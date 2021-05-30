@@ -5,11 +5,10 @@ When a silicon photomultiplier (SiPM) detects a photon, the electrical output
 is a sudden current spike, with a rise time on the order of nanoseconds, which
 decays slowly in some microseconds.
 
-This signal is summed with electrical noise, which is proportional to the
+This signal is immersed in electrical noise, which is proportional to the
 square root of the area of the SiPM, since all photodiode cells are connected
-in parallel. Given the relatively large area of the photodetector modules
-(PDMs), \SI{25}{cm^2}, the amplitude of the noise can be comparable to the
-amplitude of the signals.
+in parallel. Given the relatively large area of the SiPMs Tiles, \SI{25}{cm^2},
+the amplitude of the noise can be comparable to the amplitude of the signals.
 
 This implies that to read out the detector it is important to filter the
 waveform to suppress the noise. In this chapter we will study the performance
@@ -40,38 +39,40 @@ of some common filters on a PDM output.
 
 We use the LNGS data for Tile~57, see \autoref{sec:lngsdata}. The data file is
 \nolinkurl{MB2-LF-3x/NUV-LF_3x_57/nuvhd_lf_3x_tile57_77K_64V_6VoV_1.wav}. The
-SiPM is operated at \SI{6.0}{V} overvoltage, to be compared to \SI{6.5}{V} in
+Tile is operated at \SI{6.0}{V} overvoltage, to be compared to \SI{6.5}{V} in
 Proto0, see \autoref{fig:pdmadcch}. The amplitude of the signals is
 proportional to the overvoltage, while the noise should not depend on it, so
-the choice is relevant.
+this difference has to be taken into account when comparing the performances
+in the Proto0 and LNGS setups.
 
 In \autoref{fig:hist2dtile57} we show the persistence plot of the waveforms,
 both on the whole acquisition window and zoomed on the pulses produced by the
 laser. The persistence plot is a two-dimensional histogram of the events, where
 the variables are the sample number in the event and the ADC value. It is like
-stacking on each other all the waveforms. We have still not explained properly
-how a SiPM works (including the definition of overvoltage), for now we will do
-with what we can see with our own eyes in the data. We defer an in-depth
-explanation to \autoref{sec:analtheory}.
+stacking on each other all the waveforms. We have still not explained in full
+detail how a SiPM works, for now we will do with what we can see with our own
+eyes in the data. We defer an in-depth explanation to \autoref{sec:analtheory}.
 
 From the whole event visualization it is evident that there are other pulses
-occurring at random beside those produced by the laser. We will need to measure
-the height of pulses, and to do that we need a reference value, a baseline. The
-straightforward way to compute the baseline is taking the average of the
-pre-trigger region before the laser pulse, but this average would be biased by
-the presence of a pulse. So we filter away all events where there is a
-pre-trigger sample below~700. There are~72 such events out of~\num{10005}.
+occurring at random times beside those produced by the laser. We will need to
+measure the height of pulses, and to do that we need a reference value, i.e., a
+baseline. The straightforward way to compute the baseline is taking the average
+of the pre-trigger region before the laser pulse, but this average would be
+biased by the presence of a pulse. So we filter away all events where there is
+a pre-trigger sample below~700, choosing this threshold by looking at
+\autoref{fig:hist2dtile57}. There are~72 such events out of~\num{10005}.
 
 Looking at the zoom on the laser pulses, we see that the amplitude of the
 pulses is discrete. The laser does not emit only one photon, we expect a
-Poisson distributed number of photons to hit the SiPM. So we interpret the
+Poisson distributed number of photons to hit the Tile. So we interpret the
 discrete amplitudes as corresponding to the number of detected photons. We use
 ``PE'', standing for ``photoelectron'', as a unit of measure to indicate these
 steps. So the \SI{1}{PE} pulses are the lowest ones, the first non-straight
 band in the figure, then there are the \SI{2}{PE} pulses, and so on.
 
 In \autoref{ch:anal} we will see that the PE do not correspond precisely to the
-number of photons, but for now we just care about the discretization. In
+number of photons, due to the presence of other avalanche-generating
+mechanisms, but for now we just care about the discretization. In
 \autoref{fig:signals} we show some individual pulses with different PE.
 
 \section{Filters}
@@ -79,15 +80,15 @@ number of photons, but for now we just care about the discretization. In
 
 A filter operates by converting the original sequence of ADC samples $(x_1,
 x_2, \ldots)$ to a new ``filtered'' sequence $(y_1, y_2, \ldots)$. The filters
-are causal, i.e.\ the filtered sample $y_n$ can be computed only using the
-original samples up to $x_n$. This limitation is because we are interested in
-using the filters online, i.e.\ produce the filter output continuously as
-samples are read.
+we consider are causal, i.e., the filtered sample $y_n$ can be computed only
+using the original samples up to $x_n$. This limitation is introduced because
+we are interested in using the filters online, updating the filter output
+continuously as samples are read.
 
 We tested three linear filters: the moving average, the exponential moving
-average or autoregressive filter, and the cross-correlation filter. These are
-standard filters and are the ones currently considered by the DarkSide
-collaboration for the implementation of the online readout system.
+average (also known as autoregressive filter), and the cross correlation
+filter. These are standard filters and are the ones currently considered by the
+DarkSide collaboration for the implementation of the online readout system.
 
 We will always normalize the filters to behave like an average, in the sense
 that a constant input waveform is mapped to itself. This is a convenient choice
@@ -112,9 +113,9 @@ subtracting the $N$-th past sample and adding the incoming one:
 %
 The memory requirement is a buffer with the $N$ samples.
 
-Since the SiPM output is a current signal, the moving average is computing
-the charge in a given time window, so it also called ``charge integration''
-in this application.
+Since the SiPM output is a current signal, the moving average is computing the
+charge in a given time window, so it is also called ``charge integration'' in
+this context.
 
 \subsection{Exponential moving average}
 
@@ -155,7 +156,7 @@ filter, term which we reserve for a different case explained later.
 Let $\mathbf h = (h_1, h_2, \ldots, h_N)$ be a \emph{template} of the signal
 waveform we want to detect. This means $\mathbf h$ should ideally match the
 shape of the signal waveform we want to find in the noisy data. The filter is
-then the cross-correlation of $\mathbf x$ with $\mathbf h$:
+then the cross correlation of $\mathbf x$ with $\mathbf h$:
 %
 \begin{equation}
     y_n = \sum_{i=1}^N h_i x_{n-N+i}, \quad \sum_{i=1}^N h_i = 1.
@@ -171,16 +172,33 @@ The differences we have from the ideal case are:
 %
 \begin{enumerate}
     \item the shape of the signal probably changes a bit each time;
-    \item the signal is not aligned always in the same way to the ADC timebase;
+    \item the signal is not aligned always in the same way to the ADC clock;
     \item most importantly, the noise is not white.
 \end{enumerate}
 
-The noise spectrum can be corrected by appropriately transforming $\mathbf h$,
-in this case the filter is called \emph{matched filter}
-\cite[161]{ferrante2015}. Let $\mathbf s$ and $\mathbf w$ be the signal and
-noise, such that the waveform to be filtered is $\mathbf x = \mathbf s +
-\mathbf w$. Let $V$ be the noise covariance matrix, i.e. $V_{ij} =
-\operatorname{Cov}[w_i, w_j]$. Then the template for the matched filter is
+We defer to \autoref{sec:cctemplate} the calculation of the template $\mathbf
+h$. See \autoref{fig:filters} for an example of filtered waveform.
+
+\begin{figure}
+    
+    \widecenter{\includempl{figfilters}}
+    
+    \figcaption{filters}{A filtered event. The number of averaged samples in
+    the moving average filter, the scale of the autoregressive filter, and the
+    length of the template of the cross correlation filter are all 1024
+    samples, at \SI1{GSa/s}.}
+
+\end{figure}
+
+\subsection{Matched filter}
+
+With the cross correlation filter, a non-white noise spectrum can be kept into
+account by appropriately transforming $\mathbf h$, in this case the filter is
+called \emph{matched filter} \cite[161]{ferrante2015}. Let $\mathbf s$ and
+$\mathbf w$ be the signal and noise, such that the waveform to be filtered is
+$\mathbf x = \mathbf s + \mathbf w$. Let $V$ be the noise covariance matrix,
+i.e., $V_{ij} = \operatorname{Cov}[w_i, w_j]$. Then the template for the
+matched filter is
 %
 \begin{equation}
     \mathbf h_\text m = V^{-1} \mathbf h.
@@ -193,51 +211,42 @@ seen by writing the cross correlation with the template, $\mathbf h^\top V^{-1}
 \mathbf x$, which compared to the least squares estimator \cite[628]{zyla2020}
 is missing the multiplicative factor $1/(\mathbf h^\top V^{-1} \mathbf h)$.
 
-We tried implementing the matched filter with mixed results we will not report
-in detail. We computed the noise covariance matrix on the event samples before
-the signal. Since the noise is stationary, $V$ is a Toeplitz matrix, i.e.\ the
-covariance depends only on the lag between two samples. In
-\autoref{fig:autocorrlngs} we show the correlation of LNGS and Proto0 noise.
+We tried implementing the matched filter with mixed results, and we will not
+report these studies in detail. We computed the noise covariance matrix on the
+event samples before the signal. Since the noise is stationary, $V$ is a
+Toeplitz matrix, i.e., the covariance depends only on the lag between two
+samples. In \autoref{fig:autocorrlngs} we show the correlation of LNGS and
+Proto0 noise.
 
-The matched filter worked slightly better than the cross-correlation filter, as
-expected, but only for $N$ sufficiently small, getting worse as $N$ increased.
-This could be due to numerical accuracy problems in solving the linear system
-$V$ in \autoref{eq:matched} as the size of the matrix increases.
+The matched filter worked slightly better than the cross correlation filter, as
+expected, but only for filter length $N$ sufficiently small, getting worse as
+$N$ increased. This could be due to numerical accuracy problems in solving the
+linear system $V$ in \autoref{eq:matched} as the size of the matrix increases.
+
+\stracka{As we will see, the study on the simpler filters suggests possible
+strategies to mitigate the numerical accuracy problems. \upshape Eh?}
 
 The template obtained from the transformation is much different than the
 initial signal shape. There are large cancellations, so it is more sensitive to
 numerical accuracy, and may not be appropriate for an implementation on FPGA.
 Moreover, it has not been considered by the rest of the collaboration, so we
-did not investigate further, and limited ourselves to the characterization of
-the proposed filters.
-
-We defer to \autoref{sec:cctemplate} the calculation of the template $\mathbf
-h$. See \autoref{fig:filters} for an example of filtered waveform.
-
-\begin{figure}
-    
-    \widecenter{\includempl{figfilters}}
-    
-    \figcaption{filters}{A filtered event. The number of averaged samples in
-    the moving average filter, the scale of the autoregressive filter, and the
-    length of the template of the cross-correlation filter are all 1024
-    samples, at \SI1{GSa/s}.}
-
-\end{figure}
+did not investigate it further, and limited ourselves to the characterization
+of the proposed filters.
 
 \section{The fingerplot}
 \label{sec:fingerplot}
 
 To measure the performance of filters, we define a signal to noise ratio (SNR)
-as follows: the SNR is the ratio of the average peak filter output value for
-\SI1{PE} pulses over the standard deviation of the filtered noise.
+variable as follows: the SNR is the ratio of the value that, on average, the
+peak of the filtered waveform yields on \SI1{PE} pulses (without noise), over
+the standard deviation of the filtered noise.
 
 We could consider other similar measures, for example we could include the
 standard deviation of the peak filter output value since that influences where
 we should place a threshold to discriminate signals, however it is sufficient
 to use any reasonable definition for the purpose of comparing different
-filters. Effectively we computed the SNR without respecting the definition
-above to the letter, we will see in detail.
+filters. Occasionally we computed the SNR without strictly adhering to the
+definition above, and this will be signaled in the text were appropriate.
 
 For each event we compute the filter output at a fixed temporal delay from the
 leading edge of the laser trigger pulse, see \autoref{fig:filtersample}.
@@ -273,47 +282,48 @@ peaks reminding of fingers.
 
 \end{figure}
 
-The first peak is centered on zero and thus corresponds to cases where no laser
+The first peak is centered in zero and thus corresponds to cases where no laser
 photon is detected. Since the instant where we are evaluating the filter output
-in each event is independent of the output itself, instead of e.g.\ being
+in each event is independent of the output itself, instead of, e.g., being
 determined by peak finding, this peak is the distribution of the noise after
 passing through the filter.
 
 The various other peaks correspond to an increasing number of PE. The second
 peak is the distribution of the filter output at a fixed instant for \SI1{PE}
-signals. Assuming for the moment that the instant where we evaluate the filter
-yields the highest signal response, this means that the SNR is the mean of the
-second peak divided by the standard deviation of the first.
+signals. If the instant where we evaluate the filter is the one associated to
+the highest signal response, the mean of the second peak divided by the
+standard deviation of the first yields the SNR.
 
 Since the peaks are often overlapping, and that we will have to repeat the
 calculations for many fingerplots automatically without checking each one, we
 use robust measures of location and scale instead of the average and standard
-deviation. We run a peak finding algorithm on the histogram and divide the data
-by putting boundaries midway between peaks, so that we assign each datapoint to
-a peak. For the second peak, we take the median instead of the average. For the
-first peak, we take half of the symmetric \SI{68}\% interquantile range instead
-of the standard deviation, i.e.\ half the difference between the 0.84 and 0.16
-quantiles.
+deviation. We run a peak finding algorithm on the fingerplot and divide the
+data by putting boundaries halfway between peaks, so that we assign each
+datapoint to a peak. For the second peak, we take the median instead of the
+average. For the first peak, we take half of the symmetric \SI{68}\%
+interquantile range instead of the standard deviation, i.e., half the
+difference between the 0.84 and 0.16 quantiles.
 
 On a Gaussian distribution these are equivalent to the mean and standard
-deviation, however they are less sensible to messing up the tails of the
-distribution, which happens since the boundaries cuts away the tails and there
-is contamination from the tails of the neighboring peaks. By definition, when
-the SNR is high, the peaks are well separated, so in that case the result can
-be trusted to match precisely the quantiles of the single isolated peak.
+deviation, however they are less sensible to the tails of the distribution,
+which is a desirable property since the boundaries could cut away the tails and
+there could be contamination from the tails of the neighboring peaks. By
+definition, when the SNR is high, the peaks are well separated, so in that case
+the result can be trusted to match precisely the quantiles of the single
+isolated peak.
 
-Moreover, the code always automatically checks that the the median of the
-\SI0{PE} peak is zero within its error. If it is not, the SNR is considered
-to be zero, such that it is well visible in the results.
+Moreover, the code always automatically checks that the median of the \SI0{PE}
+peak is zero within its error. If it is not, the SNR is considered to be zero,
+such that it is well visible in the results.
 
 \section{Cross correlation filter template}
 \label{sec:cctemplate}
 
-We compute the template for the cross-correlation filter by taking the average
+We compute the template for the cross correlation filter by taking the average
 of \SI1{PE} signals, selected using the fingerplot boundaries obtained with a
-1500 samples average, with the samples starting from the trigger. The baseline
-is computed with the median. We consider three alignments for the waveforms
-prior to averaging:
+1500-samples average, counting the samples starting from the trigger position.
+The baseline is computed with the median. We consider three alignment methods
+for the waveforms prior to averaging:
 %
 \begin{itemize}
     
@@ -343,8 +353,8 @@ the signal peak.
     \widecenter{\includempl{figtemplate}}
     
     \figcaption{template}{Templates obtained averaging \SI1{PE} laser pulses,
-    selected with a \SI{1.5}{\micro s} average fingerplot, with different
-    pre-averaging alignment choices. The template we pick is the
+    selected with a \SI{1.5}{\micro s} charge integration fingerplot, with
+    different pre-averaging alignment choices. The template we pick is the
     trigger-aligned one.}
 
 \end{figure}
@@ -352,8 +362,8 @@ the signal peak.
 The trigger-aligned template appears to be the best one, so we will use it in
 this chapter and in \autoref{ch:timeres}. However \autoref{ch:anal} analyzes
 data without trigger information, forcing us to use the filter-aligned template
-in that case. See \cite{coakley2001} for an alignment method that should be
-free from this problem.
+in that case. See \cite{coakley2001} for an alignment method that may offer
+some improvements over our vanilla approach.
 
 When using the template, we normalize it to unit sum, as explained in
 \autoref{sec:filters}. Since we will try various lengths of the filter
@@ -363,18 +373,17 @@ their sum of squares is maximized. Of course normalizing the template to unit
 sum is done after truncation.
 
 We did not smooth the template nor fitted it with a model. For how to fit this
-kind of pulses, see \cite{luzzi2020}. We think that our vanilla average is fine
-enough, but we did not actually compare it with a fitted template. If the
-reader expects a fitted or smoothed template to yield significantly better
-performance, consider our results as conservative.
+kind of pulses, we refer to, e.g., \cite{luzzi2020}. We think that our vanilla
+average is fine enough, but we did not actually compare it with a fitted
+template.
 
-A technical detail: when computing the filter-aligned template, we first smooth
-the unaligned template with a 2-sample moving average. This is to remove a
-coherent noise at the Nyquist frequency, i.e.\ even samples are always biased
-in the same direction relative to odd samples, in all waveforms. If we do not
-correct this, the noise appears in the template, then when using it the filter
-matches the noise in template to the one in the waveform, and gives a peak
-output only on even or odd samples.
+We conclude this section with a technical detail: when computing the
+filter-aligned template, we first smooth the unaligned template with a 2-sample
+moving average. This is to remove a coherent noise at the Nyquist frequency,
+i.e., even samples are always biased in the same direction relative to odd
+samples, in all waveforms. If we do not correct this, the noise appears in the
+template, then when using it the filter matches the noise in template to the
+one in the waveform, and gives a peak output only on even or odd samples.
 
 \section{SNR versus filter length}
 
@@ -389,10 +398,13 @@ the random oscillation due to noise is symmetrical and the averaging recovers
 the actual amplitude of the filter output for the signal.
 
 The resulting SNR curves are shown in \autoref{fig:snrplot}, repeated for a
-range of values of the filters length parameter. For the moving average and
-cross-correlation filter, the length parameter is the number of samples, $N$.
+range of values of the filter-length parameter. For the moving average and
+cross correlation filter, the length parameter is the number of samples, $N$.
 For the exponential moving average, it is the scale of the exponential decay
 $\tau$.
+
+\stracka{Specifica la baseline usata per questo plot. \upshape Risposta:
+viene dal fingerplot, spiegato nel suo capitolo.}
 
 \begin{figure}
     
@@ -414,38 +426,36 @@ between the two points where the SNR is 1 less than its maximum value.
 \section{Effect of the baseline computation}
 
 In constructing the fingerplot, we subtract from the filter output value the
-baseline, i.e.\ the average value of the waveform in absence of signals. We
+baseline, i.e., the average value of the waveform in absence of signals. We
 compute the baseline for each event as the average of the samples before the
-signal. More precisely, we average \num{8000} samples. The value obtained
-varies randomly due to the noise; its standard deviation is that of the noise
-divided by $\sqrt{8000}$. The maximum filter length we use is 2000, so in that
-case the width of the peaks gets an additional contribution (summed in
-quadrature) which is $\sqrt{2000/8000} = 1/2$ of the width we would have with a
-noiseless baseline, i.e.\ the width of the first peak is $\sqrt{1 + 1/2} - 1 =
-\SI{22}\%$ larger, lowering the SNR by the same percentage.
+signal. As a default, we average \num{8000} samples. The value obtained varies
+randomly due to the noise; its standard deviation is that of the noise divided
+by $\sqrt{8000}$. The maximum filter length we use is 2000, so in that case the
+width of the peaks gets an additional contribution (summed in quadrature) of
+roughly $\sqrt{2000/8000} = 1/2$ of the width we would have with a noiseless
+baseline, i.e., the width of the first peak is $\sqrt{1 + 1/2} - 1 = \SI{22}\%$
+larger, lowering the SNR by the same percentage. We note that, since the noise
+is autocorrelated, the standard deviation of the mean does not scale with
+$1/\sqrt N$, giving a more detrimental effect on the SNR than the one just
+estimated, and the width of the \SI0{PE} peak depends on the filter.
 
-Actually, since the noise is autocorrelated, the standard deviation of the mean
-does not go down like $1/\sqrt N$, giving a more detrimental effect on the SNR
-than the one estimated above, and the width of the \SI1{PE} peak depends on the
-filter, so take that as a rough estimate.
+These considerations are relevant to real-world applications, because the
+baseline computation is a relevant part of the signal finding, and it requires
+either a fast on-digitizer algorithm estimating it reliably or sending enough
+samples to subsequent stages in the data processing chain. The value of the
+baseline is expected to change in the detectors, so it may not be feasible to
+compute it once with a very long average and then keep it fixed for a while.
 
-This is not just a problem of this test that can be worked around in the real
-application, because how the baseline is computed is a relevant part of the
-signal finding, since it requires either a fast on-digitizer algorithm
-estimating it reliably or sending enough samples to subsequent stages in the
-data processing chain. The value of the baseline is expected to change in the
-detectors, so it can not be computed with a very long average and then kept
-fixed.
-
-To get an idea of the effect of the baseline, we repeat everything computing
-the baseline with just 1000 or 200 samples. The result is in the central and
-rightmost columns of \autoref{fig:changebs}. We see that, for example, going
-from 8000 to 200 baseline samples the maximum SNR drops from 19 to~9.
+To get an idea of the effect of the precision of the baseline calculation, we
+repeat everything computing the baseline with just 1000 or 200 samples. The
+result is in the central and rightmost columns of \autoref{fig:changebs}. We
+see that, for example, going from 8000 to 200 baseline samples the maximum SNR
+drops from 19 to~9.
 
 It may appear strange that, with an imprecise baseline, the SNR starts dropping
-with increasing filter length at somewhat short lengths. Consider that the
+with increasing filter length at somewhat short lengths. We note that the
 filters behave like an average, so their peak value on the signal decreases as
-they get longer. The filtered noise contribution goes down too, but the
+they get longer. The filtered noise contribution decreases too, but the
 baseline error is constant.
 
 \begin{figure}[t]
@@ -455,7 +465,7 @@ baseline error is constant.
     \figcaption{changebs}{Top row: maximum SNR achieved with each filter
     (different curves) and filter length (x-axis). Bottom row: the width of the
     maxima, computed as the length of the interval of offset from trigger with
-    endpoints where the SNR is 1 less than the maximum. The cross-correlation
+    endpoints where the SNR is 1 less than the maximum. The cross correlation
     filter maintains almost constant width with increasing SNR, while the other
     two filters have increasing width. In each column the computation is
     repeated changing the number of pre-signal samples used to compute the
@@ -468,7 +478,8 @@ baseline error is constant.
 \section{Noise spectrum}
 \label{sec:spectrum}
 
-For reference, we compute the frequency spectrum of the noise.
+To support our previous statement that the noise is not white, in this section
+we report the frequency spectrum of the noise.
 
 We take the region of each event before the trigger pulse, compute its
 periodogram, and take the median across events for each frequency. We use the
@@ -495,7 +506,7 @@ that we do not window the signal because it is not a stationary process.
     \figcaption{templsp}{Comparison of the spectra of signal and noise. The red
     curve shows the percentage of signal power below a given frequency. The
     signal spectrum is computed with the discrete Fourier transform of the
-    cross-correlation filter template (\autoref{fig:template}) without
+    cross correlation filter template (\autoref{fig:template}) without
     windowing.}
 
 \end{figure}

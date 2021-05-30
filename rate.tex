@@ -15,7 +15,7 @@ fluctuations of the noise above the threshold.
 
 Even assuming the noise to be Gaussian, the probability that a random
 fluctuation gets above the threshold is not given simply by computing the
-survival function (i.e.\ the integral to $+\infty$) of the Gaussian
+survival function (i.e., the integral to $+\infty$) of the Gaussian
 distribution at the threshold.
 
 More precisely, the probability that any given sample is above the threshold is
@@ -69,7 +69,7 @@ zero-mean stationary and appropriately smooth Gaussian process is given by
 where $u$ is the threshold, $\sigma$ the noise standard deviation (the RMS),
 $\operatorname{gauss}(x;\mu,\sigma)$ a Gaussian probability density on $x$ with
 mean $\mu$ and standard deviation $\sigma$, and $k$ the autocovariance
-function, i.e.\ $k(x) = \operatorname{Cov}[f(t), f(t+x)]$ for any $t$ (for
+function, i.e., $k(x) = \operatorname{Cov}[f(t), f(t+x)]$ for any $t$ (for
 example, $k(0) = \sigma^2$), where $f(t)$ is the continuous waveform.
 
 We have to map the second derivative of the autocovariance function to a
@@ -199,7 +199,7 @@ simplicity.
     \widecenter{\includempl{figcrossingprob}}
 
     \figcaption{crossingprob}{The threshold upcrossing rate expressed as
-    per-sample crossing probability (i.e.\ the rate if the sampling frequency
+    per-sample crossing probability (i.e., the rate if the sampling frequency
     is~1) for an autocorrelated Gaussian waveform, estimated using three
     formulae: 1) the probability for a single sample to be higher than the
     threshold, 2) a formula for continuous processes (\autoref{eq:rcont}),
@@ -220,7 +220,7 @@ A threshold crossing that happens too close in time to a previous crossing will
 be ignored.
 
 This means that we have a dead time $T$. We model it as a non-restartable dead
-time, i.e.\ a crossing that happens within $T$ of a previous one is ignored
+time, i.e., a crossing that happens within $T$ of a previous one is ignored
 only if the latter has not been ignored itself.
 
 Assuming that the crossings are a Poisson process, the formula to correct a
@@ -333,7 +333,7 @@ subrange of thresholds that falls between the samples, and increment their
 counts. To apply the dead time, we keep a per-threshold last occurence time.
 
 Since the range of thresholds is evenly spaced, the subrange can be found
-arithmetically, so the complexity is just $O(N)$, i.e.\ it does not depend on
+arithmetically, so the complexity is just $O(N)$, i.e., it does not depend on
 the number of thresholds.
 
 \subsection{Results}

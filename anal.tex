@@ -1,31 +1,37 @@
-\chapter{Analysis of correlated SiPM noise}
+\chapter{Study of dark count rate and correlated noise in a DarkSide SiPM}
 \label{ch:anal}
 
-In the previous chapters we studied the sources of noise in the procedure to
-identify and measure a single signal. However the photodetector itself produces
-pulses which are not due to a detected photon. There are two kinds of these:
-pulses which are produced independently of incident light, and pulses which are
-produced by another pulse. The latter case is called \emph{correlated noise}.
+In the previous chapters we studied the impact of electrical noise in the
+procedure to identify and measure the signal produced by an incident photon.
+However the photodetector itself produces pulses which are not directly caused
+by an external photon. Such pulses can be produced independently of incident
+light, as in the case of thermally-generated avalanches, or result from
+secondary-avalanche generation mechanisms triggered by a primary avalanche. In
+the latter case we refer to them as correlated noise.
 
 We will give a brief explanation and classification of the SiPM noise and then
-analyze it on a specific Tile with LNGS laser data. We will see that we can
-reliably measure only the correlated noise, hence the chapter title.
+characterize it on a specific Tile from the LFoundry production, using laser
+data collected with the LNGS test stand. In doing this, we rely on several of
+the tools introduced in the previous chapters.
 
 There are two goals in characterizing the SiPM noise. First, a quantitative
 model of the noise is needed for the DarkSide20k simulation, and we will
-provide an estimate of the parameters for a recent new production of SiPMs.
-Second, our ``direct'' analysis method that looks at each single pulse in a
-complete recorded finely-sampled waveform provides a cross-check for more
-indirect methods that will be employed online in the VETO system which has less
-powerful readout electronics.
+provide an estimate of the parameters that can be used to simulate the behavior
+of the most recent version of the DarkSide TPC photosensors. Second, using the
+fast frontend electronics of the TPC PDMs we can classify noise pulses by
+looking at their amplitude and time distribution. This provides a validation
+sample against which one can test more indirect noise characterization methods,
+necessary, e.g., when relying on slower front-end electronics. This is a topic
+of interest for monitoring applications, e.g., for the sensors installed in the
+VETO, which feature the same Tile as the TPC ones, but slower electronics.
 
 \section{Theory}
 \label{sec:analtheory}
 
-In \autoref{ch:snr} we briefly introduced the silicon photomultiplier (SiPM).
-We will now give a more detailed explanation, mainly following
-\cite[ch.~3]{savarese2018}. For a general introduction to semiconductor
-detectors, but not the SiPM, see \cite[ch.~11]{knoll2010}.
+In \autoref{ch:darkside} and~\ref{ch:snr} we briefly introduced the silicon
+photomultiplier (SiPM). We now recap and expand the explanation, mainly
+following \cite[ch.~3]{savarese2018}. For a general introduction to
+semiconductor detectors, but not the SiPM, see \cite[ch.~11]{knoll2010}.
 
 The difference between a SiPM and older kinds of semiconductor detectors is
 that the SiPM has a binary response: the amplitude of the output is not
@@ -33,56 +39,58 @@ proportional to the energy released by the detected particle. In this sense
 they are analogous to Photomultiplier Tubes (PMTs), because they are designed
 to detect just the presence of a photon with high efficiency ($\sim\SI{50}\%$).
 
-A SiPM is composed by a grid of \emph{cells}. The cells are Single Photon
-Avalanche Photodiodes (SPADs). A SPAD is a photodiode operated in reverse bias
-above its breakdown voltage in series with a \emph{quenching resistor}. Since
-the bias is above breakdown, if a current starts in the photodiode it will be
-self sustaining and would normally destroy the diode. The resistor in series
-lowers the potential difference on the diode when a current flows through it,
-stopping the current because the diode goes below breakdown, so the output
-pulse will have duration and amplitude uniquely determined by the resistor and
-the capacitance of the diode junction, independently of the initial release of
-energy that triggered the current.
+A SiPM is composed by a grid of \emph{microcells}. The microcells are Single
+Photon Avalanche Photodiodes (SPADs). A SPAD is a photodiode operated in
+reverse bias above its breakdown voltage in series with a \emph{quenching
+resistor}. Since the bias is above breakdown, if a current starts in the
+photodiode it will be self sustaining and would normally destroy the diode. The
+resistor in series lowers the potential difference on the diode when a current
+flows through it, stopping the current because the diode goes below breakdown,
+so the output pulse will have duration and amplitude uniquely determined by the
+resistor and the capacitance of the diode junction, independently of the
+initial release of energy that triggered the current.
 
 The difference between the bias and the breakdown voltage is called
 \emph{overvoltage}, and is often indicated with the unit ``\si{VoV}'' meaning
 ``Volt overvoltage''.
 
-The output from all the cells is summed analogically, so if multiple cells are
+The output from all the microcells is summed analogically, so if multiple microcells are
 triggered simultaneously, the amplitude of the output pulse is discretized and
-proportional to the number of fired cells. As we already said in
+proportional to the number of fired microcells. As we already said in
 \autoref{ch:snr}, we will use the term ``PE'', standing for ``photoelectrons'',
-as a unit when indicating the number of cells corresponding to a pulse.
+as a unit when indicating the number of microcells corresponding to a pulse.
 
 \subsection{SiPM noise}
+\label{sec:sipmnoise}
 
 The initial creation of an electron-hole pair that starts the avalanche in the
 photodiode can either be caused by an absorbed photon or by a thermal
-fluctuation. The latter case happens randomly with fixed probability, and the
-resulting rate of random pulses is called \emph{dark count rate}, where
-``dark'' stands for the fact that this amounts to the total rate of pulses when
-the photodiode is kept isolated from light.
+fluctuation. The latter case happens randomly with probability that depends on
+temperature, and the resulting rate of random pulses is called \emph{dark count
+rate}, where ``dark'' stands for the fact that these pulses occur even when the
+photodiode is kept isolated from light.
 
-The last sentence is actually not accurate because a ``primary'' pulse, either
-a dark count or a photon, by various mechanisms can induce other pulses, that
-can themselves recursively produce tertiary pulses in the same way. The four
-ways in the proliferation of pulses are (see \autoref{fig:sipmnoise}):
+A ``primary'' pulse, either thermally- or photon-generated, can induce other
+pulses, that can themselves recursively produce additional pulses in the same
+way. The main mechanisms for the proliferation of pulses are listed here and
+illustrated in \autoref{fig:sipmnoise}:
 
 \begin{description}
 
-    \item[Afterpulses (AP)] During the avalanche, charge carriers can remain
+    \item[Afterpulse (AP)] During the avalanche, charge carriers can remain
     trapped into impurities and imperfections of the crystal. They are released
-    afterwards at random, starting another avalanche in the same cell.
+    afterwards at random times, starting another avalanche in the same microcell.
     
     \item[Direct cross talk (DiCT)] A photon emitted by an avalanche can
-    trigger a nearby cell.
+    trigger a nearby microcell.
     
-    \item[Delayed cross talk (DeCT)] Instead of hitting directly another cell,
+    \item[Delayed cross talk (DeCT)] Instead of hitting directly another microcell,
     the photon can be absorbed in the shared crystal substrate and generate
-    a hole that travels up until it passes through a cell and triggers it.
+    a hole that travels up until it passes through a microcell and triggers an
+    avalanche there.
     
     \item[Delayed afterpulse] In the latter case, if the hole hits the
-    originating cell, we call it delayed afterpulse instead of DeCT.
+    originating microcell, we call it delayed afterpulse instead of DeCT.
 
 \end{description}
 
@@ -99,12 +107,12 @@ ways in the proliferation of pulses are (see \autoref{fig:sipmnoise}):
 
 To remove ambiguity, the DCR as we intend here may be called ``primary DCR'',
 as in \cite[fig.~3]{acerbi2017} for example, to be distinguished from the total
-rate with correlated noise included.
+rate with includes the correlated noise produced by the primary DCR.
 
-The cells are much less than \SI1{mm} wide, so the DiCT pulse starts within
-\SI1{ps} of the originating pulse, while as we saw in \autoref{ch:snr} even
-just the peak of the pulse lasts $\sim\SI{10}{ns}$. This means that the effect
-of the DiCT is multiplying the height of the pulse by an integer factor,
+The microcells have a pitch of \SI{35}{\micro m}, so the DiCT pulse starts
+within \SI1{ps} of the originating pulse, while as we saw in \autoref{ch:snr}
+even just the peak of the pulse lasts $\sim\SI{10}{ns}$. This means that the
+effect of the DiCT is multiplying the height of the pulse by an integer factor,
 because the overlapping pulses are well aligned. Afterpulses and DeCT, instead,
 can arrive with a significative delay, and thus can be distinguished from the
 originating pulse.
@@ -114,12 +122,17 @@ overarching category of ``delayed noise'', is that afterpulses have a different
 amplitude. The shape of the pulse is a sharp peak followed by an exponentially
 decaying tail. This tail is due to the capacitance of the reverse-biased
 junction that recharges through the quenching resistor after being discharged
-inside the diode by the avalanche. A pulse generated by the same cell before
-the recharge is complete can only use up the charge present in that moment.
+inside the diode by the avalanche. A pulse generated in the same microcell
+before its complete recharge can only use up the charge present in that moment.
 Delayed cross talk, instead, has full amplitude because it involves a different
-cell. See \autoref{fig:sipmnoiseampl}.
+microcell. See \autoref{fig:sipmnoiseampl}.
 
-\marginpar{Mention eCT saying we do not treat it.}
+A category of correlated noise we did not mention, and will not study, is
+external cross talk (eCT). It is like DiCT, but mediated by an external object.
+For example, when a SiPM is attached to a scintillator, the correlated noise
+increases due to photons emitted by the avalanches that are reflected back by
+the scintillator \cite[8]{gola2014}. We make the assumption that our data is
+free from eCT.
 
 \begin{figure}
     
@@ -131,10 +144,28 @@ cell. See \autoref{fig:sipmnoiseampl}.
     
 \end{figure}
 
+\stracka{Qui assumi che uno possa leggersi la Tesi di Savarese. In realta' non
+e' pubblica. \upshape Risposta: è open access, ho controllato, non cito mai
+cose che non sono pubbliche}
+
+From \cite[tab.~3.1~p.~62]{savarese2018} we report typical values for the DCR
+and correlated noise probabilities in FBK devices similar to the LFoundry
+device we characterize here. The dark count rate, converted from rate per area
+to rate per PDM (area \SI{25}{cm^2}), is \SI{25}{cps}. The correlated noise
+probabilities are: DiCT \SI{17}\%, AP \SI{17}\%, DeCT \SI{1.5}\%.
+
+Among correlated noise mechanisms, in the following we focus on DiCT and AP.
+For the DeCT we will just give a very rough estimate, since we are not able to
+select cleanly this class of pulses. From \cite[fig.~3.8~p.~54]{savarese2018},
+in fact, we can see that DeCT occurs within \SI{50}{ns} and our analysis is not
+sensitive to secondary pulses with delays below \SI{100}{ns}. Also, since the
+probability is smaller than the other noise modes, we completely neglect second
+order effects due to DeCT.
+
 \subsection{DiCT model}
 \label{sec:dicttheory}
 
-As we said, noise pulses can themselves produce other noise pulses as well. We
+Like primary pulses, noise pulses can themselves produce other noise pulses. We
 can imagine quite complicated interactions, for example: a DiCT induces a DeCT
 on the original cell, thus producing a ``secondary'' delayed afterpulse. Or a
 DiCT induces an afterpulse that induces a DiCT on the originating cell, again
@@ -143,12 +174,12 @@ enough, we should get by with the following simplifying assumption: that for
 each pulse, the DiCT involves new cells that were not previously involved in
 the chain, and the distribution of the number of DiCT at each step is fixed.
 
-For the distribution to use for the generation model of DiCT, we follow
-\cite{vinogradov2012}. Even when multiple DiCT steps are chained, the combined
-delay is very small compared to the duration of the pulse, so the overall
-effect of the complete DiCT ``tree'' is still to multiply the amplitude of the
-first pulse. This means that at the end we just need to know the distribution
-of the total number of consecutive DiCT.
+For the generation model of DiCT, we follow \cite{vinogradov2012}. Even when
+multiple DiCT steps are chained, the combined delay is very small compared to
+the duration of the pulse, so the overall effect of the complete DiCT ``tree''
+is still to multiply the amplitude of the first pulse. This means that at the
+end we just need to know the distribution of the total number of consecutive
+DiCT.
 
 For the single DiCT step, we consider two distributions: Bernoulli and Poisson.
 In the first case we assume that a cell can induce a DiCT in at most just
@@ -174,7 +205,7 @@ distribution is Poisson with mean $\mu_B$, the total distribution is the Borel,
     \label{eq:borel}
 \end{equation}
 %
-If it was $\mu_B \ge 1$, $k$ would diverge with nonzero probability.
+If it were $\mu_B \ge 1$, $k$ would diverge with nonzero probability.
 
 The formula for the mean is formally the same for the two distributions,
 %
@@ -185,7 +216,7 @@ The formula for the mean is formally the same for the two distributions,
 thus, since the interesting quantity is the amount of excess pulses due to
 noise, it makes sense to compare the two distributions when $p = \mu_B$. We
 make such comparison in \autoref{fig:geomborel} for $p = \mu_B = 0.5$. We note
-that the Borel distribution has higher probability on the no-DiCT case, and at
+that the Borel distribution has higher probability in the no-DiCT case, and at
 the same time a fatter tail, while being lower in the few-DiCT cases.
 
 \begin{figure}
@@ -202,9 +233,9 @@ the same time a fatter tail, while being lower in the few-DiCT cases.
     
 \end{figure}
 
-Since we use laser data, there are multiple photons hitting the SiPM. The light
-is diffused before reaching the photodetector (see \autoref{ch:data}), so we
-expect at most one photon per cell, and thus a Poisson distribution for the
+Since we use laser data, there can be multiple photons hitting the SiPM. The
+light is diffused before reaching the photodetector (see \autoref{ch:data}), so
+we expect at most one photon per cell, and thus a Poisson distribution for the
 initial number of fired cells. So for the analysis we will need the
 distribution of the total number of PE $n \ge 0$ for an initial
 Poisson-distributed number of cells, each with its DiCT tree.
@@ -232,7 +263,7 @@ For the Borel model, the distribution is the generalized Poisson:
 
 The means of the two distributions are, unsurprisingly, $\mu_P/(1-p)$ and
 $\mu_P/(1-\mu_B)$. Note that for $n = 0$ the probabilities are equal, since
-of course the cross talk does not affect the zero initial pulses case.
+of course the cross talk does not affect the case with zero initial pulses.
 
 The referenced article finds a much better agreement with the Borel model when
 looking at the tails of the PE distribution for DiCT only
@@ -246,42 +277,39 @@ for the Poisson+DiCT distribution with $\text{PE} \le 11$
 For the afterpulses we have to model not just the number of pulses, but also
 their temporal distribution and amplitude.
 
-Afterpulses are produced by carriers trapped during the avalanche that get
-released afterwards. Following \cite[1]{nagy2014}, we claim that this fact has
-been proven by \cite{cova1991}, although by reading the latter article we feel
-that their report is a bit too synthetic.
-
-The release of trapped carriers is a thermodynamical process regulated by the
-potential difference that the carriers must overcome to jump out of their
-traps. This means that it also depends on the external bias. If there was only
-one kind of trap, the temporal distribution of carrier releasing would be
-exponential. However we expect to have various possible trapping energy levels,
-so the distribution is in general a mixture of exponentials.
+In a generally accepted explanation, afterpulses are produced by carriers
+trapped during the avalanche that get released afterwards \cite{nagy2014},
+\cite{cova1991}. The release of trapped carriers is a thermodynamical process
+regulated by the potential difference that the carriers must overcome to jump
+out of their traps. This means that it also depends on the external bias. If
+there were only one kind of trap, the carrier release temporal distribution
+would be exponential. However we expect to have various possible trapping
+energy levels, so the distribution is in general a mixture of exponentials.
 
 The released carriers also have a non-unitary probability of generating an
 avalanche. This probability also depends on the electric field and thus on the
 bias, like the release probability. The bias in turn depends on the recharge
 state of the cell, thus deforming the exponential distribution for low delays.
-
 While \cite[2]{nagy2014} tries to keep into account this deviation by
 multiplying the afterpulse temporal distribution with the fraction of recovered
 charge
 %
 \begin{equation}
-    1 - \exp\left(-\frac{t}{\tau_\text{rec}}\right),
+    1 - \exp\left(-\frac{\Delta t}{\tau_\text{rec}}\right),
     \label{eq:recfactor}
 \end{equation}
 %
-where $\tau_\text{rec}$ is the exponential scale of the pulse shape tail,
-\cite[4]{garutti2014} goes straight with pure exponentials. However, we notice
-from \cite[p.~5~fig.~11]{nagy2014}, reported here in \autoref{fig:nagyap}, that
-they do not actually have data at low delays to test the accuracy of their
-model, since the relatively high threshold they use for peak finding truncates
-the afterpulse distribution at $\approx\SI{80}{ns}$. Even though the recharge
-time is $\tau_\text{rec} = \SI{207}{ns}$, thus making the correction term
-\eqref{eq:recfactor} significative even above the temporal cut, by looking at
-the plotted histogram we think that a vanilla exponential with a different
-amplitude and scale could fit as well.
+where $\tau_\text{rec}$ is the exponential scale of the pulse shape tail, and
+$\Delta t$ is the delay from the primary pulse, other authors
+\cite[4]{garutti2014} parametrize the time distribution with pure exponentials.
+However, we notice from \cite[p.~5~fig.~11]{nagy2014}, reported here in
+\autoref{fig:nagyap}, that they do not actually have data at low delays to test
+the accuracy of their model, since the relatively high threshold they use for
+peak finding truncates the afterpulse distribution at $\approx\SI{80}{ns}$.
+Even though the recharge time is $\tau_\text{rec} = \SI{207}{ns}$, thus making
+the correction term \eqref{eq:recfactor} significative even above the temporal
+cut, by looking at the plotted histogram we think that a vanilla exponential
+with a different amplitude and scale could fit as well.
 
 \begin{figure}
     
@@ -299,34 +327,40 @@ amplitude and scale could fit as well.
 
 \cite{garutti2014} has approximately the same temporal cut and parameters, and
 gets a good fit with either one or two uncorrected exponentials. We anticipate
-that in our analysis the temporal cut will be even further relative to
-$\tau_\text{rec}$ than in the referenced articles, so we will not be able to
+that in our analysis the temporal cut, relative to $\tau_\text{rec}$, will be
+even more extended than in the referenced articles, so we will not be able to
 discriminate the two models. For simplicity, we will keep the plain
 exponentials.
 
-The other matter with low delays is the amplitude reduction. Here all the
-references we consulted agree on multiplying the 1 PE amplitude by the recharge
-factor \eqref{eq:recfactor}, thus assuming that amplitude is proportional to
-overvoltage. We will see this may not be accurate in our case.
+Another aspect to consider at small delays is the amplitude reduction. Here all
+the references we consulted agree on multiplying the 1 PE amplitude by the
+recharge factor \eqref{eq:recfactor}, thus assuming the amplitude to be
+proportional to overvoltage. We will discuss this in relation with the results
+of our data analysis.
 
-Now to another topic: multiple afterpulses. The afterpulse avalanche itself
-produces trapped carriers. However, since it may have smaller amplitude than a
-primary avalanche, they will be less than those left around by a complete
+Finally, the afterpulse avalanche itself produces trapped carriers, resulting
+in multiple afterpulses. However, since it may have smaller amplitude than a
+primary avalanche, we expect it to produce fewer carriers than a complete
 discharge. Other two possible effects that we hypothesize, although we are not
 sure about them, are: that if traps are not too far from saturation after an
 avalanche, the additional afterpulses will be even more suppressed, and that an
 avalanche may partially ``purge'' traps.
 
+\stracka{Check ultima frase con Eugenio}
+
 Keeping into account all these interactions is tedious, so we make a
 simplifying assumption, inspired by the last consideration: that each avalanche
 resets the cell to a fixed state. In this model, a pulse can have at most one
 afterpulse. An eventual successive afterpulse must be produced by the first
-afterpulse, not the initial pulse. \cite{cova1991} implicitly states that this
-is not the case, although their experimental conditions are different because
-the procedure they use to fill the traps is different from a ``spontaneous''
-avalanche. Since these are second order effects, we anticipate that the
+afterpulse, not the initial pulse. \cite{cova1991} implicitly consider this not
+to be the case, since in their statistical analysis they keep into account the
+possibility of multiple afterpulses related to the same initial population of
+trapped carriers. Since these are second order effects, we anticipate that the
 probabilities involved are small and that we probably would not be able to
 falsify the simplified model with our data.
+
+\stracka{Eliminare ``inspired by the last consideration'' e ``since these...
+our data''}
 
 Bringing the DiCT model into the picture, each afterpulse will have its own
 DiCT tree. We suppose that a smaller avalanche should emit less photons and
@@ -335,35 +369,15 @@ that the DiCT probability remains the same instead.
 
 Since the DiCT involves separate cells, even with our ``resetting afterpulse''
 model if the initial pulse has more than one PE then multiple afterpulses due
-to the same initial pulse are allowed. We call this case \emph{parallel
-afterpulses}, while the case with an afterpulse of an afterpulse \emph{series
-afterpulses}.
-
-\subsection{Expected values}
-\label{sec:expval}
-
-\cite[tab.~3.1~p.~62]{savarese2018} summarizes the noise parameters for the FBK
-SiPMs at \SI{80}K and \SI{5}V overvoltage. In this analysis we will use newer
-LFoundry SiPMs, so we can just get a rough idea from that. There are various
-kinds of SiPM in the table, the low field near ultraviolet with medium
-quenching resistance (last column) is the one with the recharge time most
-similar to ours, which is $\tau_\text{rec} \approx \SI{0.3}{\micro s}$, so we
-consider that values. The dark count rate, converted from rate per area to rate
-per PDM (area \SI{25}{cm^2}), is \SI{25}{cps}. The correlated noise
-probabilities are: DiCT \SI{17}\%, AP \SI{17}\%, DeCT \SI{1.5}\%.
-
-We did not make a model for DeCT (including delayed afterpulses) because we do
-not have a clean selection of it in our data. In
-\cite[fig.~3.8~p.~54]{savarese2018} we see that DeCT arrives within
-\SI{50}{ns}. We will not properly analyze correlated pulses with delay below
-\SI{100}{ns}. For the DeCT we will just give a very uncertain estimate. Since
-the probability is smaller than the other noise modes, we completely neglect
-second order effects due to DeCT.
+to the same initial pulse are allowed. In the following we refer to this case
+as \emph{parallel afterpulses}, while the case with an afterpulse of an
+afterpulse as \emph{series afterpulses}.
 
 \section{Data}
 
-We use LNGS laser data for Tile 21, produced by LFoundry. The LNGS data files
-are:
+We characterize DCR and correlated noise for Tile~21 from the LFoundry
+production. The following data files have been collected at LNGS at different
+overvoltages:
 %
 \begin{verbatim}
 LFOUNDRY/pre-production-test/TILE_21/LF_TILE21_77K_54V_65VoV_X.wav
@@ -377,17 +391,19 @@ events per overvoltage.
 
 The overvoltage is obtained by subtracting the first voltage from the second in
 the file name and dividing by two. The first is the breakdown voltage while the
-second is the applied reverse bias; the division is because the SiPM connection
-layout in the PDM is parallel branches each with two SiPMs in series. Thus the
-overvoltages are \SI{5.5}V, \SI{7.5}V, \SI{9.5}V.
+second is the applied reverse bias; the division by two is due to the SiPM
+connection layout in the PDM consisting of several parallel branches each with
+two SiPMs in series. Thus the overvoltages are \SI{5.5}V, \SI{7.5}V, \SI{9.5}V.
 
 We show the time-value histograms of a single file per overvoltage in
-\autoref{fig:hist2dtile21}. These files do not include the laser trigger
-waveform. Looking at the histograms it appears that the laser pulse arrives at
-$\approx\SI{9}{\micro s}$ as usual. To be confident that we can assume the
-trigger position, in \autoref{fig:triggerhist} we histogram all the triggers
-from a lot of LNGS files. The full range of the distribution is
-\SI[separate-uncertainty=true]{8969 \pm 11}{Sa}.
+\autoref{fig:hist2dtile21}. Looking at the histograms it can be inferred that
+the laser fires at $\approx\SI9{\micro s}$. These files do not include the
+laser trigger waveform, but the external trigger from the laser ensures these
+waveforms are aligned within \SI{22}{ns}. Since the DAQ configuration in the
+LNGS setup was not modified between the various data taking campaigns, we check
+this alignment by plotting in \autoref{fig:triggerhist} the position of the
+trigger rising edge from the runs in which it was recorded. The full range of
+the distribution is \SI[separate-uncertainty=true]{8969 \pm 11}{Sa}.
 
 \begin{figure}
     
@@ -396,20 +412,22 @@ from a lot of LNGS files. The full range of the distribution is
     \figcaption{triggerhist}{Cumulative histogram of the trigger leading edge
     (the first sample less than 600 in the recorded waveform) for 96 LNGS
     files. The distribution has the shape of a convolution between two uniforms
-    with length 16 and~8, we suppose these are the clocks of the digitizer and
-    laser triggers.}
+    with length 16 and~8.}
     
 \end{figure}
 
-In some files there are double peaks in the fingerplot, i.e.~there are two
-possible pulse amplitudes corresponding to the same number of PE. The worst
-offender is the first file at \SI{5.5}{VoV},
+In some of the datasets for Tile~21 we observe double peaks in the fingerplot,
+i.e.~there are two possible pulse amplitudes corresponding to the same number
+of PE. This is particularly evident in the first file at \SI{5.5}{VoV},
 \nolinkurl{LF_TILE21_77K_54V_65VoV_1.wav}. In \autoref{fig:doublepeak} we show
 the fingerplot, both global and as a function of time, computed with
 \SI{1.5}{\micro s} charge integration. It is evident that the pulse charge
 changes during the acquisition. Since it is still possible to separate the PE
 peaks, even if they are doubled, this will not be an issue. Moreover, with the
 filter we will use in the analysis the doubling will be much less marked.
+
+\stracka{Hai un plot a supporto di questo statement? \upshape Risposta: beh,
+i fingerplot che ci sono dopo. Potrei farne uno apposta qui se proprio serve.}
 
 \begin{figure}
     
@@ -422,30 +440,22 @@ filter we will use in the analysis the doubling will be much less marked.
     
 \end{figure}
 
-It was reported to us that in this data there could be a significative amount
-of light that hits the detectors after being reflected. Since the apparatus is
-small, we estimate an upper bound of \SI{1}m for the distance traveled by
-light, which corresponds to a \SI{3}{ns} delay. This delay is smaller than
-the scale of the variations of the signal shape and of the noise, so we can
-neglect this problem.
+In this data there could be a significative amount of light that hits the
+detectors after being reflected. Since the apparatus is small, we
+conservatively assume an upper bound of \SI{1}m for the distance traveled by
+light, which corresponds to a \SI{3}{ns} delay. This delay is smaller than the
+scale of the variations of the signal shape and of the noise, so we can neglect
+this problem.
 
 \section{Peak finding}
 
-As input to the analysis we will measure the amplitude and temporal position of
-all the single pulses in the data. We will filter the waveforms to suppress
-noise and then run a peak finding algorithm.
+To characterize the LFoundry Tile and classify the noise pulses we measure the
+amplitude and temporal position of all pulses in data. We filter the waveforms
+to suppress noise and then run a peak finding algorithm. This sections
+described the various steps of the signal processing.
 
 \subsection{Filtering}
 \label{sec:filtering}
-
-We filter each event using a cross correlation filter (see
-\autoref{sec:filters}). We follow the procedure outlined in \autoref{ch:snr} to
-make the filter template. We do the template separately for each file, to check
-for unexpected variations in the pulse shape. The templates obtained are shown
-in \autoref{fig:templates}. Although the variations appear to be reasonably
-small, we use each template only for its own file.
-
-\marginpar{Add more precise reference when I fix the template stuff.}
 
 \begin{figure}
     
@@ -456,18 +466,16 @@ small, we use each template only for its own file.
     
 \end{figure}
 
-An unexpected feature is the nonlinearity of the pulse amplitude with
-overvoltage. A possible explanation is mislabeling of the overvoltages. The
-overvoltage is determined from the bias and breakdown voltages reported in the
-file name. The breakdown voltage is always the same because it is a property of
-the Tile, so if it was reported incorrectly, the correction to the overvoltage
-would be a fixed offset. But in this case even if the ratio amplitude over
-overvoltage would vary, the slope would be preserved, while in
-\autoref{fig:templates} wee see that two equal overvoltage steps correspond to
-clearly different absolute increases in amplitude.
-
-One could think that the reported bias was incorrect, but it is a very simple
-measurement. We will come back to this discussion after the analysis.
+We filter each event using a cross correlation filter (see
+\autoref{sec:filters}). We follow the procedure outlined in
+\autoref{sec:cctemplate} to build the filter template. We determine the
+template separately for each file, to check for unexpected variations in the
+pulse shape. The templates obtained are shown in \autoref{fig:templates}.
+Although the variations appear to be reasonably small, we use each template
+only for its own file. An unexpected feature is the nonlinearity of the pulse
+amplitude with overvoltage. A possible explanation is a bookkeeping mistake,
+i.e., that the recorded operating operating bias voltage is wrong. We will come
+back to this discussion after the analysis.
 
 Filtering increases the signal to noise ratio, but degrades the separation
 between close peaks. Since we are studying correlated pulses, it is thus
@@ -475,16 +483,13 @@ important to use a filter as short as possible. We filter the waveform with a
 logarithmic range of filter lengths: \SI{32}{ns}, \SI{64}{ns}, \ldots,
 \SI{2048}{ns}. The computations we will describe are carried in parallel with
 all filter lengths, and then we choose in the analysis which lengths to use.
-The truncation of the template to the desired length is done like in
-\autoref{ch:timeres}, keeping the fixed length subrange of samples that has
+The truncation of the template to the desired length is done as explained in
+\autoref{sec:cctemplate}, keeping the fixed length subrange of samples that has
 maximum squared norm.
 
-\marginpar{When I fix the template stuff, the chapter for the truncation will
-be \autoref{ch:snr}.}
-
-As usual the template is normalized to unit sum for filtering, such that the
+The template is normalized to unit sum for filtering, such that the
 filter behaves like an average and the baseline can be computed independently
-of the filter. This also means that signals will stay negative.
+of the filter. This also means that signals will stay negative after filtering.
 
 To evaluate the filter near the boundaries, the waveform is prolonged with the
 estimated baseline value, described in the next section. We defer to
@@ -494,20 +499,26 @@ estimated baseline value, described in the next section. We defer to
 
 To compute the height of the peaks we have to subtract the baseline value. We
 compute the baseline using the pre-trigger region of the waveforms. For
-robustness against deviations we use the median instead of the average. The ADC
-has relatively low resolution (10~bit), so since the median can output only one
-of the values of the input sequence it is quantized. To have a more continuous
-output we divide the array in 8 interleaved subarrays, i.e.\ the first subarray
-contains samples 0, 8, 16, \dots, the second 1, 9, 17, etc., take the median
-separately on each subarray, and then average the medians.
-
-If any pre-trigger sample in an event is less than 700, for that event we reuse
-the baseline obtained in a previous event.
+robustness against deviations we use the median instead of the average. Since
+the input sequence is quantized with 10~bit resolution and the median can
+output only one of the values of the input sequence, the median is also
+quantized. To have a more continuous output we divide the array in 8
+interleaved subarrays, i.e., the first subarray contains samples 0, 8, 16,
+\dots, the second 1, 9, 17, etc., take the median separately on each subarray,
+and then average the medians. If any pre-trigger sample in an event is less
+than 700, for that event we reuse the baseline obtained in a previous event.
 
 In \autoref{fig:baseline} we show the histogram of the obtained baseline values
 for the \SI{5.5}{VoV} data. We will carry on the discussion always on the
 \SI{5.5}{VoV} dataset as example, unless otherwise necessary.
 Appendix~\ref{ch:analplot} contains additional plots that complete the picture.
+
+The baseline distribution has a small tail to the left (note that the scale is
+logarithmic) and some far outliers. In \autoref{fig:bsoutlier} and
+\autoref{fig:bstail} we show the events corresponding to the lowest and highest
+measured baselines and a pair of events from the lower tail respectively. (The
+event visualization contains elements which we have not introduced yet, they
+will soon be explained.)
 
 \begin{figure}
     
@@ -518,13 +529,6 @@ Appendix~\ref{ch:analplot} contains additional plots that complete the picture.
     overvoltages.}
     
 \end{figure}
-
-The baseline distribution has a small tail to the left (note that the scale is
-logarithmic) and some far outliers. In \autoref{fig:bsoutlier} and
-\autoref{fig:bstail} we show the events corresponding to the lowest and highest
-measured baselines and a pair of events from the lower tail respectively. (The
-event visualization contains elements which we have not introduced yet, they
-will soon be explained.)
 
 \begin{figure}
     
@@ -551,32 +555,26 @@ indices, so they must occur close in time; we suppose then that these
 deviations are due to low-frequency transient oscillations.
 
 The events in the tail all have a pre-trigger pulse (we checked only the two
-ones we plotted, we did not handpick). This means that we will systematically
+ones we plotted, we did not cherrypick). This means that we will systematically
 underestimate the amplitude of pre-trigger pulses. However, as is already
 evident by looking at the event plots, the bias is small compared to the pulse
-height. If data with lower SNR was to be processed, we would up the baseline
-veto value from 700 to something as close as possible to the noise pedestal and
-segment the baseline computation to detect inhomogeneity, but in our present
-case we will go on without fixing this bias.
+height. If data with lower SNR was to be processed, we would raise (recall the
+signals are negative) the baseline veto value from 700 to something as close as
+possible to the noise pedestal, and segment the baseline computation to detect
+inhomogeneity, but in the present case this is not deemed necessary.
 
-\subsection{Laser peak}
+\subsection{Identification of the laser peak}
 \label{sec:laser}
 
-We know where the laser pulse should be, so we search it separately from other
-pulses. We take a window from the filtered waveform of \SI{\pm 30} samples
-around the expected trigger position 8969. In this window we take the minimum
-local minimum, i.e.\ we consider the samples which have higher neighboring
-samples, and take the minimum of these. If there is no local minimum, which
-happens when the waveform is monotonically increasing or decreasing within the
-60 selected samples, we mark the laser peak as missing.
-
-To check that this is working we look at the distribution of the peak positions
-for 1 PE pulses (\autoref{fig:laserpos}, left panel). It is centered on 8969 as
-expected. However, it has a tail to the right when the filter length is short.
-An explanation that comes to mind is that maybe when the SNR is not high
-enough, the peak finder is picking up a close afterpulse instead of the main
-peak. Given the short delay this should be unlikely, but since we are
-particularly interested in afterpulses it is better to check this thoroughly.
+The laser pulse occurs at a fixed offset from the start of the recorded
+waveform, so we search for the primary signal associated to the laser light
+emission in a range of \SI{\pm 30} samples around the expected position after
+filtering. When using different filters, we adjust the search window to account
+for the offset introduced by the filtering procedure. In this window we take
+the minimum local minimum, i.e., we consider the samples which have higher
+neighboring samples, and take the minimum of these. If there is no local
+minimum, which happens when the waveform is monotonically increasing or
+decreasing within the 60 selected samples, we mark the laser peak as missing.
 
 \begin{figure}
 
@@ -591,11 +589,39 @@ particularly interested in afterpulses it is better to check this thoroughly.
     
 \end{figure}
 
-As a first diagnostic, we look at the joint distribution of the peak position
-and height (\autoref{fig:laserpos}, right panel). If the minimum was moving to
-the right due to an additional close peak, we would expect a positive
-correlation between height and position in the tail. Instead, we see a negative
-correlation.
+\stracka{Hai due spiegazioni alternative: quale sarebbe l'impatto sulla tua
+analisi nei due casi? (ossia, quanto ce ne frega di questa cosa?) Cosa succede
+se cambi la finestra di ricerca di questo picco? \upshape Risposta: ce ne frega
+poco perché non pigliamo gli afterpulse entro 30 ns di sicuro, infatti avevo
+scritto ``giusto per essere controllare'' ma me l'hai fatto cancellare, uno
+controlla le cose sospette perché magari scopre problemi più ampi. La finestra
+l'ho cambiata durante il lavoro da \num{\pm 80} se ricordo bene a quella
+attuale \num{\pm 30}, i risultati sono robusti, però non ho salvato queste cose
+per bene. Potrei aggiungere alla fine del capitolo una considerazione che ho
+cambiato varie cose (template, parametri vari) e i risultati sono cambiati meno
+dei loro errori, eccezion fatta per il minimo delay a cui piglio gli afterpulse
+che si vede l'effetto ma credo comunque entro gli errori, non ricordo bene
+perché poi sono passato a 2 tau.}
+
+As a crosscheck for this procedure we look at the distribution of the peak
+positions for \SI1{PE} pulses (\autoref{fig:laserpos}, left panel). We select
+\SI1{PE} pulses with a cut on the pulse height, described later in
+\autoref{sec:pe}. The distribution is centered in the expected place. However,
+it has a tail to the right when the filter length is short. A possible
+explanation could be that when the SNR is not high enough, the peak finder
+sometimes selects a close afterpulse instead of the primary pulse. Another
+possible interpretation is that this tail is due to random fluctuations.
+
+\stracka{Non andare a capo}
+
+As a first diagnostic, we look at the joint distribution of the
+peak position and height (\autoref{fig:laserpos}, right panel). If the minimum
+were moving to the right due to an additional close peak, we would expect a
+positive correlation between height and position in the tail. Instead, we see a
+negative correlation.
+
+\stracka{perché ce l'aspettiamo? non sono convinto \upshape Risposta: te lo
+spiego, mo' non ho tempo di scriverlo, sono lentissimo a scrivere}
 
 Then we look at the events themselves. In \autoref{fig:lptail} we show an event
 in the tail at \SI{64}{ns}, filtered with \SI{64}{ns} and \SI{128}{ns}. With
@@ -614,27 +640,27 @@ show.
 
 \end{figure}
 
+\stracka{questo va accompagnato da un commento su come cambiano i template tra
+i diversi OV. come cambia l'esponenziale all'aumentare dell'OV? Es. Fig. 7.18
+\upshape Risposta: secondo me non c'entra, o meglio cambiano molto poco, non
+mi sembra nemmeno il caso di menzionarlo.}
+
 Finally, the tail contracts as the overvoltage increases (see
 \autoref{fig:laserpos2}). From these observations we induce that the right
 shift is caused by random fluctuation. The asymmetry of the tail reflects the
 asymmetry of the shape of the signal.
 
-We have not said how we are selecting 1 PE pulses. The explanation will come in
-\autoref{sec:pe}. Also, we have talked about the positions of the peaks in the
-filtered waveform without specifying the alignment of the filter output
-relative to the input. For example, in the histogram (\autoref{fig:laserpos})
-the position is centered on the assumed trigger 8969, while clearly in the
-event visualization (\autoref{fig:lptail}) the peak search range is after the
-trigger. The reader has to trust us that although we employ multiple
-conventions, we use them consistently each time.
-
 We said that with our procedure a laser peak can be missing. However we know
 that the laser is always present; even when there are no pulses, we need to
 count the event as a 0 PE laser signal to fit the Poisson+DiCT distributions.
-We have to make something of the ``missing laser'' events.
 
-First, we count these events for each filter length (\autoref{fig:missing},
-left panel). They are about \SI{1.5}\% of the total, so not negligible. We went
+\stracka{A possible issue can arise when some filters identify a primary pulse
+from the laser, while other filters do not. \upshape Risposta: questa frase non
+mi sembra sensata, ho cambiato un po' la spiegazione, vedi se capisci.}
+
+First, we count these ``missing laser'' events for each filter length
+(\autoref{fig:missing}, left panel). They are about \SI{1.5}\% of the total
+number of events in the dataset, \num{200000}, so not negligible. We went
 through a lot of these events and they are almost all genuinely missing pulses.
 It turns out that the noise is actually quite likely not to produce a local
 minimum in a \SI{60}{ns} window after filtering. Nevertheless, there are some
@@ -653,21 +679,21 @@ oscillations is not detected properly.
 
 \end{figure}
 
-As in the case of the right shift, the anomalies tend to appear only for a
-particular filter length choice and disappear on the same event with other
-lengths. So as a simple solution we use the shortest filter which yields a
-non-missing peak when the preferred filter does not work. The right panel of
+As in the case of the position distribution tail, the anomalies tend to appear
+only for a particular filter length choice and disappear on the same event with
+other lengths. So as a simple solution we use the shortest filter which yields
+a non-missing peak when the preferred filter does not work. The right panel of
 \autoref{fig:missing} shows how the fraction of missing events decreases as we
 allow more lengths to choose from. Even with this fix, however, there is a hard
 core of events which do not have a local minimum in any case, about \SI{0.15}\%.
 
 These events are more interesting, so we show 12 of them at random for each
 overvoltage in Figures~\ref{fig:verymissing0}, \ref{fig:verymissing1},
-and~\ref{fig:verymissing2}. With our good old eyes, we identify three cases:
-1)~true missing pulses, 2)~delayed pulses which fall out of the window, and
-3)~pulses which are shadowed by a very high close consecutive pulse. In
-\autoref{tab:missing} we list the total number of hard misses and the counts
-of the three categories in the sample for all overvoltages.
+and~\ref{fig:verymissing2}. By eye we identify three cases: 1)~true missing
+pulses, 2)~delayed pulses which fall out of the window, and 3)~pulses which are
+shadowed by a very high close consecutive pulse. In \autoref{tab:missing} we
+list the total number of hard misses and the counts of the three categories in
+the sample for all overvoltages.
 
 \begin{table}
     
@@ -692,28 +718,33 @@ of the three categories in the sample for all overvoltages.
     
 \end{table}
 
+\stracka{Eliminare questo paragrafo \upshape Risposta: perché? Perché non siamo
+sicuri? Mi sembra meglio dirlo e dire che non siamo sicuri che stare zitti.}
+
 The delayed pulses could be photons that produce carriers in an inactive region
 that then migrate to a diode junction (we are not sure about this, it is just
 speculation). The consecutive pulses could be DeCT with high DiCT, they would
 have the time scale we expect from \cite[fig.~3.8~p.~54]{savarese2018} already
-mentioned in \autoref{sec:expval}, or less likely afterpulses.
+mentioned in \autoref{sec:sipmnoise}, or less likely afterpulses.
 
-Since these events are a small fraction of the sample we did not fix this
-further. We will just keep in the back of our minds that there are these events
-and check case by case that ignoring them has a negligible effect.
+Since these events are a small fraction of the sample we did not investigate
+this further. We will just keep in the back of our minds that there are these
+events and check case by case that ignoring them has a negligible effect.
 
-\subsection{Other peaks}
+\subsection{Identification of secondary peaks and peaks not associated to the
+laser pulse}
 
-We identify other pulses using a prominence-based peak finder. With
-``prominence'' we mean the topographical prominence, which is defined as
-follows: starting from the peak whose prominence is to be measured, go to the
-right and to the left until an higher elevation is found. For each side, take
-the minima between these stops and the peak. The prominence is the difference
-in elevation between the peak and the maximum of the two minima. See
-\autoref{fig:prominence} for an illustration.
+We identify other pulses using a prominence-based peak finder. In this section
+we describe the peak-finding algorithm as applied to positive pulses
+(low-to-high-to-low). By changing the sign of the input, the same algorithm can
+be used to find minima, i.e., peaks corresponding to negative signals.
 
-In this discussion we will use positive signal logic, so a peak is a local
-maximum. Remember that in the actual analysis the convention is swapped.
+The topographical prominence is defined as follows: starting from the peak
+whose prominence is to be measured, go to the right and to the left until an
+higher elevation is found. For each side, take the minima between these stops
+and the peak. The prominence is the difference in elevation between the peak
+and the maximum of the two minima. See \autoref{fig:prominence} for an
+illustration.
 
 \begin{figure}
     
@@ -725,10 +756,11 @@ maximum. Remember that in the actual analysis the convention is swapped.
     
 \end{figure}
 
-We search the peaks separately in the pre and post laser peak regions. When the
-laser peak is missing, we use the beginning of the laser peak search range as
-separator. This means that even if the laser peak is lower than the peak, the
-prominence ``exploration range'' stops there.
+We search the non-laser pulses separately in the pre- and post-laser peak
+regions. We use the position of the laser peak, when present, to delimit the
+two regions. This means that even if the laser peak is lower than the peak, the
+prominence ``exploration range'' stops there. When the laser peak is missing,
+we use the left edge of the laser peak search window as delimiter.
 
 If one of the minima occurs at the edge, it is ignored and the prominence is
 computed using the minimum on the other side, unless both minima occur at the
@@ -741,18 +773,22 @@ increases the ratio between the prominence of close pulses to the one of
 isolated pulses, because if the explored range is longer it is easier to find a
 deeper random oscillation.
 
-For each region, we save the two most prominent peaks. We do not make a
-selection on the prominence, we always fill the four slots per event. In this
-way we can observe the distribution of the height of random peaks and choose
-a good threshold afterwards.
+For each region, we save the two most prominent peaks. We do not apply a
+threshold on the prominence, we always fill the four slots per event. In this
+way we can observe the distribution of the height of random peaks and choose a
+good threshold afterwards.
+
+\marginpar{A Stracka: qua mi hai chiesto di spostare le cose, ma non ho capito
+bene come}
 
 In peak finding algorithms it is customary to require a minimum distance
 between peaks. This is to avoid picking up close high peaks due to random
 oscillation that actually correspond to a single pulse. Selecting by prominence
-avoids this problem if the waveform is smooth, because close peaks will have a
-shallow dip between them and the prominence of the lower one will be measured
-relative to that. Our waveforms are smooth on the scale of the filter length,
-so it did not turn out necessary to add a distance criterion.
+avoids this problem if the waveform is smooth, because close peaks will have
+only a shallow dip between them and the prominence of the lower one will be
+measured relative to that, resulting in a very low prominence. Our waveforms
+are smooth on the scale of the filter length, so it did not turn out necessary
+to add a distance criterion.
 
 In \autoref{fig:peakfinder} we show two examples of events with close pulses
 correctly identified.
@@ -767,7 +803,7 @@ correctly identified.
     
 \end{figure}
 
-\subsection{PE}
+\subsection{Number of photoelectrons associated to a peak}
 \label{sec:pe}
 
 To assign the number of PE to the peaks we need to define bins for the height
@@ -776,7 +812,7 @@ separation between PE in the height distribution. A longer filter suppresses
 the random height fluctuation due to noise; at the same time, however, it picks
 up afterpulses with the template tail, adding an upper tail to each PE height
 distribution. Since the afterpulse probability increases with the number of PE
-of the primary pulse, the distributions for 0 and 1~PE are the least touched.
+of the primary pulse, the distributions for 0 and 1~PE are the least affected.
 
 In our analysis we will care particularly about selecting 1~PE pulses and
 separating the afterpulses. So we use the following criterion: we take the
@@ -796,22 +832,21 @@ lengths in \autoref{fig:trunc}.
 
 We tried selecting away the afterpulse tails using the peak finder to locate
 afterpulses, however we did not manage to reduce them significantly. We
-interpret this as the tail being composed mainly of close and short
-afterpulses, that can not be recognized individually due to their low height.
-Being located on the slope of the laser peak, the prominence of a close
-afterpulse tends to be lower that that of an isolated pulse with the same
-height. Thus the peak finder will always find two random peaks in the noise
-with higher prominence than a short afterpulse, forbidding us to try to use an
-aggressively low threshold with an high fake rate, since those afterpulses are
-not even present in the peaks list.
+interpret this as the tail being composed mainly of afterpulses occurring
+shortly after the primary peak, that can not be recognized individually due to
+their low height. Being located on the slope of the laser peak, the prominence
+of a close afterpulse tends to be lower than that of an isolated pulse with the
+same height. For close enough afterpulses, the prominence will often be lower
+than noise fluctuations, and the peak finder will fail in identifying them.
 
 There are other two minor factors that deform the height distribution: the
-saturation of the digitizer, and pre-trigger pulses close to the laser one.
-Thus we histogram the laser peak height excluding events with saturation and
-events where the peak finder locates a pre-trigger pulse higher than~8 within
-\SI{2.5}{\micro s} before the trigger using the longest filter. This
-histogram is shown in \autoref{fig:pe} for \SI{5.5}{VoV} and \autoref{fig:pe2}
-for all overvoltages.
+saturation of the digitizer, and the tails of pre-trigger pulses close to the
+laser one. Thus we histogram the laser peak height excluding events with
+saturation and events where the peak finder locates a pre-trigger pulse higher
+than the upper endpoint of the random peaks height distribution within
+\SI{2.5}{\micro s} before the trigger using the longest filter. This histogram
+is shown in \autoref{fig:pe} for \SI{5.5}{VoV} and \autoref{fig:pe2} for all
+overvoltages.
 
 \begin{figure}
     
@@ -823,30 +858,30 @@ for all overvoltages.
     
 \end{figure}
 
-We place the PE bin boundaries taking the midpoints between the two most
-distant consecutive heights in the range between each pair of consecutive
-height distribution peaks. Heights above the last boundaries are not assigned a
-number of PE, but they are not lost for the analysis, we will just use an
-overflow bin when necessary. The ruler ticks that accompany the peaks in the
-event visualizations are these boundaries.
+\marginpar{Qua mi hai chiesto di cancellare delle cose, ma le lascio perché
+secondo me non hai capito.}
+
+We define the PE bin boundaries in \autoref{fig:pe} taking the midpoints
+between the two most distant consecutive heights in the range between each pair
+of consecutive height distribution peaks. Laser peak heights above the last
+boundary are assigned to an overflow bin when necessary. The ruler ticks that
+accompany the peaks in the event visualizations are these boundaries.
+
+\stracka{eliminare ``the ruler... boundaries''}
 
 Note the dips between the peaks in the histograms (the vertical scale is
 logarithmic). The lowest bin count is at most~4 in all cases. Let us put a
-rough upper bound on the contamination. There are more than \num{10000} events
-per peak. Supposing a worst case with 25 bins with 4 counts each penetrating
-into a neighboring peak, it gives \SI1\%. This means that it is surely less
-than the Poisson error on the count for each PE. The 1~PE peaks are well
+rough upper bound on the contamination. This allows us to place a rough upper
+bound of \SI1\% on the bin-to-bin contamination. This in particular is surely
+less than the Poisson error on the count for each PE. The 1~PE peaks are well
 separated, with a row of 0 or 1~count bins around them, so we estimate a
 contamination of \SI{0.01}\%.
 
-\marginpar{I forgot to mention that doing this with the amplitude is the same,
-and that anyway we are doing it with the amplitude.}
-
-\subsection{Amplitude of close pulses}
+\subsection{Determination of the amplitude of close pulses}
 
 When two pulses are close to each other, the height contains a contribution
 from the tail of the other pulse. We need to compute the amplitude of the
-single pulse, i.e.\ the height it would have if it was isolated. To simplify
+single pulse, i.e., the height it would have if it was isolated. To simplify
 the problem, we make the following assumptions:
 %
 \begin{enumerate}
@@ -862,22 +897,17 @@ About the first assumption: we have seen that the peaks in the output of the
 cross correlation filter have a sharp cusp. A perfectly sharp cusp, even if
 summed to a sloping shape, remains in the same position. A rounded peak,
 instead, will move slightly in the uphill direction when summed to a slope.
-Actually, given the short filters we are using, these cusps are not really
-sharp. Look at the second panel of \autoref{fig:peakfinder}. The peak in the
-square box has a radius of less than \SI{10}{ns}. By intuition we expect the
-peak to drift less than its radius, so we estimate that the typical error will
-be \SI{5}{ns}.
+Given the short filters we are using, these cusps are not really sharp, as
+shown in the right panel of \autoref{fig:peakfinder}: the peak in the square
+box has a radius of less than \SI{10}{ns}. Thus we estimate the typical bias
+due to an underlying exponential tail to be around \SI{5}{ns}.
 
-About the second assumption: it seems that in the literature this is implicitly
-given for. But, as we said before, it depends on the assumption that the pulse
-shape does not change with overvoltage, such that while the cell is recharging,
-its behavior will just be the rescaled version of its fully charged self. In
-\autoref{sec:filtering} we have seen that the pulse amplitude does not depend
-linearly on overvoltage. If you look closely at \autoref{fig:templates}, you
-can notice that the shapes are also a bit different. We make a clearer
-comparison in \autoref{fig:shape} by plotting the templates normalized to have
-the same peak amplitude. They are indeed different, but the difference is small
-enough to justify the working hypothesis.
+The second assumption is commonly made in the literature. But it rests on the
+assumption that the pulse shape does not change with overvoltage, such that for
+an avalanche occurring while the cell is recharging, only the overall amplitude
+of the pulse will be affected. \autoref{fig:shape} shows that while the shape
+of the signal pulses varies with overvoltage for the Tile under study, the
+difference is small enough to justify the working hypothesis.
 
 \begin{figure}
     
@@ -924,35 +954,36 @@ simplicity this system of equations instead:
     \label{eq:amplsystem}
 \end{equation}
 %
-i.e.\ we use only the observed peak heights $w_{t_\beta}$ instead of the full
+i.e., we use only the observed peak heights $w_{t_\beta}$ instead of the full
 waveform.
 
-What are we losing with this simplification? In \autoref{sec:filters} we said
+To justify this simplification, we recall that in \autoref{sec:filters} we said
 that the matched filter is equivalent to linear least squares. We now indeed
 show that, if we were using the matched filter, solving \eqref{eq:amplsystem}
 would be equivalent to least squares and thus optimal. Just for this proof, let
-us use all the above notation, but without the filter applied, i.e.\ $\mathbf
+us use all the above notation, but without the filter applied, i.e., $\mathbf
 w$ is the unfiltered waveform, $\mathbf y$ is the unfiltered signal, $V$ is the
 covariance of the unfiltered noise.
 
-The template of the matched filter is
-%
-\begin{equation}
-    \mathbf h = V^{-1} \mathbf y.
-\end{equation}
-%
 The model (noise implicit) is
 %
 \begin{equation}
-    \mathbf w = H \mathbf a.
+    \mathbf w = H \mathbf a. \label{eq:modelni}
 \end{equation}
 %
 The filter is applied by operating with the matrix
+%
 \begin{equation}
-    F_{ij} \equiv h_{j-i} = V^{-1}_{j-i,k} y_k,
+    F_{ij} \equiv V^{-1}_{jk} y_{k-i}. \label{eq:filterf}
 \end{equation}
 %
-so applying the filter we have
+Here we can not write the filter as the cross correlation with a fixed template
+because we are not assuming the stationarity of the noise. If that was the
+case, $V^{-1}$ would be invariant under the paired translation of its indices,
+and thus \eqref{eq:filterf} could be expressed with a template, and would
+depend only on $j-i$. In other words, think that the template changes at each
+point due to the different noise spectrum. Applying the filter to
+\eqref{eq:modelni} we have
 %
 \begin{align}
     F \mathbf w &= F H \mathbf a. \label{eq:noindices}
@@ -962,30 +993,20 @@ We want to use only the peak heights in the filter output, assuming that we
 know exactly the true signal positions. These are
 %
 \begin{equation}
-    W_\beta \equiv (F \mathbf w)_{t_\beta} = V^{-1}_{j-t_\beta,k} y_k w_j. 
+    W_\beta \equiv (F \mathbf w)_{t_\beta} = V^{-1}_{jk} y_{k-t_\beta} w_j,
 \end{equation}
 %
-The noise is stationary, so we can sum the same offset to the indices of
-$V^{-1}$. Using this fact, the symmetry of $V$, and redefining the mute index
-$k$, we obtain
-
-\marginpar{This translation of the indices of $V^{-1}$ holds only in the limit
-of an infinitely long waveform. In practice for a waveform with some margin
-around the pulses. However the initial mistake was not translating properly the
-indices of $V^{-1}$ when defining the filter template; after fixing that it
-should not be necessary to translate them later.}
-
+which in vector form becomes
+%
 \begin{equation}
-    W_\beta = V^{-1}_{jk} y_{k-t_\beta} w_j = V^{-1}_{jk} H_{k\beta} w_j
-    \rightarrow \mathbf W = H^\top V^{-1} \mathbf w.
+    \mathbf W = H^\top V^{-1} \mathbf w.
 \end{equation}
 %
 So, considering only the $W_\beta$ on the left hand side of
 \eqref{eq:noindices} and putting the indices on the right hand side, we have
 %
 \begin{align}
-    W_\beta &= V^{-1}_{j-t_\beta,k} y_k H_{j\alpha} a_\alpha = \\
-    &= V^{-1}_{j,k} y_{k-t_\beta} H_{j\alpha} a_\alpha = \\
+    W_\beta &= V^{-1}_{jk} y_{k-t_\beta} H_{j\alpha} a_\alpha = \\
     &= (H^\top V^{-1} H)_{\beta\alpha} a_\alpha,
 \end{align}
 %
@@ -1010,7 +1031,14 @@ is guaranteed that in a region of some microseconds we will find a peak with
 height comparable to the noise standard deviation. Indeed in the next section
 we will look at the height distribution for the peak finder output and see that
 it is positively biased. So we compute the amplitude only for peaks higher than
-a threshold. As threshold we pick the the PE bin boundary between 0 and 1~PE.
+a threshold. As threshold we pick the PE bin boundary between 0 and 1~PE.
+
+\stracka{si capisce poco il perché della definizione di questa nuova variabile,
+ma una volta che l'hai costruita come verifichi che faccia quello che vuoi che
+faccia? \upshape Risposta: invece è importante! Se capisci poi non fai la
+domanda su come si verifica. Se non la definisco così spariscono tutte le
+strisciate di rumore dai grafici, che però esistono e semplicemente non le
+starei guardando, sarebbe una finta pulizia.}
 
 When we use the computed pulse amplitude instead of the peak height, we would
 like to also see the distribution of the fake peaks such that we can be sure at
@@ -1021,13 +1049,22 @@ height, so we construct a variable which is the amplitude when available, and
 the height otherwise. In the following sections we mean this variable when we
 talk about ``amplitude''.
 
-Note that with this selection we are not excluding short afterpulses from the
-amplitude computation, because even if their amplitude is smaller, sitting on
-the tail of their parent pulse their height is still above threshold.
+Note that with this selection we are not excluding low height afterpulses from
+the amplitude computation, because even if their amplitude is smaller, sitting
+on the tail of their parent pulse their height from baseline is still above
+threshold.
+
+\stracka{Eliminare ``in the event visualizations...'' \upshape Risposta: ci
+sarebbero troppe cose da scrivere in troppe caption, per questo dico ogni cosa
+una sola volta nel punto in cui la definisco.}
 
 In the event visualizations, the ruler associated to each peak starts from a
 dot placed such that the distance from the dot to the peak is the amplitude.
 In the legend, the amplitude is given under ``$a = \ldots$''.
+
+We checked that recomputing the PE bins with the laser pulse amplitude instead
+of the height gives almost the same result. In the analysis, anyway, we use the
+bins computed with the amplitude for complete consistency.
 
 \section{Random pulses rate}
 \label{sec:random}
@@ -1276,7 +1313,7 @@ The priors of the fit are:
     
     \item The expected uniform background, computed from the random pulse rate
     in \autoref{tab:ptrate}. The variance is determined only from the variance
-    of the rate; the afterpulse count i.e.\ the histogram normalization is an
+    of the rate; the afterpulse count i.e., the histogram normalization is an
     errorless input.
     
     \item For the one component fit, the prior on the logarithm of the
@@ -1362,7 +1399,7 @@ the amplitude, since the afterpulses get denser as they get shorter.}
     \figcaption{apfit}{Left panel: fit of the temporal distribution of
     post-trigger pulses. Right panel: the histogram with even bins and without
     the temporal cuts. In the legend, `const' is the background excess density,
-    i.e.\ $(R/N)/((t_R-t_L)(1-R/N))$, in \si{ns^{-1}}. See \autoref{fig:apfit2}
+    i.e., $(R/N)/((t_R-t_L)(1-R/N))$, in \si{ns^{-1}}. See \autoref{fig:apfit2}
     for all overvoltages.}
     
 \end{figure}
@@ -1530,7 +1567,7 @@ afterpulses, reporting both results.
 
 The 0~PE probability in the laser model only depends on the initial Poisson
 mean $\mu_P$. Since in most of the cases the laser fit has poor quality, we are
-interested in ``fixing'' the first datapoint, i.e.\ assuming that the Poisson
+interested in ``fixing'' the first datapoint, i.e., assuming that the Poisson
 model is correct and that all the problems come from the DiCT model. As usual
 we will rescale the fit errors with $\sqrt{\chi^2/\mathrm{dof}}$, so what we
 want to obtain is that, after the rescaling, the error on the first datapoint
@@ -1543,9 +1580,9 @@ In \autoref{fig:ctfitrandom} and~\ref{fig:ctfitaplaser} we show individual
 fits. In \autoref{fig:ctresults} we show together the obtained values for the
 DiCT parameters $\mu_B$ (Borel model) and $p$ (Geometric model) for the three
 categories of pulses. Additionally we also show the same comparison with the
-DiCT probability, i.e.\ the probability of having more than one PE, which is
+DiCT probability, i.e., the probability of having more than one PE, which is
 $1-e^{-\mu_B}$ for the Borel model and just $p$ for the Geometric model, and
-with the average excess PE, i.e.\ the mean number of PE minus one, which is
+with the average excess PE, i.e., the mean number of PE minus one, which is
 respectively $1/(1-\mu_B)-1$ or $1/(1-p)-1$. Note that to first order these
 quantities are equal to the parameter.
 
@@ -1718,14 +1755,33 @@ $\chi^2/\mathrm{dof}$-less.
 \section{Discussion}
 \label{sec:analconcl}
 
+\stracka{Sul Cap. 7.7 : snellirei molto:}
+
 We analyzed the additional pulses noise of the LFoundry Tile~21. The key
 results are reported in \autoref{tab:ptrate}, \autoref{fig:apresults} and
 \autoref{fig:ctresults}.
+
+\stracka{In Sec. xx we estimated an upper bound to the DCR, which is measured
+to be within the DS20k requirement.}
 
 For the random pulses rate we are quite confident that there must be an
 additional source of random pulses other than the dark count rate, so our
 estimates are an upper bound on DCR, and are anyway within the DarkSide20k
 requirements.
+
+\stracka{In Sec yy we searched for secondary peaks following a primary laser
+pulse, and selected the ones compatible with being afterpulses. We modelled the
+delay-time distribution with a sum of two exponentials, and used this model to
+estimate the efficiency of a cut on the delay that enters the selection of
+afterpulse candidates. This in turn is used to evaluate the AP probabilities,
+which are ... We then observed the behavior of the afterpulse amplitude for
+shorter delays. This is qualitatively consistent with the expected behavior of
+[...]. We note however that our analysis is not efficient at very small delays.
+The explorative analysis presented in Sec. yy is amenable to improvements. For
+example, while for brevity we used the same short filter both for the hit
+finding (Sec. a) and for the calculation of the amplitude (sec. b), adopting a
+long filter for the latter task (as in Ref. []) would have been more
+appropriate.}
 
 The afterpulse probability for 1~PE pulses goes from $\approx\SI{2.5}\%$ at
 \SI{5.5}{VoV} to $\approx\SI{6.5}\%$ at \SI{9.5}{VoV}. The temporal
@@ -1766,6 +1822,12 @@ point is using the long filter output for the amplitude, because it is less
 noisy and because having determined the position in another way we are not
 taking a peak in the filter output and thus we avoid an upward bias. We noticed
 that this method was already presented in \cite{krikler2020}.
+
+\stracka{In Sec zz we evaluated DiCT probabilities for three classes of primary
+pulses: random pulses, laser pulses, and afterpulses, by fitting the
+distributions of the number of photoelectrons with two alternative models. For
+both models the results are consistent among the three classes of primary
+pulses.}
 
 With the DiCT we get consistent results between the three samples: random
 pulses, laser pulses, afterpulses. The probability goes from $\approx\SI{20}\%$
@@ -1854,6 +1916,13 @@ difference between the templates, they seem small enough to not have a
 substantial influence on the results. It would be interesting to compute the
 template keeping only the lower half of the distribution.
 
+\stracka{A questo punto puoi aggiungere la cosa che il dataset che hai usato
+non è quello solitamente usato in DarkSide per questo tipo di studi, ma che -
+nonostante la tua analisi sia stata sostanzialmente esplorativa - non vedi
+showstopper particolari per questo tipo di analisi su questo tipo di dataset
+``more readily available'' (perchè ci metti meno a raccoglierli). E poi parli
+della cosa del Veto.}
+
 From \cite{savarese2018} and \cite{nagy2014} we guess that the data for this
 kind of analysis is normally collected by reading continuously the SiPM output
 and triggering on dark count pulses, running a peak finder online, instead of
@@ -1883,7 +1952,11 @@ pulse-by-pulse, such that the validity of the models can be assessed. For
 example, if our analysis is deemed sufficient, Tile~21 could be reanalyzed
 following \cite{chmill2017}.
 
-\marginpar{Look if the VETO electronics is explained in \cite{aalseth2019}.}
+\stracka{E poi accenni al fatto che un'applicazione è il tuning della
+simulazione, ma senza impelagarti in gitlab, confronti, eccetera, per il
+seguente motivo: il codice non è accessibile a nessuno, quindi per il lettore
+stai parlando di aria fritta; inoltre non usi da nessuna parte la simulazione,
+quindi se non ti metti a commentare il loro codice non fai torto a nessuno.}
 
 Another application of a model-sensitive analysis is for defining the
 correlated noise simulation in the DarkSide20k software. The current version of

@@ -45,7 +45,11 @@
 
 % small sans font for marginpar
 \let\oldmarginpar\marginpar
-\renewcommand\marginpar[1]{\oldmarginpar{\sffamily\scriptsize #1}}
+\renewcommand\marginpar[1]{\oldmarginpar{\sffamily\tiny #1}}
+
+% commands for supervisors' comments
+\newcommand\stracka[1]{\marginpar{\itshape #1}}
+\newcommand\paoloni[1]{\marginpar{\ttfamily #1}}
 
 % url prefix for file preview
 \newcommand\repofileurl{https://github.com/Gattocrucco/sipmfilter/blob/master}

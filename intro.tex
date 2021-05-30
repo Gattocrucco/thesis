@@ -1,25 +1,52 @@
 \chapter*{Introduction}
 
-The goal of this thesis is to do some studies on the silicon photomultipliers
-(SiPMs) photodetector modules (PDMs) that will be used in the DarkSide20k dark
-matter detection experiment, needed in order to decide some details of the data
-acquisition system (DAQ) and of the layout of the readout electronics. Similar
-work in the DarkSide collaboration has been reported in
-\cite[ch.~3, 5]{savarese2018} and \cite[ch.~5, 6]{luzzi2020}.
+\stracka{Per l'introduzione: questa parte introduce l'argomento della tesi e ne
+descrive la struttura. E' una cosa simile al riassunto. estendi fino a farlo
+diventare di 1 pagina. Segui la traccia del riassunto, anzi direi di prendere
+proprio il riassunto (da l.6 a l.58), e di aggiungere a quello i rimandi ai
+capitoli.}
 
-The thesis is divided in eight chapters. The first two chapters provide a brief
-introduction to dark matter and to the DarkSide experiment. They do not contain
+\paoloni{Mi sembra che manchi l’introduzione… L’introduzione dovrebbe dire
+sinteticamente: - perché è importante continuare a cercare la materia oscura -
+perché farlo con Darkside 20k - perché Darkside 20k usa i SiPM - i problemi che
+hai affrontato - perché i problemi sono rilevanti poi parti con la divisione in
+capitoli etc. Scrivi pensando di dover spiegare le cose ad un tuo collega di
+studi brillante.}
+
+The goal of this thesis is to study some characteristics of the silicon
+photomultipliers (SiPMs) photodetector modules (PDMs) that will be used in the
+DarkSide20k dark matter detection experiment. These studies are needed to
+finalize the design of the data acquisition system (DAQ) and of the layout of
+the readout electronics. Similar work in the DarkSide collaboration has been
+reported in \cite[ch.~3, 5]{savarese2018} and \cite[ch.~5, 6]{luzzi2020}.
+
+\stracka{Togli i riferimenti bibliografici dall'introduzione: è come l'abstract
+di un papero. They do not contain... completeness: leva.}
+
+\paoloni{dove descrivi il funzionamento dei SiPM?}
+
+The thesis is divided in eight chapters. The first two chapters provide a short
+pedagogical to dark matter and to the DarkSide experiment. They do not contain
 new material and are included only for the sake of completeness.
 Chapter~\ref{ch:data} is a reference for the sources of the datasets used in
 the analyses. Chapters~\ref{ch:snr}, \ref{ch:timeres} and~\ref{ch:rate} deal
 with the performance of single pulse detection in the PDM output: signal to
-noise ratio, temporal resolution, and fake rate. Chapter~\ref{ch:anal}
-analyzes additional pulses noise (cross talk and afterpulsing).
-Chapter~\ref{ch:end} summarizes the key results from each chapter.
+noise ratio, temporal resolution, and fake rate. Chapter~\ref{ch:anal} analyzes
+additional pulses noise (cross talk and afterpulsing). Chapter~\ref{ch:end}
+summarizes the key results from each chapter.
+
+\paoloni{Elimina ``this layout... etc''}
 
 This layout has more chapters than is currently conventional for this kind of
 document. This is done to keep each somewhat self-contained topic well
 separated, such that it should be quicker to pull out specific information.
+
+\stracka{i link ai repository li puoi mettere, ma devono occupare 2 righe. Se
+vuoi descrivere più estesamente il contenuto dei repository, trasferisci
+l.86-97 in un'appendice, e metti qui semplicemente un rimando.}
+
+\paoloni{Qeusto può andare in ``forewords'' o in un'``appendix'' ma non ci sta
+tanto in un'introduzione}
 
 To the same end, for each figure and table we provide a Python script that
 reproduces the content. Each script is referenced at the end of the caption
@@ -34,6 +61,11 @@ included in the repository. Of the latter, some have a cache of the data they
 need, others just can not be executed without the original data. For people
 outside of the DarkSide collaboration it may not be possible to obtain the data
 files; in any case, they can check what the code is doing exactly.
+
+\stracka{leva. la tesi è un prodotto che viene registrato dall'università, e il
+copyright è determinato da quello: non serve specificare nulla qui. Per quanto
+riguarda i repository: le indicazioni sulla licenza vanno in un file nel
+repository, non vanno nella tesi.}
 
 The \LaTeX{} code for this thesis is itself available at
 \url{https://github.com/Gattocrucco/thesis}. Moreover, the
