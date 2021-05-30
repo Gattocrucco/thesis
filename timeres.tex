@@ -1,52 +1,51 @@
 \chapter{Temporal resolution of pulse detection}
 \label{ch:timeres}
 
-In the previous chapter we studied the performance of filters, but we did not
-define an algorithm to search for signals. Neither we will do it here, we will
-skip it and measure the temporal localization precision once we know there is a
-signal.
+In this chapter we measure the temporal localization precision once the
+presence of a signal pulse is established.
 
-To this end, we make a simulation where each ``event'' contains only one signal
-at a known position. In principle we could use the LNGS data
-(\autoref{sec:lngsdata}), but we do not know the jitter of the trigger pulse
-and we may reach a temporal resolution below the sampling period, while in the
-simulation we have the exact actual temporal location of signals.
+To this end, we simulate events each containing only one signal at a known
+position. In principle we could use the LNGS data (\autoref{sec:lngsdata}), but
+we do not know the jitter of the trigger pulse and we may reach a temporal
+resolution below the sampling period, while in the simulation we know the exact
+actual temporal location of signals.
 
-\section{Event generation}
+\section{Event simulation}
 
-Each event is the sum of a signal and a noise waveform. We do not add a
-baseline, so the noise has mean zero and the signals taper down to zero. The
-signals are negative. We use the same scale of the LNGS data; it actually does
-not matter because we are not simulating digitalization.
+Every event is the sum of a \SI1{PE} signal and a noise waveform. We do not add
+a baseline, so the noise has mean zero and the signals taper down to zero. The
+signals are negative. We use the same scale of the LNGS data; the scale does
+not affect the results of this study since we are not simulating digitalization.
+The following paragraphs describe in detail the event simulation procedure.
 
-\subsection{Signal}
+\subsection{Signal generation}
 \label{sec:toysignal}
 
-We use the trigger-aligned template from \SI1{PE} laser pulses in Tile~57, see
-\autoref{sec:cctemplate} and \autoref{fig:template}.
+We generate the signal pulse shape according to the trigger-aligned template
+from \SI1{PE} laser pulses in Tile~57, see \autoref{sec:cctemplate} and
+\autoref{fig:template}.
 
-The template is at \SI1{GSa/s}, but the simulation is at \SI{125}{MSa/s}, which
-is the sampling frequency planned for the DarkSide20k digitizers. We have to
-downsample the template and shift its temporal position continuously instead of
-by $(\SI1{GHz})^{-1} = \SI1{ns}$ steps. Given the continuous temporal position
-where we want to place the template, we round it by excess and defect to the
-\SI{1}{ns} timebase. Then we downsample the template by averaging samples in
-groups of~8, once with the groups aligned to the floor rounded position, once
-with the ceiling rounded one. Finally we interpolate linearly between the two
-downsampled templates. \autoref{fig:interptempl} shows a series of waveforms
-obtained in this way.
-
-Downsampling with an average is not the best antialiasing filter doable, but it
-should be fine for our application.
+The template is sampled at \SI1{GSa/s}, but the simulated events are sampled at
+\SI{125}{MSa/s}, which is the sampling frequency planned for the DarkSide20k
+digitizers. The randomly generated signal time is not required to be aligned
+with either clock. Given the generated temporal position, we round it by excess
+\emph{and} defect to the \SI{1}{ns} clock tick. Then we downsample the template
+by averaging samples in groups of~8. This is done twice: once with the groups
+aligned to the floor-rounded temporal position, once with the ceiling-rounded
+one. Finally we interpolate linearly between the two downsampled templates.
+\autoref{fig:interptempl} shows a series of waveforms generated following this
+procedure. Here averaging before downsampling has the role of an antialias
+filter. While more refined antialiasing filters exist, a simple average is
+sufficient for our application.
 
 In each simulation event we vary the amplitude of the signal by an additive
 Gaussian random variable, which has the standard deviation observed in the LNGS
-data, \SI{2.9}\%. This value is obtained by computing the difference in
-quadrature between the ``quantile standard deviations'' (see
-\autoref{sec:fingerplot}) of the \SI{0}{PE} and \SI{1}{PE} peaks in the
-fingerplot done with a \SI{1.5}{\micro s} average, the same used for the
-template in \autoref{sec:cctemplate}, and dividing it by the median of the
-\SI{1}{PE} peak.
+data, \SI{2.9}\% of the average \SI1{PE} amplitude. This value is obtained by
+computing the difference in quadrature between the ``quantile standard
+deviations'' (see \autoref{sec:fingerplot}) of the \SI{1}{PE} and \SI{0}{PE}
+peaks in the fingerplot done with a \SI{1.5}{\micro s} average, the same used
+for the template in \autoref{sec:cctemplate}, and dividing it by the median of
+the \SI{1}{PE} peak.
 
 \begin{figure}
     
@@ -58,39 +57,46 @@ template in \autoref{sec:cctemplate}, and dividing it by the median of the
 
 \end{figure}
 
-\subsection{Noise}
+\subsection{Noise simulation}
 
-We used three different kinds of noise: Gaussian white noise; noise sampled
-from the LNGS data; noise sampled from the Proto0 data.
+To study the dependence of the algorithms on noise, we simulate three different
+noise distributions: Gaussian white noise; noise sampled from the LNGS data;
+noise sampled from the Proto0 data.
 
-The white noise is generated in the simulation. The LNGS noise is copied from
-the pre-trigger region, with the same selections explained in
-\autoref{sec:snrdata}, i.e., ignoring any event with a sample less than 700.
-The Proto0 noise is copied from the whole events without selection. The
-detector is always Tile~57, as for the signal template. A persistence plot of
-the Proto0 data is shown in \autoref{fig:hist2dtile155759}. The spectra are
-shown in \autoref{sec:spectrum}, the autocorrelations in
-\autoref{fig:autocorrlngs}.
+\stracka{Eliminare ``A persistence... in Figure 4.3''}
 
-The filter applied to the LNGS noise data may not be strict enough, letting
-spurious \SI{1}{PE} pulses appear in the simulation. We will use robust
-measures (quantiles), so outliers caused by this or any other transient problem
-will not spoil the results.
+The white noise is generated in the simulation. The LNGS noise is sampled from
+the pre-trigger region of Tile~57 data, the same data used for the signal
+template, ignoring any event with any sample less than 700 as in
+\autoref{sec:snrdata}. The Proto0 noise is copied from data collected operating
+Tile~57 below the breakdown voltage, keeping the whole events without
+selection. A persistence plot of the Proto0 data is shown in
+\autoref{fig:hist2dtile155759}. The spectra are shown in
+\autoref{sec:spectrum}, the autocorrelations in \autoref{fig:autocorrlngs}.
 
-When taking the noise for multiple simulation events from the same data event,
-we skip \SI{1}{\micro s} between each chunk in the data, just be safe in
-avoiding correlations between the simulation events.
+The preprocessing applied on the pre-trigger window of LNGS data does not fully
+reject \SI1{PE} pulses, and spurious \SI1{PE} pulses may appear in the
+simulation. In the analysis we will use robust statistics, i.e., quantiles, to
+deal with outliers caused by this or any other unanticipated feature of the
+data.
 
-The noise obtained from data is normalized to the variance required by the
-simulation. We normalize the variance separately for each \emph{data} event.
+When the noise waveforms for multiple simulated events are extracted from the
+same data event, we skip \SI{1}{\micro s} between each waveform segment in the
+data, to avoid correlations between the simulated events.
 
 We downsample the noise in the same way as the signal, by averaging nearby
-samples. Both noises have spectra that go down with frequency, so this crappy
-antialiasing should be sufficient. The normalization to the desired variance is
-done after downsampling. The order matters because downsampling with averaging
-reduces the variance of the noise. See \autoref{fig:noise}. The Proto0 noise
-data is already at \SI{125}{MSa/s} and so did not require downsampling for most
-of the simulations.
+samples. The noise spectra from both sources (LNGS and Proto0) decrease with
+frequency, so an antialiasing with an average should suffice.
+
+\marginpar{Bisogna dire com'è fatto il pre-downsampling di Proto0 da
+\SI{250}{MSa/s} a \SI{125}{MSa/s}.}
+
+After downsampling, the noise obtained from data is normalized to the desired
+variance. We normalize the variance separately for each \emph{data} event. The
+order matters because downsampling with averaging reduces the variance of the
+noise. See \autoref{fig:noise}.
+
+\stracka{Eliminare ``we normalize... data event''}
 
 \begin{figure}
     
@@ -104,20 +110,19 @@ of the simulations.
 \subsection{Event layout}
 
 Each event is the sum of a noise waveform and a shorter signal waveform. Before
-the beginning of the signal there is a noise-only region long enough for the
-filters to be in a stationary state when they reach the signal; in particular
-its length is the highest filter length parameter used in the simulation,
-\SI{2048}{ns}, plus \SI{256}{ns}.
+the beginning of the signal there is a noise-only region which is chosen long
+enough for the filters to be in a stationary state when the signal occurs. The
+length of this region is set to be \SI{2304}{ns}, i.e., longer than the largest
+filter-length parameter considered in our study, \SI{2048}{ns}.
 
-The simulation is repeated for various signal to noise ratios (SNR). We define
-the SNR as follows: the peak height relative to the baseline of the original
+The simulation is repeated for various raw signal to noise ratios (SNR),
+calculated as the peak height relative to the baseline of the original
 \SI1{GSa/s} signal template over the noise standard deviation.
 
-The reason we consider the signal amplitude at \SI1{GSa/s} instead of at the
-actual sampling frequency of the simulation is that downsampling reduces the
+The reason we consider the signal amplitude at \SI1{GSa/s} and not at the
+actual sampling frequency of the simulation is because downsampling reduces the
 peak height. For convenience, we want to keep the definition of signal height
-comparable at different sampling frequencies. This will be clearer later when
-we do the comparison.
+comparable at different sampling frequencies.
 
 \marginpar{I should use the peak height, averaged over continuous positioning,
 at the simulation sampling frequency, instead of at \SI{1}{GSa/s}. Then the
@@ -125,12 +130,14 @@ comparisons at different sampling frequencies would need to adjust both for the
 reduction of the noise variance and of the peak height, but the definition of
 SNR would be the standard one.}
 
-Simulations with different SNR differ only in the multiplicative constant of
-the noise, so we used exactly the same noise and signal arrays for each SNR to
-speed up the code. This means that there is no random variation between results
-obtained at different SNR (or with different filters), keep this in mind when
-the smoothness of some curves would seem to suggest that the Monte Carlo error
-is negligible.
+Simulations with different raw SNR differ only in the multiplicative constant
+of the noise, so we use exactly the same noise and signal arrays for every SNR
+to speed up the code. This means that there is no random variation between
+results obtained at different SNR (or with different filters), keep this in
+mind if the smoothness of some curves would seem to suggest that the Monte
+Carlo error is negligible.
+
+\stracka{Eliminare ``keep this... is negligible''}
 
 \autoref{fig:toyevent} shows a complete example event.
 
@@ -147,20 +154,22 @@ is negligible.
 \end{figure}
 
 \section{Temporal localization}
+\label{sec:temploc}
 
-We run the three filters described in \autoref{sec:filters} (moving
-average, exponential moving average, cross correlation), then take the minimum
-(the signals are negative) of the filtered waveform as the location of the
-signal. We also take the minimum of the unfiltered waveform as baseline
-comparison.
+To reconstruct the time position of the signals, We run the three filters
+described in \autoref{sec:filters} (moving average, exponential moving average,
+cross correlation), and take the minimum (the signals are negative) of the
+filtered waveform as the location of the signal. We also take the minimum of
+the unfiltered waveform as a baseline comparison.
 
-The minimum of the filter output occurs in some sense later than the signal
-location, this is not a problem since the choice of the point of the signal to
-be taken as reference is already arbitrary.
+The minimum of the filter output occurs at a shifted position relative to the
+signal location, but this is not a problem since the choice of the point of the
+signal to be taken as reference is arbitrary, and, for each filter, the shift
+is constant from one event to another.
 
-To make the template for the cross correlation filter, we first truncate it
-as described in \autoref{sec:cctemplate}, and then downsample it in the same
-way we downsample the signal template and the noise.
+To build the template for the cross correlation filter, we first truncate it as
+described in \autoref{sec:cctemplate}, and then downsample it in the same way
+we downsample the signal template and the noise.
 
 \begin{figure}
     
@@ -174,18 +183,18 @@ way we downsample the signal template and the noise.
 
 \end{figure}
 
-To allow for a localization eventually more precise than the sampling timebase,
-we interpolate the minimum sample and its first neighbors with a parabola. We
-also try upsampling the waveform to \SI{1}{GSa/s} (with sample repetition)
-prior to filtering to check if it improves performance.
+To allow for a localization more precise than the sampling clock bin, we
+interpolate the minimum sample and its first neighbors with a parabola. We also
+try upsampling the waveform to \SI{1}{GSa/s} (with sample repetition) prior to
+filtering to check if it improves performance.
 
-\subsection{Resolution}
+\subsection{Time resolution results}
 
-We repeat the simulation for 1000 events for each filter, filter length
-parameter, and SNR in some range, using the Proto0 noise.
-\autoref{fig:lochist} shows the histograms of the temporal localization for
-all filters for a choice of SNR and filter length. The signal template position
-varies continuously and uniformly within one sampling step.
+Assuming Proto0 noise spectrum, we simulate 1000 events and repeat the time
+position reconstruction varying the filter, filter length parameter, and raw
+SNR. The signal template position is generated uniformly within one clock bin.
+\autoref{fig:lochist} shows the histograms of the temporal localization for all
+filters for a choice of SNR and filter length.
 
 \begin{figure}
     
@@ -200,51 +209,55 @@ varies continuously and uniformly within one sampling step.
 
 \end{figure}
 
-We see that the distribution of localizations can be non-Gaussian, so to
-quantify the resolution we use, instead of the standard deviation, half the
-distance between the \SI{16}\% and \SI{84}\% quantiles, which is equivalent to
-a standard deviation for a Gaussian, but gives a meaningful measure for the
-width of the distribution even when it is highly skewed or with heavy tails.
+We see that the distribution of reconstructed signal time positions can be
+non-Gaussian, so to quantify the resolution we use, instead of the standard
+deviation, half the distance between the \SI{16}\% and \SI{84}\% quantiles,
+which is equivalent to a standard deviation for a Gaussian, but gives a
+meaningful measure for the width of the distribution even when it is highly
+skewed or with heavy tails.
+
+\stracka{Non a capo}
 
 \autoref{fig:rescurve} shows the temporal resolution thus defined for each
-filter, filter length, and SNR. The exponential moving average has a
-consistently poor performance compared to the other filters. The
-cross correlation filter is the best one, with performance improving with
-length, and at a length of 96 samples (\SI{768}{ns}) is already practically
-optimal. The moving average can get close to the cross correlation filter by
-choosing appropriately the number of samples.
+filter, filter length, and raw SNR. The exponential moving average has a
+consistently poor performance compared to the other filters. The cross
+correlation filter is the best one, with performance improving with
+filter-length, and at a length of 96 samples (\SI{768}{ns}) is already
+practically optimal. The moving average can get close to the cross correlation
+filter by choosing appropriately the number of samples.
 
 \begin{figure}
     
     \widecenter{\includempl{figrescurve}}
     
     \figcaption{rescurve}{Pulse detection temporal resolution for a range of
-    SNR and filter lengths. The shaded region marks the sampling
+    raw SNR and filter lengths. The shaded region marks the sampling
     step~\SI{8}{ns}. The right endpoint of the cross correlation filter curves
     is at~\SI{2.6}{ns}.}
 
 \end{figure}
 
-The online processing of the PDM output in the experiment will be done in two
+In the experiment The online processing of the PDM output will happen in two
 steps: the digitizers must find the signals, then send them to the front end
 processors (FEPs) for further analysis. The computational resources of the
-digitizers are limited compared to the FEPs.
+digitizers are limited compared to those available in the FEPs.
 
-The exponential moving average can be surely implemented on the digitizers. The
-cross correlation with 64 samples could probably be done on the digitizers
-since a similar computation was implemented in another study.
+The exponential moving average can be implemented on the digitizers with few
+logic resources. The cross correlation with 64 samples could probably be
+performed with the resources available on the digitizers since a computation
+with similar complexity was implemented in firmware and run on an evaluation
+card featuring the same FPGA installed on the DarkSide digitizer boards.
 
 The FEPs can and should probably use the best filter, so they would run a long
-cross correlation filter. The temporal resolution matters in the FEPs but
-probably not in the digitizers, in the latter case it is just a generic measure
-of performance.
+cross correlation filter, since achieving a good temporal resolution may be
+beneficial for offline analysis.
 
-Thus out of all the temporal resolution curves the ones that matter are:
+To summarize, out of all the temporal resolution curves the most relevant are:
 %
 \begin{itemize}
     %
-    \item the best we can do with the exponential moving average and moving
-    average;
+    \item the best time resolution we can achieve with the exponential moving
+    average and moving average;
     %
     \item the long cross correlation filters;
     %
@@ -252,10 +265,12 @@ Thus out of all the temporal resolution curves the ones that matter are:
     %
 \end{itemize}
 %
-We plotted these curves together in \autoref{fig:rescomp}, adding some
-curves done with the LNGS and white noises. Note that a different noise
-spectrum makes a large difference at low SNR. We also plot a curve computed
-with upsampling; it does not improve significantly the performance.
+We plot these curves together in \autoref{fig:rescomp}, adding the resolution
+plots obtained in the best configuration when changing the noise spectrum in
+the simulation, to show the impact of the noise spectrum on the performances.
+We note in particular that a different noise spectrum makes a large difference
+at low SNR. Finally, we plot a curve computed with and without upsampling,
+which shows that upsampling does not improve significantly the performance.
 
 \begin{figure}
     
@@ -271,33 +286,52 @@ with upsampling; it does not improve significantly the performance.
 
 \section{Data reduction}
 
-We said that the digitizers must find signals in the waveform stream and send
-them to the FEPs for further processing. The bandwidth of the connection
-between the digitizers and the FEPs happens to be a bottleneck. Two possible
-ways of reducing the amount of transmitted data are keeping only the minimum
-number of samples for each signals, and reducing the sampling frequency. Both
-have an effect on the temporal resolution, which we assess here.
+In this section we study the effect of some data reduction strategies at the
+digitizer level on the time resolution that can be achieved in subsequent data
+processing stages. We said that the digitizers must find signals in the
+waveform stream and send them to the FEPs for further processing. Depending on
+the background rate, the bandwidth of the connection between the digitizers and
+the FEPs can be a bottleneck. Two possible ways of reducing the amount of
+transmitted data are keeping only the minimum number of samples around each
+signal, and reducing the sampling frequency. Both have an effect on the
+temporal resolution, which we assess in the next paragraphs.
 
 \subsection{Waveform truncation}
 
-We repeat the simulation, but this time we use only a fixed smaller number of
-samples in each event to compute the filter output. We call this selection of
-samples ``window''. On the window we run only a long cross correlation filter
-since that is what would be done on the FEPs. As past and future boundary
-condition we use zero. We evaluate the filter even after the sample window end
-because the window can be shorter than the filter.
+We repeat the simulation, as in \autoref{sec:temploc}, but this time we use
+only a fixed smaller number of samples in each event to compute the filter
+output. We call this selection of samples a ``window''. On the window we run
+only a long cross correlation filter since that is what would be done on the
+FEPs. As past and future boundary condition we use zero. We evaluate the filter
+even after the sample window end because the window can be shorter than the
+filter.
 
-While the length of the window is fixed, the placement is not fixed relative to
+In this study we did not attempt any optimization of the left/right balance of
+the window. The number of samples to be stored \emph{before} the onset of the
+signal is driven by the requirement to allow a proper baseline subtraction
+procedure. However, by applying the zero padding just described, we are
+implicitly assuming that a proper baseline subtraction procedure has been
+applied prior to running the filter. Thus, we only focus on determining the
+number of samples that should be saved \emph{after} the onset of the signal, by
+considering windows that very skewed to the right. Keep into account that the
+measure we are looking at, the temporal resolution, does not depend critically
+on getting the baseline right.
+
+While the length of the window is fixed, its placement is not fixed relative to
 the true signal location. Instead we use the temporal localization with another
 filter feasible on the digitizers, calibrated to have the median aligned to the
-beginning of the signal template. The window then extends a given number of
+beginning of the signal template. The window then extends for a given number of
 samples to the left and to the right of this localization.
+
+\stracka{Non andare a capo}
 
 \autoref{fig:windowevent} shows this procedure graphically for a single
 event. \autoref{fig:windowtempres} shows the temporal resolution versus
 unfiltered SNR curves for various choices of window length, noise, and filter
 used to align the window, where for reasons of computation time the latter was
 computed at a fixed SNR that does not follow the value on the x-axis.
+
+\stracka{Eliminare ``where for reasons... x-axis''}
 
 \begin{figure}
     
@@ -322,36 +356,41 @@ computed at a fixed SNR that does not follow the value on the x-axis.
 
 \end{figure}
 
-By looking at \autoref{fig:windowtempres}, we conclude that probably it is
-sufficient to save \SI1{\micro s} of waveform to obtain practically the same
-temporal resolution achievable without windowing.
-
-What is missing in this study is that we did not try to optimize the left/right
-balance of the window, and that as said above the unwindowed localization used
-to align the windows is done at a mismatched SNR. The first problem can only
-worsen the temporal resolution obtained, so it is conservative; the second is
-conservative assuming that our choice of SNR, 2.5, is lower that what we expect
-in the detector.
+From \autoref{fig:windowtempres} we conclude that it would be necessary to save
+at least \SI1{\micro s} of waveform after the onset of the signal to avoid
+degrading the temporal resolution. On the other hand, we also observe that the
+performances improve quickly to almost optimal ones when increasing the window
+length. In the top right panel, i.e., with Proto0 noise and centering with an
+exponential moving average, the resolution does not converge to the value
+without windowing as the window length increases. This is due to the standard
+deviation of the distribution of the window center, \SI{17}{Sa}, being not
+small enough compared to the left window margin, \SI{32}{Sa}. This means that
+in a non-negligible fraction of cases, the window does not include the leading
+edge of the signal. We show this problem intentionally to underline the
+importance of the left/right balance.
 
 \subsection{Downsampling}
 
 Another way of reducing the data throughput is downsampling. In
 \autoref{fig:tempresdowns} we show the temporal resolution achieved with a long
-cross correlation filter at different sampling frequencies. We observe that
-downsampling by a factor of 2 from \SI{125}{MSa/s} to \SI{62}{MSa/s} maintains
-almost the same temporal resolution, while going to \SI{31}{MSa/s} lowers it
-visibly.
+cross correlation filter at different sampling frequencies. The downsampling is
+computed averaging nearby samples. So, in other words, we are comparing
+applying the cross correlation at the full sampling frequency to first applying
+an antialiasing filter, downsampling and then computing the cross correlation
+with a downsampled template. We observe that downsampling by a factor of 2 from
+\SI{125}{MSa/s} to \SI{62}{MSa/s} maintains almost the same temporal
+resolution, while going to \SI{31}{MSa/s} lowers it visibly.
 
 When downsampling a waveform, the variance of the noise is reduced. At each
 sampling frequency the simulation sets the SNR looking at the standard
 deviation of the already downsampled noise, so the SNR scales are off by the
-factor of the noise amplitude reduction. Think about it this way: to make the
-simulations comparable, we should start by a ``master simulation'' at
-\SI{1}{GSa/s}, then downsample it various times. Our code does not implement
-this and repeats the simulation from scratch at each sampling frequency,
-renormalizing the downsampled noise to unitary variance, so it gets an higher
-noise. Thus the SNR of the downsampled simulations is ``actually lower'' than
-what they declare.
+factor of the noise amplitude reduction. To make the simulations comparable, we
+should start from a common ``master simulation'' at \SI{1}{GSa/s}, then
+downsample it various times. Our code does not implement this and repeats the
+simulation from scratch at each sampling frequency, renormalizing the
+downsampled noise to unitary variance. To account for this, in
+\autoref{fig:tempresdowns} we apply a correction factor on the raw SNR before
+plotting the time resolution results.
 
 \begin{figure}
     
@@ -361,13 +400,15 @@ what they declare.
     sampling frequencies with a cross correlation filter with template length
     \SI{2048}{ns}. The SNR scale is at \SI{125}{MSa/s}; curves for different
     sampling frequencies are rescaled horizontally by the factor written in the
-    legend to account for the noise variance reduction with downsampling.}
+    legend to account for the noise variance reduction with downsampling, as
+    described in the text.}
 
 \end{figure}
 
-Since we are downsampling we also need to check if we lose signal to noise
-ratio in the filter output. In \autoref{tab:filtsnrdowns} we report the
-ratio between SNR after and before filtering. It does not appear to change.
+We also check if downsampling is associated to signal to noise ratio
+degradation in the cross correlation filter output. In
+\autoref{tab:filtsnrdowns} we report the ratio between SNR after and before
+filtering. It does not appear to change significantly.
 
 \marginpar{Add digitalization to the simulation and make a plot like the one
 for the sampling frequency but varying the number of bits at \SI{125}{MSa/s}.
