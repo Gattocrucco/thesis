@@ -32,7 +32,7 @@
 }
 \addtolength\marginparwidth{-0.5\bindingoffset}
 
-\linenumbers % print line numbers (for the draft)
+% \linenumbers % print line numbers (for the draft)
 
 \addbibresource{thesis.bib}
 
@@ -50,6 +50,9 @@
 % commands for supervisors' comments
 \newcommand\stracka[1]{\marginpar{\itshape #1}}
 \newcommand\paoloni[1]{\marginpar{\ttfamily #1}}
+
+% hides margin notes
+\renewcommand\marginpar[1]\relax
 
 % url prefix for file preview
 \newcommand\repofileurl{https://github.com/Gattocrucco/sipmfilter/blob/master}
